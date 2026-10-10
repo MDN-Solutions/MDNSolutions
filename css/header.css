@@ -1,0 +1,288 @@
+/* ==========================================================================
+   Header fixo + menu mobile
+   Estados controlados pelo JS:
+   - .header[data-solid="true"]       fundo escuro ao rolar a página
+   - .header__panel[data-open="true"] menu mobile aberto
+   - [aria-current="location"]        link da seção visível
+   ========================================================================== */
+
+.header {
+  position: fixed;
+  inset: 0 0 auto;
+  z-index: 50;
+  border-bottom: 1px solid transparent;
+  transition: border-color var(--dur) ease;
+}
+
+/* Fundo com blur, só aparece quando o header fica sólido */
+.header::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background: rgb(0 0 0 / 0.8);
+  -webkit-backdrop-filter: saturate(140%) blur(14px);
+  backdrop-filter: saturate(140%) blur(14px);
+  opacity: 0;
+  transition: opacity var(--dur) ease;
+}
+
+.header[data-solid="true"] {
+  border-bottom-color: var(--c-line);
+}
+
+.header[data-solid="true"]::before {
+  opacity: 1;
+}
+
+.header__bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1.5rem;
+  height: var(--header-h);
+}
+
+/* ---------- Marca ---------- */
+
+.header__brand {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.75rem;
+  border-radius: var(--r-sm);
+}
+
+.header__brand-mark {
+  display: grid;
+  place-items: center;
+  width: 2.375rem;
+  height: 2.375rem;
+  overflow: hidden;
+  border: 1px solid var(--c-line);
+  border-radius: 0.75rem;
+  background: var(--c-ink);
+}
+
+.header__brand-name {
+  font-size: 1.0625rem;
+  font-weight: 640;
+  letter-spacing: -0.015em;
+}
+
+/* ---------- Navegação desktop ---------- */
+
+.header__nav {
+  display: none;
+}
+
+.header__nav-list {
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+}
+
+.header__nav-link {
+  position: relative;
+  display: block;
+  padding: 0.5rem 0.875rem;
+  border-radius: var(--r-pill);
+  color: var(--c-chalk);
+  font-size: var(--fs-sm);
+  transition: color var(--dur-fast) ease;
+}
+
+/* Sublinhado que cresce no link ativo */
+.header__nav-link::after {
+  content: "";
+  position: absolute;
+  right: 0.875rem;
+  bottom: 0.25rem;
+  left: 0.875rem;
+  height: 1px;
+  background: currentColor;
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform var(--dur) var(--ease-out);
+}
+
+.header__nav-link:hover,
+.header__nav-link[aria-current="location"] {
+  color: var(--c-white);
+}
+
+.header__nav-link[aria-current="location"]::after {
+  transform: scaleX(1);
+}
+
+/* ---------- Ações (CTA + botão do menu) ---------- */
+
+.header__actions {
+  display: flex;
+  align-items: center;
+  gap: 0.625rem;
+}
+
+.header__cta {
+  display: none;
+}
+
+.header__menu-button {
+  display: grid;
+  place-items: center;
+  width: 2.75rem;
+  height: 2.75rem;
+  border: 1px solid var(--c-line-strong);
+  border-radius: var(--r-sm);
+  color: var(--c-paper);
+  transition: border-color var(--dur-fast) ease;
+}
+
+.header__menu-button:hover {
+  border-color: var(--c-pencil);
+}
+
+/* Mostra o ícone "menu" ou "fechar" conforme o estado */
+.header__menu-button[aria-expanded="false"] .header__icon-close,
+.header__menu-button[aria-expanded="true"] .header__icon-open {
+  display: none;
+}
+
+/* ---------- Painel do menu mobile ---------- */
+
+.header__panel {
+  position: fixed;
+  inset: var(--header-h) 0 0;
+  z-index: -1;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  background: var(--c-ink);
+  visibility: hidden;
+  opacity: 0;
+  transform: translateY(-0.5rem);
+  transition:
+    opacity 0.2s,
+    transform 0.2s,
+    visibility 0s linear 0.2s;
+}
+
+.header__panel[data-open="true"] {
+  visibility: visible;
+  opacity: 1;
+  transform: none;
+  transition:
+    opacity 0.26s var(--ease-out),
+    transform 0.26s var(--ease-out),
+    visibility 0s;
+}
+
+.header__panel-inner {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: 2.5rem;
+  min-height: 100%;
+  padding-block: 1rem calc(2rem + env(safe-area-inset-bottom));
+}
+
+.header__panel-list {
+  display: grid;
+}
+
+.header__panel-link {
+  display: block;
+  padding: 1.125rem 0;
+  border-bottom: 1px solid var(--c-line);
+  color: var(--c-chalk);
+  font-size: 1.75rem;
+  font-weight: 560;
+  line-height: 1.15;
+  letter-spacing: -0.025em;
+}
+
+.header__panel-link:hover,
+.header__panel-link[aria-current="location"] {
+  color: var(--c-white);
+}
+
+.header__panel-footer {
+  display: grid;
+  justify-items: center;
+  gap: 1.25rem;
+}
+
+.header__panel-social {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem;
+  color: var(--c-chalk);
+  font-size: var(--fs-sm);
+}
+
+/* ---------- Animações ---------- */
+
+@media (prefers-reduced-motion: no-preference) {
+  /* Itens do menu entram em sequência (longhands para não zerar os delays abaixo) */
+  .header__panel[data-open="true"] :is(.header__panel-list > li, .header__panel-footer) {
+    animation-name: header-item-in;
+    animation-duration: 0.42s;
+    animation-timing-function: var(--ease-out);
+    animation-fill-mode: backwards;
+  }
+
+  .header__panel-list > li:nth-child(2) { animation-delay: 35ms; }
+  .header__panel-list > li:nth-child(3) { animation-delay: 70ms; }
+  .header__panel-list > li:nth-child(4) { animation-delay: 105ms; }
+  .header__panel-list > li:nth-child(5) { animation-delay: 140ms; }
+  .header__panel-footer { animation-delay: 190ms; }
+
+  /* Troca do ícone do botão (o "X" entra girando) */
+  .header__menu-button svg {
+    animation: header-icon-in 0.22s var(--ease-out);
+  }
+
+  .header__menu-button[aria-expanded="true"] svg {
+    animation-name: header-icon-in-turn;
+  }
+}
+
+@keyframes header-item-in {
+  from {
+    opacity: 0;
+    translate: 0 -0.5rem;
+  }
+}
+
+@keyframes header-icon-in {
+  from {
+    opacity: 0;
+    scale: 0.7;
+  }
+}
+
+@keyframes header-icon-in-turn {
+  from {
+    opacity: 0;
+    rotate: -90deg;
+    scale: 0.7;
+  }
+}
+
+/* ---------- Responsivo ---------- */
+
+@media (width >= 40em) {
+  .header__cta {
+    display: inline-flex;
+  }
+}
+
+@media (width >= 60em) {
+  .header__nav {
+    display: block;
+  }
+
+  .header__menu-button,
+  .header__panel {
+    display: none;
+  }
+}
