@@ -1,0 +1,120 @@
+/* ==========================================================================
+   Rodapé
+   ========================================================================== */
+
+.footer {
+  /* Espaço extra no celular para o botão flutuante não cobrir o conteúdo */
+  padding-bottom: calc(5.5rem + env(safe-area-inset-bottom));
+  border-top: 1px solid var(--c-line);
+}
+
+.footer__grid {
+  display: grid;
+  gap: 2.75rem;
+  padding-block: clamp(3.5rem, 2.5rem + 3vw, 5rem) 3rem;
+}
+
+/* ---------- Coluna da marca ---------- */
+
+.footer__brand {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.875rem;
+  border-radius: var(--r-sm);
+}
+
+.footer__mark {
+  display: grid;
+  place-items: center;
+  width: 3rem;
+  height: 3rem;
+  overflow: hidden;
+  border: 1px solid var(--c-line);
+  border-radius: 0.875rem;
+  background: var(--c-ink);
+}
+
+.footer__name {
+  font-size: 1.25rem;
+  font-weight: 640;
+  letter-spacing: -0.02em;
+}
+
+.footer__description {
+  max-width: 30rem;
+  margin-top: 1.25rem;
+  color: var(--c-chalk);
+}
+
+.footer__location {
+  margin-top: 1rem;
+}
+
+/* ---------- Colunas de links ---------- */
+
+.footer__column-title {
+  color: var(--c-pencil);
+  font-size: var(--fs-sm);
+  font-weight: 600;
+  letter-spacing: 0;
+}
+
+.footer__links {
+  display: grid;
+  gap: 0.25rem;
+  margin-top: 1rem;
+}
+
+.footer__link {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.375rem 0;
+  color: var(--c-chalk);
+  transition: color var(--dur-fast) ease;
+}
+
+.footer__link:hover {
+  color: var(--c-white);
+}
+
+.footer__button {
+  margin-top: 1.25rem;
+}
+
+/* ---------- Copyright ---------- */
+
+.footer__bottom {
+  padding-block: 1.5rem;
+  border-top: 1px solid var(--c-line);
+  color: var(--c-pencil);
+  font-size: var(--fs-xs);
+}
+
+/* ---------- Responsivo ---------- */
+
+@media (width >= 40em) {
+  .footer__grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .footer__brand-column {
+    grid-column: 1 / -1;
+  }
+}
+
+@media (width >= 48em) {
+  .footer {
+    padding-bottom: 0;
+  }
+}
+
+@media (width >= 64em) {
+  .footer__grid {
+    grid-template-columns: minmax(0, 2fr) minmax(0, 1fr) minmax(0, 1fr);
+  }
+
+  .footer__brand-column {
+    grid-column: auto;
+  }
+}

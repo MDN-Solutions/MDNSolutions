@@ -1,0 +1,214 @@
+/* ==========================================================================
+   Serviços: três cards com desenho ilustrativo
+   ========================================================================== */
+
+.services__title {
+  max-width: 16ch;
+}
+
+.services__grid {
+  display: grid;
+  gap: 1rem;
+  margin-top: clamp(2.5rem, 2rem + 2vw, 3.75rem);
+}
+
+/* O <li> recebe a animação de entrada; o card dentro dele recebe o hover */
+.services__item {
+  display: grid;
+}
+
+.services__card {
+  position: relative;
+  display: grid;
+  overflow: hidden;
+  border: 1px solid var(--c-line);
+  border-radius: var(--r-md);
+  background: var(--c-graphite);
+  transition:
+    border-color var(--dur) ease,
+    box-shadow var(--dur) var(--ease-out),
+    transform var(--dur) var(--ease-out);
+}
+
+/* Linha violeta no topo, aparece no hover/foco */
+.services__card::before {
+  content: "";
+  position: absolute;
+  inset: 0 1.5rem auto;
+  z-index: 1;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgb(var(--c-violet) / 0.75), transparent);
+  opacity: 0;
+  transition: opacity var(--dur) ease;
+  pointer-events: none;
+}
+
+/* Área pontilhada com o desenho */
+.services__canvas {
+  height: 10.5rem;
+  padding: 1.25rem 2rem;
+  border-bottom: 1px solid var(--c-line);
+  background-image: radial-gradient(circle, #262626 1px, transparent 1.2px);
+  background-position: center;
+  background-size: 14px 14px;
+}
+
+.services__body {
+  display: flex;
+  flex-direction: column;
+  padding: 1.75rem 1.75rem 1.625rem;
+}
+
+.services__card-title {
+  font-size: var(--fs-h3);
+  font-weight: 620;
+  letter-spacing: -0.025em;
+}
+
+.services__text {
+  margin-top: 0.75rem;
+  color: var(--c-chalk);
+}
+
+.services__link {
+  display: inline-flex;
+  align-self: flex-start;
+  align-items: center;
+  gap: 0.5rem;
+  margin-top: 1.5rem;
+  padding: 0.375rem 0;
+  color: var(--c-paper);
+  font-size: var(--fs-sm);
+  font-weight: 560;
+  text-decoration-line: underline;
+  text-decoration-color: var(--c-line-strong);
+  text-decoration-thickness: 1px;
+  text-underline-offset: 0.35em;
+  transition: text-decoration-color var(--dur-fast) ease;
+}
+
+.services__link:hover {
+  text-decoration-color: var(--c-paper);
+}
+
+/* ---------- Estado ativo (hover com mouse ou foco pelo teclado) ---------- */
+
+.services__card:has(:focus-visible) {
+  border-color: var(--c-line-strong);
+}
+
+.services__card:has(:focus-visible)::before {
+  opacity: 1;
+}
+
+.services__card:has(:focus-visible) .service-drawing {
+  --tone: #8a8a8a;
+  --tone-hi: var(--c-white);
+  --tone-faint: #333;
+  --fill: #2b2b2b;
+  --fill-strong: #3d3d3d;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .services__card:hover {
+    border-color: var(--c-line-strong);
+    box-shadow:
+      0 24px 48px -30px rgb(var(--c-violet) / 0.5),
+      0 16px 32px -24px rgb(0 0 0 / 0.9);
+  }
+
+  .services__card:hover::before {
+    opacity: 1;
+  }
+
+  .services__card:hover .service-drawing {
+    --tone: #8a8a8a;
+    --tone-hi: var(--c-white);
+    --tone-faint: #333;
+    --fill: #2b2b2b;
+    --fill-strong: #3d3d3d;
+  }
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .services__card:has(:focus-visible) {
+    transform: translateY(-4px);
+  }
+}
+
+@media (hover: hover) and (pointer: fine) and (prefers-reduced-motion: no-preference) {
+  .services__card:hover {
+    transform: translateY(-4px);
+  }
+}
+
+/* ---------- Responsivo ---------- */
+
+/* Tablet: desenho à esquerda, texto à direita */
+@media (40em <= width < 56em) {
+  .services__card {
+    grid-template-columns: 15rem 1fr;
+  }
+
+  .services__canvas {
+    display: grid;
+    align-items: center;
+    height: auto;
+    border-right: 1px solid var(--c-line);
+    border-bottom: 0;
+  }
+}
+
+/* Desktop: três colunas */
+@media (width >= 56em) {
+  .services__grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+
+  .services__card {
+    grid-template-rows: auto 1fr;
+  }
+
+  .services__link {
+    margin-top: auto;
+    padding-top: 1.875rem;
+  }
+}
+
+/* ==========================================================================
+   Desenhos dos cards (as cores mudam pelas variáveis no estado ativo)
+   ========================================================================== */
+
+.service-drawing {
+  --tone: #4f4f4f;
+  --tone-hi: #9a9a9a;
+  --tone-faint: #242424;
+  --fill: #1d1d1d;
+  --fill-strong: #2a2a2a;
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+}
+
+.service-drawing :is(.line, .hi, .faint, .dashed) {
+  fill: none;
+  stroke-width: 1.25px;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  transition: stroke var(--dur) ease;
+}
+
+.service-drawing .line { stroke: var(--tone); }
+.service-drawing .hi { stroke: var(--tone-hi); }
+.service-drawing .faint { stroke: var(--tone-faint); }
+.service-drawing .dashed {
+  stroke: var(--tone);
+  stroke-dasharray: 2 4;
+}
+
+.service-drawing :is(.fill, .fill--strong) {
+  transition: fill var(--dur) ease;
+}
+
+.service-drawing .fill { fill: var(--fill); }
+.service-drawing .fill--strong { fill: var(--fill-strong); }

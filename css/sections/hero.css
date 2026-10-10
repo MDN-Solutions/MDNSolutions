@@ -1,0 +1,312 @@
+/* ==========================================================================
+   Hero (seção inicial) + ilustração animada
+   ========================================================================== */
+
+.hero {
+  position: relative;
+  overflow: hidden;
+  padding-top: calc(var(--header-h) + clamp(2.25rem, 14vh - 3.5rem, 6rem));
+  padding-bottom: clamp(3rem, 2rem + 4vw, 5rem);
+}
+
+.hero__grid {
+  display: grid;
+  align-items: center;
+  gap: clamp(3rem, 2rem + 4vw, 3.5rem);
+}
+
+.hero__eyebrow {
+  color: var(--c-pencil);
+  font-size: var(--fs-xs);
+  font-weight: 540;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.hero__title {
+  max-width: 13ch;
+  margin-top: 1.25rem;
+  font-size: clamp(2.625rem, min(1.4rem + 4.4vw, 9.2vh), 4.75rem);
+  font-weight: 660;
+  line-height: 1;
+  letter-spacing: -0.04em;
+}
+
+.hero__subtitle {
+  max-width: 35rem;
+}
+
+.hero__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  margin-top: 2.25rem;
+}
+
+.hero__location {
+  margin-top: 1.75rem;
+}
+
+/* Entrada do texto ao carregar a página */
+@media (prefers-reduced-motion: no-preference) {
+  .hero__eyebrow,
+  .hero__title,
+  .hero__subtitle,
+  .hero__actions,
+  .hero__location {
+    animation: hero-in var(--dur-reveal) var(--ease-out) backwards;
+  }
+
+  .hero__title { animation-delay: 40ms; }
+  .hero__subtitle { animation-delay: 140ms; }
+  .hero__actions { animation-delay: 240ms; }
+  .hero__location { animation-delay: 340ms; }
+}
+
+@keyframes hero-in {
+  from {
+    opacity: 0;
+    translate: 0 calc(var(--reveal-shift) * 0.75);
+  }
+}
+
+@media (width < 30em) {
+  .hero__actions > a {
+    width: 100%;
+  }
+}
+
+@media (width < 24em) {
+  .hero__eyebrow {
+    font-size: 0.75rem;
+    letter-spacing: 0.05em;
+  }
+}
+
+@media (width >= 64em) {
+  .hero__grid {
+    grid-template-columns: minmax(0, 1.1fr) minmax(0, 1fr);
+  }
+
+  .hero__art {
+    width: calc(100% + 3rem);
+    margin-right: -3rem;
+  }
+}
+
+/* ==========================================================================
+   Ilustração: navegador + celular + balão de mensagem
+   Cada traço usa --delay (quando começa) e --duration (quanto dura, padrão 0.8s)
+   ========================================================================== */
+
+.hero-visual {
+  position: relative;
+  width: 100%;
+  max-width: 40rem;
+  aspect-ratio: 640 / 560;
+  margin-inline: auto;
+  container-type: inline-size;
+}
+
+.hero-visual__svg {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+}
+
+/* Brilho violeta atrás do logo */
+.hero-visual__glow {
+  position: absolute;
+  top: 28%;
+  left: -8%;
+  width: 70%;
+  aspect-ratio: 1;
+  border-radius: 50%;
+  background: radial-gradient(
+    closest-side,
+    rgb(var(--c-violet) / 0.36),
+    rgb(var(--c-violet) / 0.1) 55%,
+    transparent
+  );
+  filter: blur(18px);
+  pointer-events: none;
+}
+
+/* ---------- Elementos do desenho ---------- */
+
+.hero-visual .stroke {
+  fill: none;
+  stroke-width: 1.6px;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.hero-visual .stroke--soft { stroke: #2e2e2e; }
+.hero-visual .stroke--mid { stroke: #525252; }
+.hero-visual .stroke--strong { stroke: #8c8c8c; }
+.hero-visual .stroke--hi { stroke: var(--c-white); }
+
+.hero-visual .bar { fill: #1c1c1c; }
+.hero-visual .bar--strong { fill: #2a2a2a; }
+
+/* Fundo preto que esconde o que está atrás (logo e celular) */
+.hero-visual .mask { fill: var(--c-ink); }
+
+/* ---------- Logo, celular e balão ---------- */
+
+.hero-visual__logo {
+  position: absolute;
+  top: 42.8571%;
+  left: 3.75%;
+  display: grid;
+  place-items: center;
+  width: 36.25%;
+  aspect-ratio: 1;
+  padding: 2px;
+}
+
+.hero-visual__logo .logo {
+  border-radius: 14%;
+}
+
+.hero-visual__phone {
+  --drift: -5px;
+  position: absolute;
+  top: 28.2143%;
+  left: 70.3125%;
+  width: 25%;
+  aspect-ratio: 160 / 316;
+}
+
+.hero-visual__phone-svg {
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+}
+
+.hero-visual__bubble {
+  position: absolute;
+  top: 87.1429%;
+  left: 31.25%;
+  display: flex;
+  align-items: flex-end;
+  gap: 0.5em;
+  max-width: 62%;
+  padding: 0.7em 0.9em 0.7em 1em;
+  border: 1px solid var(--c-line-strong);
+  border-radius: 1.1em 1.1em 1.1em 0.3em;
+  background: var(--c-graphite-2);
+  color: var(--c-paper);
+  font-size: clamp(0.75rem, 2.3cqi, 0.9375rem);
+  line-height: 1.35;
+  box-shadow: 0 18px 40px -18px rgb(0 0 0 / 0.9);
+}
+
+.hero-visual__read {
+  flex: none;
+  width: 1.15em;
+  height: 1.15em;
+  color: var(--c-pencil);
+  stroke-width: 2;
+}
+
+@container (width <= 26rem) {
+  .hero-visual__bubble {
+    right: 0;
+    left: auto;
+    max-width: 78%;
+  }
+}
+
+/* ---------- Animações ---------- */
+
+@media (prefers-reduced-motion: no-preference) {
+  .hero-visual .stroke {
+    opacity: 0;
+    stroke-dasharray: 1;
+    animation: hero-draw var(--duration, 0.8s) var(--ease-out) var(--delay) forwards;
+  }
+
+  .hero-visual .bar {
+    opacity: 0;
+    animation: hero-fade 0.5s ease var(--delay) forwards;
+  }
+
+  .hero-visual__glow {
+    opacity: 0;
+    animation: hero-fade 1.6s 0.4s forwards;
+  }
+
+  .hero-visual__logo {
+    opacity: 0;
+    animation: hero-rise 0.8s var(--ease-out) 0.75s forwards;
+  }
+
+  .hero-visual__bubble {
+    --drift: -4px;
+    opacity: 0;
+    animation:
+      hero-pop 0.6s var(--ease-out) 1.6s forwards,
+      hero-drift 7s var(--ease-in-out) 2.4s infinite alternate both;
+  }
+
+  .hero-visual__phone {
+    animation: hero-drift 9s var(--ease-in-out) 2.6s infinite alternate both;
+  }
+
+  /* Pausa tudo quando o hero sai da tela (atributo controlado pelo JS) */
+  .hero-visual[data-paused],
+  .hero-visual[data-paused] * {
+    animation-play-state: paused;
+  }
+}
+
+@keyframes hero-draw {
+  from {
+    opacity: 1;
+    stroke-dashoffset: 1px;
+  }
+  to {
+    opacity: 1;
+    stroke-dashoffset: 0;
+  }
+}
+
+@keyframes hero-fade {
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes hero-rise {
+  from {
+    opacity: 0;
+    transform: scale(0.96);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@keyframes hero-pop {
+  from {
+    opacity: 0;
+    transform: translateY(0.5rem) scale(0.96);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@keyframes hero-drift {
+  from {
+    translate: 0;
+  }
+  to {
+    translate: 0 var(--drift);
+  }
+}
