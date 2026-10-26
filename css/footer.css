@@ -3,8 +3,8 @@
    ========================================================================== */
 
 .footer {
-  /* Espaço extra no celular para o botão flutuante não cobrir o conteúdo */
-  padding-bottom: calc(5.5rem + env(safe-area-inset-bottom));
+  margin-top: var(--space-section);
+  padding-bottom: env(safe-area-inset-bottom);
   border-top: 1px solid var(--c-line);
 }
 
@@ -97,12 +97,6 @@
 
   .footer__brand-column {
     grid-column: 1 / -1;
-  }
-}
-
-@media (width >= 48em) {
-  .footer {
-    padding-bottom: 0;
   }
 }
 

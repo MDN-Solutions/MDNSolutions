@@ -1,5 +1,5 @@
 /* ==========================================================================
-   Componentes reutilizáveis: botão, logo e botão flutuante do WhatsApp
+   Componentes reutilizáveis: botão, logo e molduras de dispositivo
    ========================================================================== */
 
 /* ---------- Botão ---------- */
@@ -32,12 +32,6 @@
   min-height: var(--tap);
   padding: 0.5rem 1.125rem;
   font-size: 0.875rem;
-}
-
-.button--md {
-  min-height: 3rem;
-  padding: 0.75rem 1.375rem;
-  font-size: var(--fs-sm);
 }
 
 .button--lg {
@@ -100,71 +94,62 @@
   background: var(--c-ink);
 }
 
-/* ---------- Botão flutuante do WhatsApp ---------- */
+/* ---------- Dispositivos (moldura de navegador e de celular com captura real) ----------
+   Usados na cena 3D do hero e nos projetos. O brilho (::after) segue o ponteiro via --gx/--gy. */
 
-.whatsapp-fab {
-  position: fixed;
-  right: max(1rem, env(safe-area-inset-right));
-  bottom: max(1rem, env(safe-area-inset-bottom));
-  z-index: 40;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  gap: 0.5rem;
-  width: 3.5rem;
-  height: 3.5rem;
-  border-radius: var(--r-pill);
-  background: var(--c-white);
-  color: var(--c-ink);
-  font-size: var(--fs-sm);
-  font-weight: 580;
+.device {
+  position: relative;
+  margin: 0;
+  overflow: hidden;
+  border-radius: 0.875rem;
+  background: #0b0b0b;
   box-shadow:
-    0 0 0 1px rgb(255 255 255 / 0.08),
-    0 16px 36px -10px rgb(0 0 0 / 0.9);
-  transition:
-    opacity var(--dur) ease,
-    transform var(--dur) var(--ease-out),
-    translate var(--dur) var(--ease-out),
-    box-shadow var(--dur) var(--ease-out),
-    visibility 0s;
+    0 0 0 1px rgb(255 255 255 / 0.13),
+    0 36px 70px -28px rgb(0 0 0 / 0.95),
+    0 0 70px -24px rgb(var(--c-violet) / 0.45);
 }
 
-/* Escondido enquanto o hero está na tela (controlado pelo JS) */
-.whatsapp-fab[data-visible="false"] {
-  visibility: hidden;
-  opacity: 0;
-  transform: translateY(1rem) scale(0.96);
-  transition:
-    opacity var(--dur) ease,
-    transform var(--dur) ease,
-    visibility 0s linear var(--dur);
+.device img {
+  width: 100%;
+  height: auto;
+  background: #0b0b0b;
 }
 
-.whatsapp-fab__label {
-  display: none;
+.device::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: radial-gradient(
+    circle at var(--gx, 20%) var(--gy, 0%),
+    rgb(255 255 255 / 0.2),
+    transparent 58%
+  );
+  opacity: var(--glare, 0);
+  transition: opacity var(--dur) ease;
 }
 
-@media (hover: hover) {
-  .whatsapp-fab:hover {
-    box-shadow:
-      0 0 0 5px rgb(var(--c-violet) / 0.18),
-      0 16px 36px -10px rgb(var(--c-violet) / 0.6);
-  }
+.device--browser .device__bar {
+  display: flex;
+  gap: 0.375rem;
+  padding: 0.5rem 0.75rem;
+  border-bottom: 1px solid var(--c-line);
+  background: var(--c-graphite-2);
 }
 
-@media (hover: hover) and (prefers-reduced-motion: no-preference) {
-  .whatsapp-fab:hover {
-    translate: 0 -2px;
-  }
+.device__bar i {
+  width: 0.5rem;
+  height: 0.5rem;
+  border-radius: 50%;
+  background: var(--c-line-strong);
 }
 
-@media (width >= 48em) {
-  .whatsapp-fab {
-    width: auto;
-    padding: 0 1.375rem 0 1.125rem;
-  }
+.device--phone {
+  padding: 0.3rem;
+  border-radius: 1.5rem;
+  background: var(--c-graphite-2);
+}
 
-  .whatsapp-fab__label {
-    display: inline;
-  }
+.device--phone img {
+  border-radius: 1.2rem;
 }

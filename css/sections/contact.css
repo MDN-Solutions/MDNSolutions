@@ -1,116 +1,92 @@
 /* ==========================================================================
-   Contato: painel estilo "caderno" com chamada para o WhatsApp
+   Contato: um único painel com a chamada principal
+   Ganchos de JS: [data-spotlight] recebe --mx/--my (brilho que segue o ponteiro).
    ========================================================================== */
 
 .contact {
-  padding-block: var(--space-section) calc(var(--space-section) * 0.7);
+  padding-top: var(--space-section);
 }
 
 .contact__panel {
-  --rule: 2.5rem; /* distância entre as linhas do caderno */
-  --margin: clamp(1.25rem, 0.25rem + 4.5vw, 4.5rem); /* posição da margem violeta */
   position: relative;
-  isolation: isolate;
+  padding: clamp(2rem, 1rem + 6vw, 5.5rem) clamp(1.5rem, 0.5rem + 5vw, 5rem);
   overflow: hidden;
-  padding: calc(var(--rule) * 2) clamp(1.25rem, 0.5rem + 4vw, 5rem) calc(var(--rule) * 2)
-    calc(var(--margin) + clamp(1.25rem, 0.75rem + 2.5vw, 3.5rem));
-  border: 1px solid var(--c-line);
+  border: 1px solid var(--c-line-strong);
   border-radius: var(--r-lg);
   background:
-    radial-gradient(60% 90% at 0% 0%, rgb(var(--c-violet) / 0.16), transparent 70%),
+    radial-gradient(
+      ellipse 55% 70% at var(--mx, 85%) var(--my, 0%),
+      rgb(var(--c-violet) / 0.3),
+      transparent 70%
+    ),
+    linear-gradient(var(--grid-line) 1px, transparent 1px) 0 0 / 3rem 3rem,
+    linear-gradient(90deg, var(--grid-line) 1px, transparent 1px) 0 0 / 3rem 3rem,
     var(--c-graphite);
 }
 
-/* Linhas horizontais do caderno, sumindo para a direita */
-.contact__panel::before {
-  content: "";
-  position: absolute;
-  inset: 0;
-  z-index: -1;
-  background-image: linear-gradient(rgb(255 255 255 / 0.055) 1px, transparent 1px);
-  background-position: 0 calc(var(--rule) - 1px);
-  background-size: 100% var(--rule);
-  -webkit-mask-image: linear-gradient(90deg, #000 15%, transparent 90%);
-  mask-image: linear-gradient(90deg, #000 15%, transparent 90%);
-}
-
-/* Linha vertical da margem */
+/* marcas de canto, como numa folha de projeto */
+.contact__panel::before,
 .contact__panel::after {
   content: "";
   position: absolute;
-  top: 0;
-  bottom: 0;
-  left: var(--margin);
-  z-index: -1;
-  width: 1px;
-  background: linear-gradient(rgb(var(--c-violet) / 0.7), rgb(var(--c-violet) / 0.2));
+  width: 1.5rem;
+  height: 1.5rem;
+  border: 0 solid var(--c-pencil);
+  pointer-events: none;
+}
+
+.contact__panel::before {
+  top: 1rem;
+  left: 1rem;
+  border-width: 1px 0 0 1px;
+}
+
+.contact__panel::after {
+  right: 1rem;
+  bottom: 1rem;
+  border-width: 0 1px 1px 0;
 }
 
 .contact__title {
   max-width: 14ch;
-  font-size: clamp(2.25rem, 1.5rem + 3.2vw, 4.25rem);
-  font-weight: 640;
+  margin-top: 1.5rem;
+  font-size: clamp(2.5rem, 1.5rem + 4.4vw, 5rem);
   line-height: 1.02;
-  letter-spacing: -0.04em;
+  letter-spacing: -0.045em;
 }
 
 .contact__text {
-  max-width: 34rem;
+  max-width: 32rem;
 }
 
-.contact__button {
-  margin-top: 2.5rem;
+.contact__actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.75rem 1.75rem;
+  margin-top: 2.25rem;
 }
 
-/* ---------- Desenho decorativo (só em telas grandes) ---------- */
-
-.contact__sketch {
-  position: absolute;
-  top: 50%;
-  right: clamp(2rem, 4vw, 4.5rem);
-  z-index: -1;
-  display: none;
-  width: min(30%, 22rem);
-  transform: translateY(-50%);
+.contact__social {
+  display: inline-flex;
+  align-items: center;
+  min-height: var(--tap);
+  gap: 0.5rem;
+  border-bottom: 1px solid var(--c-line-strong);
+  color: var(--c-chalk);
+  font-size: var(--fs-sm);
+  transition:
+    border-color var(--dur-fast) ease,
+    color var(--dur-fast) ease;
 }
 
-.contact__sketch-line {
-  stroke: #3a3a3a;
-  stroke-width: 1.5px;
-  stroke-linecap: round;
-  stroke-linejoin: round;
+.contact__social:hover {
+  border-color: var(--c-white);
+  color: var(--c-white);
 }
-
-.contact__sketch-dashed {
-  stroke-dasharray: 3 6;
-}
-
-.contact__sketch-fill {
-  fill: #1f1f1f;
-}
-
-.contact__sketch-hi {
-  stroke: #6b6b6b;
-  stroke-width: 1.5px;
-}
-
-/* ---------- Responsivo ---------- */
 
 @media (width < 30em) {
-  .contact__button {
+  .contact__actions .button {
     width: 100%;
-  }
-}
-
-@media (width < 24em) {
-  .contact__panel {
-    padding-right: 1.25rem;
-    padding-left: calc(var(--margin) + 1rem);
-  }
-}
-
-@media (width >= 72em) {
-  .contact__sketch {
-    display: block;
   }
 }

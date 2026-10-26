@@ -68,6 +68,7 @@
   --fs-lead: clamp(1.125rem, 1.06rem + 0.3vw, 1.3125rem);
   --fs-h3: clamp(1.25rem, 1.16rem + 0.42vw, 1.5rem);
   --fs-h2: clamp(2.125rem, 1.6rem + 2.3vw, 3.375rem);
+  --fs-hero: clamp(2.5rem, 1.7rem + 3.2vw, 4.75rem);
   --lh-body: 1.6;
 
   /* Layout */
@@ -76,6 +77,7 @@
   --header-h: 4.25rem;
   --tap: 2.75rem; /* alvo de toque mínimo (44px) */
   --space-section: clamp(5rem, 3.6rem + 6vw, 9.5rem);
+  --grid-line: rgb(255 255 255 / 0.055); /* linhas da "planta" (fundos quadriculados) */
 
   /* Bordas arredondadas */
   --r-sm: 0.75rem;
@@ -85,7 +87,6 @@
 
   /* Movimento */
   --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
-  --ease-in-out: cubic-bezier(0.45, 0, 0.55, 1);
   --dur-fast: 0.16s;
   --dur: 0.28s;
   --dur-reveal: 0.72s;
@@ -210,6 +211,34 @@ main:focus {
   color: var(--c-chalk);
   font-size: var(--fs-lead);
   line-height: 1.55;
+}
+
+/* Cabeçalho de seção: legenda com "linha de cota" + título */
+.section-head {
+  max-width: 46rem;
+}
+
+.section-head .section-title {
+  margin-top: 1.25rem;
+}
+
+.section-kicker {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  color: var(--c-pencil);
+  font-size: var(--fs-xs);
+  font-weight: 620;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+
+.section-kicker::before {
+  content: "";
+  flex: none;
+  width: 2rem;
+  height: 1px;
+  background: currentColor;
 }
 
 /* Linha com ícone de localização (hero, sobre, rodapé) */

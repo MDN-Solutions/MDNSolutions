@@ -1,6 +1,7 @@
 # MDN Solutions — site estático
 
-Abra `index.html` direto no navegador. Não precisa de build nem de servidor.
+Abra `index.html` direto no navegador. Não precisa de build nem de servidor (para testar do jeito
+que o Vercel serve, use `python3 -m http.server 8000` dentro desta pasta).
 
 ```
 index.html                 Conteúdo da página (seções marcadas com <!-- ===== NOME ===== -->)
@@ -9,12 +10,13 @@ sitemap.xml                Páginas do site para o Google (hoje, só a página i
 og-image.png               Imagem que aparece ao compartilhar o link (1200×630)
 css/
   base.css                 Fontes, variáveis (cores, tamanhos, espaçamentos), reset e utilitários
-  components.css           Botões, logo e botão flutuante do WhatsApp
+  components.css           Botões, logo e molduras de dispositivo (navegador e celular)
   header.css               Header fixo e menu mobile
   footer.css               Rodapé
-  sections/                Um arquivo por seção: hero, services, benefits, steps, about, contact
-js/main.js                 Interações (header, menu, animações, botão do WhatsApp, ano)
-assets/                    Fontes, logo e ícones do site
+  sections/                Um arquivo por seção: hero, projects, services, process, about, contact
+js/main.js                 Header, menu, link ativo, entrada ao rolar, ano no rodapé
+js/scene.js                Inclinação 3D das cenas e brilho que segue o mouse
+assets/                    Fontes, logo, ícones e capturas dos projetos (assets/projects/)
 ```
 
 ## Como editar
@@ -23,14 +25,31 @@ assets/                    Fontes, logo e ícones do site
   `https://wa.me/5581998576040?text=<mensagem codificada>`.
 - **Cores e espaçamentos globais:** variáveis no topo de `css/base.css` (ex.: `--c-violet`).
 - **Estilo de uma seção:** arquivo com o nome dela em `css/sections/`.
-  As classes seguem o padrão `bloco__elemento--modificador` (ex.: `.benefits__item`).
-- **Classes compartilhadas** (em `base.css`): `.section` (espaço do topo), `.section-title`,
-  `.lead` (parágrafo de destaque), `.location` (linha com ícone de local) e `.icon`.
+  As classes seguem o padrão `bloco__elemento--modificador` (ex.: `.case__title`).
+- **Classes compartilhadas** (em `base.css`): `.section` (espaço do topo), `.section-head` e
+  `.section-kicker` (legenda + título de seção), `.section-title`, `.lead`, `.location` e `.icon`.
 - **Ícones:** ficam num sprite no início do `<body>`. Para usar:
   `<svg class="icon" width="20" height="20" aria-hidden="true"><use href="#icon-whatsapp" /></svg>`
 - **Animação de entrada:** adicione `data-reveal="up"` a qualquer elemento.
-- **Animação do hero:** cada traço tem `style="--delay: …; --duration: …"` (duração padrão 0.8s).
 - **Alvo de toque:** links e botões usam `min-height: var(--tap)` (44px). Mantenha em novos links.
+
+## Projetos (seção "Projetos" e cena do hero)
+
+Cada projeto é um `<li class="case">` em `index.html`, com capturas em `assets/projects/`:
+`<nome>-desktop.webp` (1200×750, telas retina), `<nome>-desktop-sm.webp` (800×500, usada pelo
+`srcset` e pelo hero) e `<nome>-mobile.webp` (300×649). Mantenha as capturas leves (WebP, qualidade
+~70): elas são a maior parte do peso da página.
+
+- **Só entra o que dá para comprovar.** Os textos e a ficha ("Seções", "Estado") foram conferidos no
+  código de cada site. Ao atualizar um projeto, confira de novo; não acrescente números, depoimentos
+  ou prazos que o cliente não tenha confirmado.
+- **Link para o site no ar:** ainda não há links porque os endereços de produção dos clientes não
+  foram confirmados. Quando houver, acrescente dentro de `.case__body`, depois da ficha:
+  `<a class="product__link" href="https://…" target="_blank" rel="noopener noreferrer">Ver o site <svg class="icon" width="16" height="16" aria-hidden="true"><use href="#icon-arrow-up-right" /></svg><span class="visually-hidden">(abre em nova aba)</span></a>`
+- **Novo projeto:** copie um `<li class="case">`, troque textos e imagens e use `case--flip` para
+  alternar o lado da imagem. A numeração (01, 02…) é automática.
+- **Autorização:** nomes, marcas e capturas de clientes precisam do OK deles. Isso vale em especial
+  para o Studio Monique Marques (a captura mostra a própria cliente).
 
 ## Endereço do site, Google e compartilhamento
 
@@ -46,6 +65,10 @@ assets/                    Fontes, logo e ícones do site
 
 ## Sistema visual
 
+Linguagem: preto, grafite e branco, com violeta só como luz (brilhos e pontos de destaque). Detalhes de
+"planta de projeto": linhas de cota (legendas e sublinhado do hero), quadriculado fino, marcas de
+canto e fichas técnicas, para reforçar a ideia de solução feita sob medida.
+
 | Item | Valor | Uso |
 | --- | --- | --- |
 | `--c-ink` | `#000` | Fundo da página |
@@ -55,30 +78,35 @@ assets/                    Fontes, logo e ícones do site
 | `--c-chalk` | `#c4c4c4` | Texto corrido (12:1 sobre o fundo) |
 | `--c-paper`, `--c-white` | `#f3f3f3`, `#fff` | Títulos e botão principal |
 | `--c-violet` | `139 108 255` | Acento da marca: brilhos e destaques, nunca como cor de texto |
+| `--grid-line` | branco a 5,5% | Quadriculado dos fundos |
 
 - **Tipografia:** Bricolage Grotesque (variável, pesos 200–800), escala fluida com `clamp()`
-  (`--fs-*`). O mascote da logo nunca muda de cor.
+  (`--fs-*`, incluindo `--fs-hero`). Legendas em caixa alta com espaçamento largo. O mascote da logo
+  nunca muda de cor.
 - **Formas:** raios `--r-sm` 12px, `--r-md` 20px, `--r-lg` 32px e `--r-pill`.
 - **Espaço:** `--space-section` entre seções; container de `75rem`.
 
-## Movimento
+## Movimento e 3D
 
-Todo movimento fica desligado com `prefers-reduced-motion: reduce` (o conteúdo aparece pronto). Sem
-JavaScript o conteúdo e os links do WhatsApp aparecem normalmente; só o menu do celular e o botão
-flutuante dependem dele.
+Todo movimento fica desligado com `prefers-reduced-motion: reduce` (o conteúdo aparece pronto e as
+cenas ficam paradas). Sem JavaScript o conteúdo e os links do WhatsApp aparecem normalmente; só o
+menu do celular e a inclinação das cenas dependem dele. Nenhuma animação se repete sozinha: o que
+se move responde ao ponteiro ou à rolagem (ou acontece uma vez, na entrada).
 
-| Animação | Objetivo | Mobile | Fallback |
+| Efeito | Objetivo | Mobile | Fallback |
 | --- | --- | --- | --- |
-| Desenho do hero (traços, logo e balão, cerca de 2,5 s) | Explicar "site + celular + WhatsApp" | Igual ao desktop; pausa fora da tela | Ilustração estática completa |
-| Flutuação do celular e do balão (2 ciclos, 4–5 px) | Dar vida ao hero sem distrair | Igual; pausa fora da tela | Para sozinha; parada com movimento reduzido |
-| Entrada ao rolar (`data-reveal`) | Guiar a leitura, com deslocamento curto | Igual | Conteúdo visível sem JS ou com movimento reduzido |
-| Inclinação 3D do hero (`js/effects.js` + `css/effects.css`) | Dar profundidade à ilustração; camadas se afastam conforme o ponteiro | Com o dedo no hero e leve inclinação ao rolar | Painel parado, com luz e sombra |
-| Cards com inclinação 3D e brilho | Mostrar qual card está em foco | Não existe em toque (só mouse) | Card estático, com borda e sombra |
-| Planeta e anéis da seção "Sobre" | Dar vida ao símbolo da marca | Anéis giram ao rolar (navegadores com `animation-timeline`) | Anéis parados |
-| Hover dos cards | Feedback de interação | Não existe em toque (só `hover: hover`) | Borda e cor mudam, sem deslocamento |
-| Menu mobile e ícone do botão | Confirmar abrir e fechar | Só aparece em telas pequenas | Troca imediata |
-| Linha do tempo "Como funciona" | Mostrar a ordem das etapas | Linha vertical | Linha já desenhada |
+| Cena 3D do hero (3 capturas reais em camadas, `js/scene.js`) | Mostrar o trabalho logo na primeira dobra | Inclina ao arrastar na horizontal e ao rolar | Composição parada, com luz e sombra |
+| Cenas dos projetos (captura + celular em perspectiva) | Dar noção de tela e de profundidade | Inclina ao rolar | Composição parada |
+| Brilho no vidro e no fundo (`--gx`, `--mx`) | Mostrar o que está em foco | Só com mouse | Sem brilho |
+| Entrada do hero (uma vez, ~1,2 s) | Guiar o olhar do título para a cena | Igual | Aparece pronto |
+| Entrada ao rolar (`data-reveal`) | Guiar a leitura | Igual | Conteúdo visível sem JS ou com movimento reduzido |
+| Linha de "Como funciona" | Mostrar a ordem das etapas | Linha vertical | Linha já desenhada |
+| Anéis da seção "Sobre" | Dar vida ao símbolo da marca | Giram ao rolar | Anéis parados |
+| Hover de links e botões | Feedback de interação | Não existe em toque | Mudança de cor e borda |
 
-O 3D é feito só com CSS (`perspective`, `rotateX/Y`) e um arquivo JS de cerca de 130 linhas, sem
-biblioteca. Os efeitos ficam em `css/effects.css` e `js/effects.js`: para desligar tudo, remova
-esses dois arquivos do `index.html`.
+O 3D é feito só com CSS (`perspective`, `preserve-3d`, `translate3d`) e um arquivo JS pequeno,
+sem biblioteca; o JS só escreve variáveis CSS (`--rx`, `--ry`, `--px`, `--py`, `--sp`, `--spread`).
+
+**Cuidado ao mexer nas cenas:** elementos com `overflow`, `filter`, `opacity < 1` ou `contain`
+"achatam" o 3D dos filhos. Entre `.stage__world` (ou `.case__scene`) e as camadas não coloque nenhum
+desses. Para desligar o 3D, remova `js/scene.js` do `index.html` (as cenas ficam paradas).

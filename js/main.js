@@ -5,14 +5,14 @@
  * 2. Link do menu da seção visível fica marcado como ativo
  * 3. Menu mobile (abrir/fechar, Esc, foco, trava de rolagem)
  * 4. Animação de entrada dos elementos com [data-reveal]
- * 5. Pausa a animação do hero quando ele sai da tela
- * 6. Botão flutuante do WhatsApp aparece depois do hero
- * 7. Ano atual no rodapé
+ * 5. Ano atual no rodapé
+ *
+ * As cenas 3D e o brilho que segue o mouse ficam em js/scene.js.
  */
 (function () {
   "use strict";
 
-  const SECTION_IDS = ["inicio", "servicos", "como-funciona", "sobre", "contato"];
+  const SECTION_IDS = ["inicio", "projetos", "servicos", "como-funciona", "sobre", "contato"];
   const DESKTOP_QUERY = "(min-width: 60em)"; // acima disso o menu mobile some
   const MAX_REVEAL_STAGGER = 4; // máximo de itens escalonados por vez
 
@@ -22,12 +22,10 @@
   const menuPanel = document.getElementById("menu-mobile");
   const main = document.getElementById("conteudo");
   const footer = document.querySelector(".footer");
-  const fab = document.querySelector(".whatsapp-fab");
   const hasObserver = "IntersectionObserver" in window;
 
   let menuOpen = false;
   let scrolled = false;
-  let pastHero = false;
 
   /* ---------- 1. Header sólido ---------- */
   function updateHeader() {
@@ -112,7 +110,6 @@
     }
 
     updateHeader();
-    updateFab();
   }
 
   menuButton.addEventListener("click", () => setMenuOpen(!menuOpen));
@@ -156,34 +153,7 @@
     });
   }
 
-  /* ---------- 5. Pausa a animação do hero fora da tela ---------- */
-  const heroVisual = document.querySelector(".hero-visual");
-  if (heroVisual && hasObserver) {
-    const VISIBLE_RATIO = 0.2;
-    new IntersectionObserver(
-      ([entry]) => {
-        const visible = entry.isIntersecting && entry.intersectionRatio >= VISIBLE_RATIO;
-        if (visible) heroVisual.removeAttribute("data-paused");
-        else heroVisual.setAttribute("data-paused", "");
-      },
-      { threshold: [0, VISIBLE_RATIO] },
-    ).observe(heroVisual);
-  }
-
-  /* ---------- 6. Botão flutuante do WhatsApp ---------- */
-  function updateFab() {
-    fab.dataset.visible = String(pastHero && !menuOpen);
-  }
-
-  const heroActions = document.getElementById("hero-actions");
-  if (heroActions && hasObserver) {
-    new IntersectionObserver(([entry]) => {
-      pastHero = !entry.isIntersecting && entry.boundingClientRect.top < 0;
-      updateFab();
-    }).observe(heroActions);
-  }
-
-  /* ---------- 7. Ano no rodapé ---------- */
+  /* ---------- 5. Ano no rodapé ---------- */
   document.querySelectorAll("[data-year]").forEach((el) => {
     el.textContent = new Date().getFullYear();
   });
