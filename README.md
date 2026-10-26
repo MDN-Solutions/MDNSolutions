@@ -72,9 +72,13 @@ flutuante dependem dele.
 | Desenho do hero (traços, logo e balão, cerca de 2,5 s) | Explicar "site + celular + WhatsApp" | Igual ao desktop; pausa fora da tela | Ilustração estática completa |
 | Flutuação do celular e do balão (2 ciclos, 4–5 px) | Dar vida ao hero sem distrair | Igual; pausa fora da tela | Para sozinha; parada com movimento reduzido |
 | Entrada ao rolar (`data-reveal`) | Guiar a leitura, com deslocamento curto | Igual | Conteúdo visível sem JS ou com movimento reduzido |
+| Inclinação 3D do hero (`js/effects.js` + `css/effects.css`) | Dar profundidade à ilustração; camadas se afastam conforme o ponteiro | Com o dedo no hero e leve inclinação ao rolar | Painel parado, com luz e sombra |
+| Cards com inclinação 3D e brilho | Mostrar qual card está em foco | Não existe em toque (só mouse) | Card estático, com borda e sombra |
+| Planeta e anéis da seção "Sobre" | Dar vida ao símbolo da marca | Anéis giram ao rolar (navegadores com `animation-timeline`) | Anéis parados |
 | Hover dos cards | Feedback de interação | Não existe em toque (só `hover: hover`) | Borda e cor mudam, sem deslocamento |
 | Menu mobile e ícone do botão | Confirmar abrir e fechar | Só aparece em telas pequenas | Troca imediata |
 | Linha do tempo "Como funciona" | Mostrar a ordem das etapas | Linha vertical | Linha já desenhada |
 
-Não há animação 3D: o estilo da marca é de ilustração em traço, e uma biblioteca 3D acrescentaria
-peso sem ajudar a explicar o serviço, num site visto sobretudo no celular.
+O 3D é feito só com CSS (`perspective`, `rotateX/Y`) e um arquivo JS de cerca de 130 linhas, sem
+biblioteca. Os efeitos ficam em `css/effects.css` e `js/effects.js`: para desligar tudo, remova
+esses dois arquivos do `index.html`.
