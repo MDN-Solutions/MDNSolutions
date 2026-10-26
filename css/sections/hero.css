@@ -244,16 +244,17 @@
     animation: hero-rise 0.8s var(--ease-out) 0.75s forwards;
   }
 
+  /* Celular e balão flutuam por 2 ciclos (cerca de 15 a 20 s) e ficam parados: sem movimento contínuo */
   .hero-visual__bubble {
     --drift: -4px;
     opacity: 0;
     animation:
       hero-pop 0.6s var(--ease-out) 1.6s forwards,
-      hero-drift 7s var(--ease-in-out) 2.4s infinite alternate both;
+      hero-drift 7s var(--ease-in-out) 2.4s 2 alternate both;
   }
 
   .hero-visual__phone {
-    animation: hero-drift 9s var(--ease-in-out) 2.6s infinite alternate both;
+    animation: hero-drift 9s var(--ease-in-out) 2.6s 2 alternate both;
   }
 
   /* Pausa tudo quando o hero sai da tela (atributo controlado pelo JS) */

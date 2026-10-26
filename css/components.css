@@ -29,7 +29,7 @@
 
 /* Tamanhos */
 .button--sm {
-  min-height: 2.5rem;
+  min-height: var(--tap);
   padding: 0.5rem 1.125rem;
   font-size: 0.875rem;
 }

@@ -48,6 +48,7 @@
 .header__brand {
   display: inline-flex;
   align-items: center;
+  min-height: var(--tap);
   gap: 0.75rem;
   border-radius: var(--r-sm);
 }
@@ -83,8 +84,10 @@
 
 .header__nav-link {
   position: relative;
-  display: block;
-  padding: 0.5rem 0.875rem;
+  display: flex;
+  align-items: center;
+  min-height: var(--tap);
+  padding: 0 0.875rem;
   border-radius: var(--r-pill);
   color: var(--c-chalk);
   font-size: var(--fs-sm);
@@ -96,7 +99,7 @@
   content: "";
   position: absolute;
   right: 0.875rem;
-  bottom: 0.25rem;
+  bottom: 0.375rem;
   left: 0.875rem;
   height: 1px;
   background: currentColor;
@@ -213,6 +216,7 @@
 .header__panel-social {
   display: inline-flex;
   align-items: center;
+  min-height: var(--tap);
   gap: 0.5rem;
   padding: 0.5rem;
   color: var(--c-chalk);

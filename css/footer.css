@@ -61,13 +61,14 @@
 
 .footer__links {
   display: grid;
-  gap: 0.25rem;
-  margin-top: 1rem;
+  margin-top: 0.5rem;
 }
 
 .footer__link {
   display: inline-flex;
   align-items: center;
+  min-width: var(--tap);
+  min-height: var(--tap);
   gap: 0.5rem;
   padding: 0.375rem 0;
   color: var(--c-chalk);
