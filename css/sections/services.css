@@ -70,28 +70,6 @@
   color: var(--c-chalk);
 }
 
-.services__link {
-  display: inline-flex;
-  align-self: flex-start;
-  align-items: center;
-  min-height: var(--tap);
-  gap: 0.5rem;
-  margin-top: 1.5rem;
-  padding: 0.375rem 0;
-  color: var(--c-paper);
-  font-size: var(--fs-sm);
-  font-weight: 560;
-  text-decoration-line: underline;
-  text-decoration-color: var(--c-line-strong);
-  text-decoration-thickness: 1px;
-  text-underline-offset: 0.35em;
-  transition: text-decoration-color var(--dur-fast) ease;
-}
-
-.services__link:hover {
-  text-decoration-color: var(--c-paper);
-}
-
 /* ---------- Estado ativo (hover com mouse ou foco pelo teclado) ---------- */
 
 .services__card:has(:focus-visible) {
@@ -168,11 +146,6 @@
 
   .services__card {
     grid-template-rows: auto 1fr;
-  }
-
-  .services__link {
-    margin-top: auto;
-    padding-top: 1.875rem;
   }
 }
 
