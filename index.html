@@ -234,25 +234,87 @@
             </div>
           </div>
 
-          <!-- Cena 3D: projetos reais em camadas (os mesmos da seção Projetos) -->
+          <!-- Painel animado: navegador, logo, celular e balão, em camadas 3D -->
           <div class="hero__art">
-            <div class="stage" data-stage="hero" aria-hidden="true">
-              <div class="stage__glow"></div>
-              <div class="stage__world">
-                <figure class="device device--browser stage__a">
-                  <div class="device__bar"><i></i><i></i><i></i></div>
-                  <img src="assets/projects/trio-desktop-sm.webp" alt="" width="800" height="500" decoding="async" />
-                </figure>
-                <figure class="device device--browser stage__b">
-                  <div class="device__bar"><i></i><i></i><i></i></div>
-                  <img src="assets/projects/monique-desktop-sm.webp" alt="" width="800" height="500" decoding="async" />
-                </figure>
-                <figure class="device device--phone stage__c">
-                  <img src="assets/projects/tiopet-mobile.webp" alt="" width="300" height="649" decoding="async" />
-                </figure>
-                <p class="stage__chip stage__chip--1">Site profissional</p>
-                <p class="stage__chip stage__chip--2">Landing page</p>
-                <p class="stage__chip stage__chip--3">Versão celular</p>
+            <div class="hero-visual" data-stage="hero" aria-hidden="true">
+              <div class="hero-visual__glow"></div>
+
+              <div class="hero-visual__world">
+              <svg class="hero-visual__svg" viewBox="0 0 640 560" fill="none">
+                <!-- Janela do navegador -->
+                <rect class="stroke stroke--mid" x="88" y="24" width="480" height="320" rx="20" pathLength="1" style="--delay: 0.05s; --duration: 1.2s" />
+                <path class="stroke stroke--soft" d="M88 64H568" pathLength="1" style="--delay: 0.35s; --duration: 0.6s" />
+                <circle class="stroke stroke--mid" cx="114" cy="44" r="5" pathLength="1" style="--delay: 0.45s; --duration: 0.4s" />
+                <circle class="stroke stroke--mid" cx="132" cy="44" r="5" pathLength="1" style="--delay: 0.5s; --duration: 0.4s" />
+                <circle class="stroke stroke--mid" cx="150" cy="44" r="5" pathLength="1" style="--delay: 0.55s; --duration: 0.4s" />
+                <rect class="stroke stroke--soft" x="176" y="33" width="240" height="22" rx="11" pathLength="1" style="--delay: 0.5s; --duration: 0.7s" />
+                <rect class="bar" x="192" y="41" width="96" height="6" rx="3" style="--delay: 0.8s" />
+
+                <!-- Texto e botão da página -->
+                <rect class="bar bar--strong" x="120" y="92" width="196" height="16" rx="8" style="--delay: 0.7s" />
+                <rect class="bar bar--strong" x="120" y="116" width="140" height="16" rx="8" style="--delay: 0.78s" />
+                <rect class="bar" x="120" y="148" width="212" height="6" rx="3" style="--delay: 0.86s" />
+                <rect class="bar" x="120" y="162" width="184" height="6" rx="3" style="--delay: 0.9s" />
+                <rect class="bar" x="120" y="176" width="198" height="6" rx="3" style="--delay: 0.94s" />
+                <rect class="stroke stroke--hi" x="120" y="198" width="108" height="30" rx="15" pathLength="1" style="--delay: 1.15s; --duration: 0.6s" />
+
+                <!-- Imagem (retângulo com X) -->
+                <rect class="stroke stroke--mid" x="352" y="92" width="84" height="136" rx="12" pathLength="1" style="--delay: 0.75s" />
+                <path class="stroke stroke--soft" d="M355.6 95.6 432.4 224.4" pathLength="1" style="--delay: 1s; --duration: 0.5s" />
+                <path class="stroke stroke--soft" d="M432.4 95.6 355.6 224.4" pathLength="1" style="--delay: 1.1s; --duration: 0.5s" />
+
+                <!-- Três cards pequenos -->
+                <rect class="stroke stroke--soft" x="284" y="256" width="46" height="64" rx="9" pathLength="1" style="--delay: 0.9s; --duration: 0.6s" />
+                <circle class="stroke stroke--mid" cx="297" cy="271" r="5" pathLength="1" style="--delay: 1.15s; --duration: 0.4s" />
+                <rect class="bar" x="292" y="286" width="30" height="4" rx="2" style="--delay: 1.25s" />
+                <rect class="bar" x="292" y="296" width="20" height="4" rx="2" style="--delay: 1.3s" />
+
+                <rect class="stroke stroke--soft" x="340" y="256" width="46" height="64" rx="9" pathLength="1" style="--delay: 0.98s; --duration: 0.6s" />
+                <circle class="stroke stroke--mid" cx="353" cy="271" r="5" pathLength="1" style="--delay: 1.23s; --duration: 0.4s" />
+                <rect class="bar" x="348" y="286" width="30" height="4" rx="2" style="--delay: 1.33s" />
+                <rect class="bar" x="348" y="296" width="20" height="4" rx="2" style="--delay: 1.38s" />
+
+                <rect class="stroke stroke--soft" x="396" y="256" width="46" height="64" rx="9" pathLength="1" style="--delay: 1.06s; --duration: 0.6s" />
+                <circle class="stroke stroke--mid" cx="409" cy="271" r="5" pathLength="1" style="--delay: 1.31s; --duration: 0.4s" />
+                <rect class="bar" x="404" y="286" width="30" height="4" rx="2" style="--delay: 1.41s" />
+                <rect class="bar" x="404" y="296" width="20" height="4" rx="2" style="--delay: 1.46s" />
+
+                <!-- Moldura do logo (o fundo preto cobre as linhas atrás) -->
+                <rect class="mask" x="24" y="240" width="232" height="232" rx="36" />
+                <rect class="stroke stroke--mid" x="24" y="240" width="232" height="232" rx="36" pathLength="1" style="--delay: 0.3s; --duration: 1s" />
+              </svg>
+
+              <div class="hero-visual__logo">
+                <img class="logo" src="assets/img/logo-512.webp" alt="" width="512" height="512" />
+              </div>
+
+              <!-- Celular -->
+              <div class="hero-visual__phone">
+                <svg class="hero-visual__phone-svg" viewBox="450 158 160 316" fill="none">
+                  <rect class="mask" x="452" y="160" width="156" height="312" rx="28" />
+                  <rect class="stroke stroke--strong" x="452" y="160" width="156" height="312" rx="28" pathLength="1" style="--delay: 0.45s; --duration: 1s" />
+                  <rect class="stroke stroke--soft" x="510" y="174" width="40" height="8" rx="4" pathLength="1" style="--delay: 0.9s; --duration: 0.4s" />
+
+                  <rect class="bar bar--strong" x="472" y="198" width="96" height="10" rx="5" style="--delay: 1s" />
+                  <rect class="bar bar--strong" x="472" y="214" width="70" height="10" rx="5" style="--delay: 1.05s" />
+                  <rect class="bar" x="472" y="234" width="112" height="5" rx="2.5" style="--delay: 1.1s" />
+                  <rect class="bar" x="472" y="245" width="98" height="5" rx="2.5" style="--delay: 1.12s" />
+                  <rect class="stroke stroke--hi" x="472" y="262" width="76" height="22" rx="11" pathLength="1" style="--delay: 1.3s; --duration: 0.5s" />
+
+                  <rect class="stroke stroke--mid" x="472" y="298" width="116" height="84" rx="10" pathLength="1" style="--delay: 1.1s" />
+                  <path class="stroke stroke--soft" d="M475 301 585 379" pathLength="1" style="--delay: 1.35s; --duration: 0.5s" />
+                  <path class="stroke stroke--soft" d="M585 301 475 379" pathLength="1" style="--delay: 1.45s; --duration: 0.5s" />
+
+                  <rect class="bar" x="472" y="396" width="116" height="5" rx="2.5" style="--delay: 1.2s" />
+                  <rect class="bar" x="472" y="407" width="92" height="5" rx="2.5" style="--delay: 1.24s" />
+                  <path class="stroke stroke--soft" d="M510 456H550" pathLength="1" style="--delay: 1.2s; --duration: 0.4s" />
+                </svg>
+              </div>
+
+              <div class="hero-visual__bubble">
+                <p>Olá! Quero tirar meu projeto do papel.</p>
+                <svg class="icon hero-visual__read" width="16" height="16"><use href="#icon-check-double" /></svg>
+              </div>
               </div>
             </div>
           </div>
@@ -459,16 +521,14 @@
       <!-- ==================== SOBRE ==================== -->
       <section class="section" id="sobre" aria-labelledby="sobre-title">
         <div class="container about__layout">
-          <div class="about__visual" aria-hidden="true" data-reveal="up">
-            <svg class="about__orbits" viewBox="0 0 400 400" fill="none">
-              <circle class="about__orbit" cx="200" cy="200" r="196" />
-              <circle class="about__orbit about__orbit--dashed" cx="200" cy="200" r="152" />
-              <circle class="about__dot" cx="200" cy="4" r="4" />
-              <circle class="about__dot" cx="61" cy="337" r="4" />
-              <circle class="about__dot about__dot--filled" cx="352" cy="200" r="3" />
-            </svg>
-            <div class="about__badge">
-              <img class="logo" src="assets/img/logo-256.webp" alt="" width="256" height="256" loading="lazy" />
+          <div class="about__visual" aria-hidden="true" data-reveal="up" data-stage="orbit">
+            <div class="about__world">
+              <div class="orbit orbit--a"><div class="orbit__ring"><i class="orbit__dot"></i><i class="orbit__dot orbit__dot--filled orbit__dot--b"></i></div></div>
+              <div class="orbit orbit--b"><div class="orbit__ring orbit__ring--dashed"><i class="orbit__dot orbit__dot--c"></i></div></div>
+              <div class="orbit orbit--c"><div class="orbit__ring"><i class="orbit__dot orbit__dot--filled"></i></div></div>
+              <div class="about__badge">
+              <img class="logo" src="assets/img/logo-512.webp" alt="" width="512" height="512" loading="lazy" />
+            </div>
             </div>
           </div>
 
@@ -548,7 +608,7 @@
         <div class="footer__brand-column">
           <a class="footer__brand" href="#inicio">
             <span class="footer__mark">
-              <img class="logo" src="assets/img/logo-256.webp" alt="" width="256" height="256" loading="lazy" />
+              <img class="logo" src="assets/img/logo-512.webp" alt="" width="512" height="512" loading="lazy" />
             </span>
             <span class="footer__name">MDN Solutions</span>
           </a>

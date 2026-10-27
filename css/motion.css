@@ -1,5 +1,5 @@
 /* ==========================================================================
-   Movimento extra: entradas escalonadas, micro-interações e barra de progresso
+   Movimento extra: entradas escalonadas, micro-interações, anéis da seção Sobre e barra de progresso
    Tudo fica dentro de prefers-reduced-motion: no-preference. Nada repete para sempre:
    as animações em ciclo duram no máximo ~5 s (WCAG 2.2.2). Para desligar a camada inteira,
    remova este arquivo do index.html.
@@ -128,13 +128,13 @@
     animation: m-ring 2.4s ease-out 1s 2;
   }
 
-  /* ---------- Hero: respiro das camadas (2 ciclos, ~4,8 s, depois para) ---------- */
-  .stage__a { animation: hero-rise 1s var(--ease-out) 120ms backwards, m-bob 2.4s ease-in-out 2s 2; }
-  .stage__b { animation: hero-rise 1s var(--ease-out) 240ms backwards, m-bob 2.4s ease-in-out 2.4s 2; }
-  .stage__c { animation: hero-rise 1s var(--ease-out) 360ms backwards, m-bob 2.4s ease-in-out 2.2s 2; }
-  .stage__chip--1 { animation: hero-rise 1s var(--ease-out) 520ms backwards, m-bob 2.4s ease-in-out 2.6s 2; }
-  .stage__chip--2 { animation: hero-rise 1s var(--ease-out) 600ms backwards, m-bob 2.4s ease-in-out 2.8s 2; }
-  .stage__chip--3 { animation: hero-rise 1s var(--ease-out) 680ms backwards, m-bob 2.4s ease-in-out 3s 2; }
+  /* ---------- Sobre: os anéis se abrem uma vez, em sequência ---------- */
+  .about__visual[data-reveal-state="shown"] .orbit {
+    animation: m-orbit-open 1.3s var(--ease-out) backwards;
+  }
+
+  .about__visual[data-reveal-state="shown"] .orbit--b { animation-delay: 0.12s; }
+  .about__visual[data-reveal-state="shown"] .orbit--c { animation-delay: 0.24s; }
 }
 
 @keyframes m-progress {
@@ -203,8 +203,9 @@
   }
 }
 
-@keyframes m-bob {
-  50% {
-    translate: 0 -0.5rem;
+@keyframes m-orbit-open {
+  from {
+    scale: 0.25;
+    opacity: 0;
   }
 }

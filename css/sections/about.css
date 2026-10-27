@@ -15,67 +15,130 @@
   width: min(100%, 24rem);
   margin-inline: auto;
   aspect-ratio: 1;
-  overflow: clip; /* o SVG girando é maior que a caixa (cantos) e criaria rolagem horizontal */
+  perspective: 900px;
+  perspective-origin: 50% 42%;
+  touch-action: pan-y;
+  overflow: clip; /* margem de segurança: nada da cena 3D cria rolagem horizontal */
 }
 
-.about__orbits {
+/* Giroscópio 3D: três anéis em planos diferentes cruzando a logo (que fica no centro).
+   js/scene.js escreve --rx/--ry (ponteiro); a rolagem gira os anéis (animation-timeline).
+   Sem JS, sem suporte ou com movimento reduzido a composição fica parada, em 3D.
+   Não coloque overflow, filter, opacity<1 ou contain em .about__world/.orbit: achata o 3D. */
+.about__world {
   position: absolute;
   inset: 0;
-  width: 100%;
-  height: 100%;
-  overflow: visible;
+  transform-style: preserve-3d;
+  transform: rotateX(calc(var(--rx, 0) * 1.4deg + 12deg)) rotateY(calc(var(--ry, 0) * 1.4deg - 18deg));
 }
 
-.about__orbit {
-  stroke: var(--c-line-strong);
-  stroke-width: 1;
+.about__visual[data-live="true"] .about__world {
+  will-change: transform;
 }
 
-.about__orbit--dashed {
-  stroke: var(--c-pencil);
-  stroke-dasharray: 2 7;
-  stroke-linecap: round;
+.orbit {
+  position: absolute;
+  transform-style: preserve-3d;
 }
 
-.about__dot {
-  fill: var(--c-ink);
-  stroke: var(--c-white);
-  stroke-width: 1.25;
+.orbit--a {
+  inset: 1%;
+  transform: rotateX(64deg);
+  --turn: 200deg;
 }
 
-.about__dot--filled {
-  fill: rgb(var(--c-violet));
-  stroke: none;
+.orbit--b {
+  inset: 9%;
+  transform: rotateY(66deg) rotateX(14deg);
+  --turn: -160deg;
+}
+
+.orbit--c {
+  inset: 17%;
+  transform: rotateX(-30deg) rotateY(34deg);
+  --turn: 240deg;
+}
+
+.orbit__ring {
+  position: absolute;
+  inset: 0;
+  border: 1px solid #5a5a5a;
+  border-radius: 50%;
+}
+
+.orbit__ring--dashed {
+  border: 0;
+  background: none;
+  outline: 0;
+  /* anel tracejado: o tracejado vem de um gradiente cônico recortado em anel */
+  --seg: 3deg;
+  -webkit-mask: radial-gradient(farthest-side, transparent calc(100% - 1.5px), #000 calc(100% - 1.5px));
+  mask: radial-gradient(farthest-side, transparent calc(100% - 1.5px), #000 calc(100% - 1.5px));
+  background-image: repeating-conic-gradient(var(--c-chalk) 0 var(--seg), transparent var(--seg) 9deg);
+}
+
+.orbit__dot {
+  position: absolute;
+  top: 0;
+  left: 50%;
+  width: 0.65rem;
+  height: 0.65rem;
+  margin: -0.325rem 0 0 -0.325rem;
+  border: 1.5px solid var(--c-white);
+  border-radius: 50%;
+  background: var(--c-ink);
+}
+
+.orbit__dot--filled {
+  border: 0;
+  background: rgb(var(--c-violet));
+  box-shadow: 0 0 14px 2px rgb(var(--c-violet) / 0.8);
+}
+
+.orbit__dot--b {
+  top: 93.3%;
+  left: 25%;
+}
+
+.orbit__dot--c {
+  top: 50%;
+  left: 100%;
 }
 
 .about__badge {
   position: absolute;
-  inset: 27%;
+  inset: 29%;
   display: grid;
   place-items: center;
   overflow: hidden;
   border: 1px solid var(--c-line-strong);
   border-radius: 50%;
   background: var(--c-ink);
-  box-shadow:
-    0 0 0 8px rgb(var(--c-violet) / 0.08),
-    0 0 70px -10px rgb(var(--c-violet) / 0.55);
+  box-shadow: 0 0 0 8px rgb(var(--c-violet) / 0.1);
+}
+
+/* O brilho fica fora do plano 3D (uma sombra grande dentro dele seria cortada em quadrado) */
+.about__visual::before {
+  content: "";
+  position: absolute;
+  inset: 12%;
+  background: radial-gradient(closest-side, rgb(var(--c-violet) / 0.32), transparent);
+  pointer-events: none;
 }
 
 @supports (animation-timeline: view()) {
   @media (prefers-reduced-motion: no-preference) {
-    .about__orbits {
-      transform-origin: 50% 50%;
-      animation: about-turn linear both;
+    .orbit__ring {
+      animation: orbit-turn linear both;
       animation-timeline: view();
       animation-range: cover 0% cover 100%;
     }
   }
 }
 
-@keyframes about-turn {
+@keyframes orbit-turn {
   to {
-    rotate: 140deg;
+    rotate: var(--turn);
   }
 }
 

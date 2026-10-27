@@ -3,7 +3,7 @@
    Ganchos de JS (js/scene.js): --rx/--ry (inclinação), --px/--py (posição do ponteiro, -1 a 1),
    --spread (0 a 1, quanto o hero já saiu da tela). Sem JS ou com movimento reduzido a
    composição fica parada no ângulo inicial.
-   Atenção: .stage__world usa preserve-3d. Nenhum elemento entre ele e as camadas pode ter
+   Atenção: .hero-visual__world usa preserve-3d. Nenhum elemento entre ele e as camadas pode ter
    overflow, filter, opacity < 1 ou contain, senão o 3D "achata".
    ========================================================================== */
 
@@ -92,117 +92,150 @@
   margin-top: clamp(2.5rem, 2rem + 3vw, 4.5rem);
 }
 
-/* ---------- Cena 3D ---------- */
+/* ---------- Painel animado em camadas 3D ----------
+   Navegador (z 0), logo, celular e balão em profundidades diferentes dentro de .hero-visual__world.
+   js/scene.js só escreve --rx/--ry; sem ele (ou com movimento reduzido) a pose fica parada.
+   Não coloque overflow, filter, opacity<1 ou contain em .hero-visual__world: achata o 3D. */
 
 .hero__art {
   min-width: 0;
 }
 
-.stage {
-  --persp: 1500px;
+.hero-visual {
   position: relative;
   width: 100%;
-  max-width: 44rem;
+  max-width: 40rem;
+  aspect-ratio: 640 / 560;
   margin-inline: auto;
-  aspect-ratio: 1.1 / 1;
-  perspective: var(--persp);
-  perspective-origin: 50% 38%;
-  touch-action: pan-y; /* arrastar na vertical continua rolando a página */
+  container-type: inline-size;
+  perspective: 1400px;
+  perspective-origin: 50% 40%;
+  touch-action: pan-y;
 }
 
-.stage__glow {
-  position: absolute;
-  inset: 4% 0 0;
-  background: radial-gradient(
-    ellipse 52% 46% at calc(50% + var(--px, 0) * 8%) calc(48% + var(--py, 0) * 8%),
-    rgb(var(--c-violet) / 0.38),
-    transparent 70%
-  );
-  pointer-events: none;
-}
-
-.stage__world {
+.hero-visual__world {
   position: absolute;
   inset: 0;
   transform-style: preserve-3d;
-  transform: rotateX(calc(var(--rx, 0) * 1deg + 7deg)) rotateY(calc(var(--ry, 0) * 1deg - 15deg))
-    rotateZ(calc(var(--spread, 0) * 2deg));
+  transform: rotateX(calc(var(--rx, 0) * 1deg + 4deg)) rotateY(calc(var(--ry, 0) * 1deg - 9deg));
 }
 
-.stage[data-live="true"] .stage__world {
+.hero-visual[data-live="true"] .hero-visual__world {
   will-change: transform;
 }
 
-.stage__a,
-.stage__b,
-.stage__c {
+.hero-visual__svg {
   position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  overflow: visible;
 }
 
-/* camada do fundo */
-.stage__a {
-  top: 5%;
-  left: 0;
-  width: 66%;
-  transform: translate3d(calc(var(--px, 0) * -10px), calc(var(--spread, 0) * -26px), -130px);
-}
-
-/* camada do meio */
-.stage__b {
-  top: 31%;
-  right: 0;
-  width: 62%;
-  transform: translate3d(calc(var(--px, 0) * 4px), calc(var(--spread, 0) * 12px), 0);
-}
-
-/* camada da frente */
-.stage__c {
-  bottom: 1%;
-  left: 31%;
-  width: 22%;
-  transform: translate3d(calc(var(--px, 0) * 16px), calc(var(--spread, 0) * 34px), 120px);
-}
-
-.stage__chip {
+/* Brilho violeta atrás do logo */
+.hero-visual__glow {
   position: absolute;
-  padding: 0.375rem 0.75rem;
-  border: 1px solid var(--c-line-strong);
-  border-radius: var(--r-pill);
-  background: #0e0e0e;
-  color: var(--c-chalk);
-  font-size: var(--fs-xs);
-  font-weight: 560;
-  letter-spacing: 0.02em;
-  white-space: nowrap;
-  box-shadow: 0 14px 30px -14px rgb(0 0 0 / 0.9);
-}
-
-.stage__chip::before {
-  content: "";
-  display: inline-block;
-  width: 0.4375rem;
-  height: 0.4375rem;
-  margin-right: 0.5rem;
+  top: 28%;
+  left: -8%;
+  width: 70%;
+  aspect-ratio: 1;
   border-radius: 50%;
-  background: rgb(var(--c-violet));
+  background: radial-gradient(
+    closest-side,
+    rgb(var(--c-violet) / 0.36),
+    rgb(var(--c-violet) / 0.1) 55%,
+    transparent
+  );
+  filter: blur(18px);
+  pointer-events: none;
 }
 
-.stage__chip--1 {
-  top: 0;
-  left: 6%;
-  transform: translate3d(0, 0, -40px);
+/* ---------- Elementos do desenho ---------- */
+
+.hero-visual .stroke {
+  fill: none;
+  stroke-width: 1.6px;
+  stroke-linecap: round;
+  stroke-linejoin: round;
 }
 
-.stage__chip--2 {
-  top: 26%;
-  right: 2%;
-  transform: translate3d(0, 0, 70px);
+.hero-visual .stroke--soft { stroke: #3a3a3a; }
+.hero-visual .stroke--mid { stroke: #6a6a6a; }
+.hero-visual .stroke--strong { stroke: #a8a8a8; }
+.hero-visual .stroke--hi { stroke: var(--c-white); }
+
+.hero-visual .bar { fill: #232323; }
+.hero-visual .bar--strong { fill: #343434; }
+
+/* Fundo preto que esconde o que está atrás (logo e celular) */
+.hero-visual .mask { fill: var(--c-ink); }
+
+/* ---------- Logo, celular e balão (cada um numa profundidade) ---------- */
+
+.hero-visual__logo {
+  position: absolute;
+  top: 42.8571%;
+  left: 3.75%;
+  display: grid;
+  place-items: center;
+  width: 36.25%;
+  aspect-ratio: 1;
+  padding: 2px;
+  transform: translateZ(55px);
 }
 
-.stage__chip--3 {
-  bottom: 9%;
-  left: 2%;
-  transform: translate3d(0, 0, 170px);
+.hero-visual__logo .logo {
+  border-radius: 14%;
+}
+
+.hero-visual__phone {
+  position: absolute;
+  top: 28.2143%;
+  left: 70.3125%;
+  width: 25%;
+  aspect-ratio: 160 / 316;
+  transform: translateZ(95px);
+}
+
+.hero-visual__phone-svg {
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+}
+
+.hero-visual__bubble {
+  position: absolute;
+  top: 87.1429%;
+  left: 31.25%;
+  display: flex;
+  align-items: flex-end;
+  gap: 0.5em;
+  max-width: 62%;
+  padding: 0.7em 0.9em 0.7em 1em;
+  border: 1px solid var(--c-line-strong);
+  border-radius: 1.1em 1.1em 1.1em 0.3em;
+  background: var(--c-graphite-2);
+  color: var(--c-paper);
+  font-size: clamp(0.75rem, 2.3cqi, 0.9375rem);
+  line-height: 1.35;
+  box-shadow: 0 18px 40px -18px rgb(0 0 0 / 0.9);
+  transform: translateZ(140px);
+}
+
+.hero-visual__read {
+  flex: none;
+  width: 1.15em;
+  height: 1.15em;
+  color: var(--c-pencil);
+  stroke-width: 2;
+}
+
+@container (width <= 26rem) {
+  .hero-visual__bubble {
+    right: 0;
+    left: auto;
+    max-width: 78%;
+  }
 }
 
 /* ---------- Entrada (uma vez, ~1,2 s; some com movimento reduzido) ---------- */
@@ -224,22 +257,31 @@
     animation: hero-measure 0.9s var(--ease-out) 0.55s backwards;
   }
 
-  .stage__a,
-  .stage__b,
-  .stage__c,
-  .stage__chip {
-    animation: hero-rise 1s var(--ease-out) backwards;
+  /* Traços do painel se desenham uma vez (usam --delay/--duration de cada elemento) */
+  .hero-visual .stroke {
+    opacity: 0;
+    stroke-dasharray: 1;
+    animation: hv-draw var(--duration, 0.8s) var(--ease-out) var(--delay) forwards;
   }
 
-  .stage__a { animation-delay: 120ms; }
-  .stage__b { animation-delay: 240ms; }
-  .stage__c { animation-delay: 360ms; }
-  .stage__chip--1 { animation-delay: 520ms; }
-  .stage__chip--2 { animation-delay: 600ms; }
-  .stage__chip--3 { animation-delay: 680ms; }
+  .hero-visual .bar {
+    opacity: 0;
+    animation: hv-fade 0.5s ease var(--delay) forwards;
+  }
 
-  .stage__glow {
-    animation: hero-fade 1.4s ease backwards;
+  .hero-visual__glow {
+    opacity: 0;
+    animation: hv-fade 1.6s 0.4s forwards;
+  }
+
+  .hero-visual__logo {
+    opacity: 0;
+    animation: hv-rise 0.8s var(--ease-out) 0.75s forwards;
+  }
+
+  .hero-visual__bubble {
+    opacity: 0;
+    animation: hv-pop 0.6s var(--ease-out) 1.6s forwards;
   }
 }
 
@@ -250,43 +292,57 @@
   }
 }
 
-@keyframes hero-rise {
-  from {
-    opacity: 0;
-    translate: 0 1.5rem;
-  }
-}
-
 @keyframes hero-measure {
   from {
     scale: 0 1;
   }
 }
 
-@keyframes hero-fade {
+@keyframes hv-draw {
+  from {
+    opacity: 1;
+    stroke-dashoffset: 1px;
+  }
+
+  to {
+    opacity: 1;
+    stroke-dashoffset: 0;
+  }
+}
+
+@keyframes hv-fade {
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes hv-rise {
   from {
     opacity: 0;
+    scale: 0.94;
+  }
+
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes hv-pop {
+  from {
+    opacity: 0;
+    scale: 0.94;
+  }
+
+  to {
+    opacity: 1;
   }
 }
 
 /* ---------- Responsivo ---------- */
 
 @media (width < 30em) {
-  .stage__chip--3 {
-    display: none;
-  }
-
-  .stage__c {
-    width: 25%;
-    left: 28%;
-  }
-
-  .stage__chip {
-    font-size: 0.75rem;
-  }
-
-  .stage__chip--2 {
-    top: 20%;
+  .hero__actions > a {
+    width: 100%;
   }
 }
 
@@ -294,9 +350,5 @@
   .hero__grid {
     grid-template-columns: minmax(0, 1fr) minmax(0, 1.1fr);
     min-height: min(46rem, calc(100svh - var(--header-h) - 7rem));
-  }
-
-  .stage {
-    max-width: none;
   }
 }

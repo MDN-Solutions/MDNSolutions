@@ -96,16 +96,16 @@ se move responde ao ponteiro ou à rolagem (ou acontece uma vez, na entrada).
 
 | Efeito | Objetivo | Mobile | Fallback |
 | --- | --- | --- | --- |
-| Cena 3D do hero (3 capturas reais em camadas, `js/scene.js`) | Mostrar o trabalho logo na primeira dobra | Inclina ao arrastar na horizontal e ao rolar | Composição parada, com luz e sombra |
+| Painel do hero em camadas 3D (navegador, logo, celular e balão, `js/scene.js`) | Dar profundidade à marca na primeira dobra | Inclina ao arrastar na horizontal e ao rolar | Painel parado, com os traços já desenhados |
 | Cenas dos projetos (captura + celular em perspectiva) | Dar noção de tela e de profundidade | Inclina ao rolar | Composição parada |
 | Brilho no vidro e no fundo (`--gx`, `--mx`) | Mostrar o que está em foco | Só com mouse | Sem brilho |
 | Entrada do hero (uma vez, ~1,2 s) | Guiar o olhar do título para a cena | Igual | Aparece pronto |
 | Entrada ao rolar (`data-reveal`) | Guiar a leitura | Igual | Conteúdo visível sem JS ou com movimento reduzido |
 | Linha de "Como funciona" | Mostrar a ordem das etapas | Linha vertical | Linha já desenhada |
-| Anéis da seção "Sobre" | Dar vida ao símbolo da marca | Giram ao rolar | Anéis parados |
+| Giroscópio 3D da seção "Sobre" (3 anéis em planos diferentes cruzando a logo) | Dar vida ao símbolo da marca | Os anéis giram ao rolar e inclinam com o dedo | Composição 3D parada |
 | Entradas escalonadas dos projetos, títulos que se revelam, ícones que "saltam" (`css/motion.css`) | Guiar a leitura | Igual | Aparece pronto |
 | Barra de progresso de leitura no header | Mostrar onde se está na página | Igual (navegadores com `animation-timeline`) | Sem barra |
-| Respiro das camadas do hero e anel no botão do contato | Dar vida sem distrair; param sozinhos em ~5 s | Igual | Parados |
+| Anel que se expande no botão do contato (2 ciclos, ~4,8 s) | Chamar atenção sem distrair | Igual | Parado |
 | Brilho que atravessa o botão principal | Feedback de interação | Só com mouse | Sem brilho |
 | Hover de links e botões | Feedback de interação | Não existe em toque | Mudança de cor e borda |
 
@@ -113,5 +113,5 @@ O 3D é feito só com CSS (`perspective`, `preserve-3d`, `translate3d`) e um arq
 sem biblioteca; o JS só escreve variáveis CSS (`--rx`, `--ry`, `--px`, `--py`, `--sp`, `--spread`).
 
 **Cuidado ao mexer nas cenas:** elementos com `overflow`, `filter`, `opacity < 1` ou `contain`
-"achatam" o 3D dos filhos. Entre `.stage__world` (ou `.case__scene`) e as camadas não coloque nenhum
+"achatam" o 3D dos filhos. Entre `.hero-visual__world`, `.about__world` ou `.case__scene` e as camadas não coloque nenhum
 desses. Para desligar o 3D, remova `js/scene.js` do `index.html` (as cenas ficam paradas).
