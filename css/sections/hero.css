@@ -1,39 +1,84 @@
 /* ==========================================================================
-   Hero (seção inicial) + ilustração animada
+   Hero: título + cena 3D com os projetos reais em camadas
+   Ganchos de JS (js/scene.js): --rx/--ry (inclinação), --px/--py (posição do ponteiro, -1 a 1),
+   --spread (0 a 1, quanto o hero já saiu da tela). Sem JS ou com movimento reduzido a
+   composição fica parada no ângulo inicial.
+   Atenção: .hero-visual__world usa preserve-3d. Nenhum elemento entre ele e as camadas pode ter
+   overflow, filter, opacity < 1 ou contain, senão o 3D "achata".
    ========================================================================== */
 
 .hero {
   position: relative;
-  overflow: hidden;
-  padding-top: calc(var(--header-h) + clamp(2.25rem, 14vh - 3.5rem, 6rem));
-  padding-bottom: clamp(3rem, 2rem + 4vw, 5rem);
+  isolation: isolate; /* mantém o quadriculado (z-index -1) dentro do hero */
+  padding-top: calc(var(--header-h) + clamp(2rem, 1rem + 5vw, 5rem));
+  padding-bottom: clamp(2.5rem, 2rem + 3vw, 4.5rem);
+}
+
+/* "Planta": quadriculado fino que some nas bordas + brilho violeta atrás da cena */
+.hero::before {
+  content: "";
+  position: absolute;
+  inset: 0 0 auto;
+  height: min(100%, 60rem);
+  z-index: -1;
+  pointer-events: none;
+  background-image:
+    linear-gradient(var(--grid-line) 1px, transparent 1px),
+    linear-gradient(90deg, var(--grid-line) 1px, transparent 1px);
+  background-size: 4rem 4rem;
+  background-position: center top;
+  -webkit-mask-image: radial-gradient(ellipse 70% 65% at 70% 38%, #000 10%, transparent 75%);
+  mask-image: radial-gradient(ellipse 70% 65% at 70% 38%, #000 10%, transparent 75%);
 }
 
 .hero__grid {
   display: grid;
   align-items: center;
-  gap: clamp(3rem, 2rem + 4vw, 3.5rem);
+  gap: clamp(2.5rem, 2rem + 3vw, 4rem);
 }
+
+/* ---------- Texto ---------- */
 
 .hero__eyebrow {
   color: var(--c-pencil);
   font-size: var(--fs-xs);
-  font-weight: 540;
-  letter-spacing: 0.08em;
+  font-weight: 620;
+  letter-spacing: 0.14em;
   text-transform: uppercase;
 }
 
+.hero__eyebrow span {
+  margin-inline: 0.25rem;
+  color: var(--c-line-strong);
+}
+
 .hero__title {
-  max-width: 13ch;
-  margin-top: 1.25rem;
-  font-size: clamp(2.625rem, min(1.4rem + 4.4vw, 9.2vh), 4.75rem);
-  font-weight: 660;
-  line-height: 1;
-  letter-spacing: -0.04em;
+  margin-top: 1.5rem;
+  font-size: var(--fs-hero);
+  font-weight: 640;
+  line-height: 1.04;
+  letter-spacing: -0.035em;
+}
+
+/* "Linha de cota": sublinhado com pontas, como numa medida de projeto */
+.hero__mark {
+  position: relative;
+  display: inline-block;
+  white-space: nowrap;
+}
+
+.hero__mark::after {
+  content: "";
+  position: absolute;
+  inset: auto 0 -0.1em;
+  height: 0.2em;
+  border-inline: 1px solid rgb(var(--c-violet));
+  background: linear-gradient(rgb(var(--c-violet)), rgb(var(--c-violet))) center / 100% 1px no-repeat;
+  transform-origin: left;
 }
 
 .hero__subtitle {
-  max-width: 35rem;
+  max-width: 34rem;
 }
 
 .hero__actions {
@@ -43,61 +88,18 @@
   margin-top: 2.25rem;
 }
 
-.hero__location {
-  margin-top: 1.75rem;
+.hero__place {
+  margin-top: clamp(2.5rem, 2rem + 3vw, 4.5rem);
 }
 
-/* Entrada do texto ao carregar a página */
-@media (prefers-reduced-motion: no-preference) {
-  .hero__eyebrow,
-  .hero__title,
-  .hero__subtitle,
-  .hero__actions,
-  .hero__location {
-    animation: hero-in var(--dur-reveal) var(--ease-out) backwards;
-  }
+/* ---------- Painel animado em camadas 3D ----------
+   Navegador (z 0), logo, celular e balão em profundidades diferentes dentro de .hero-visual__world.
+   js/scene.js só escreve --rx/--ry; sem ele (ou com movimento reduzido) a pose fica parada.
+   Não coloque overflow, filter, opacity<1 ou contain em .hero-visual__world: achata o 3D. */
 
-  .hero__title { animation-delay: 40ms; }
-  .hero__subtitle { animation-delay: 140ms; }
-  .hero__actions { animation-delay: 240ms; }
-  .hero__location { animation-delay: 340ms; }
+.hero__art {
+  min-width: 0;
 }
-
-@keyframes hero-in {
-  from {
-    opacity: 0;
-    translate: 0 calc(var(--reveal-shift) * 0.75);
-  }
-}
-
-@media (width < 30em) {
-  .hero__actions > a {
-    width: 100%;
-  }
-}
-
-@media (width < 24em) {
-  .hero__eyebrow {
-    font-size: 0.75rem;
-    letter-spacing: 0.05em;
-  }
-}
-
-@media (width >= 64em) {
-  .hero__grid {
-    grid-template-columns: minmax(0, 1.1fr) minmax(0, 1fr);
-  }
-
-  .hero__art {
-    width: calc(100% + 3rem);
-    margin-right: -3rem;
-  }
-}
-
-/* ==========================================================================
-   Ilustração: navegador + celular + balão de mensagem
-   Cada traço usa --delay (quando começa) e --duration (quanto dura, padrão 0.8s)
-   ========================================================================== */
 
 .hero-visual {
   position: relative;
@@ -106,6 +108,20 @@
   aspect-ratio: 640 / 560;
   margin-inline: auto;
   container-type: inline-size;
+  perspective: 1400px;
+  perspective-origin: 50% 40%;
+  touch-action: pan-y;
+}
+
+.hero-visual__world {
+  position: absolute;
+  inset: 0;
+  transform-style: preserve-3d;
+  transform: rotateX(calc(var(--rx, 0) * 1deg + 4deg)) rotateY(calc(var(--ry, 0) * 1deg - 9deg));
+}
+
+.hero-visual[data-live="true"] .hero-visual__world {
+  will-change: transform;
 }
 
 .hero-visual__svg {
@@ -143,18 +159,18 @@
   stroke-linejoin: round;
 }
 
-.hero-visual .stroke--soft { stroke: #2e2e2e; }
-.hero-visual .stroke--mid { stroke: #525252; }
-.hero-visual .stroke--strong { stroke: #8c8c8c; }
+.hero-visual .stroke--soft { stroke: #3a3a3a; }
+.hero-visual .stroke--mid { stroke: #6a6a6a; }
+.hero-visual .stroke--strong { stroke: #a8a8a8; }
 .hero-visual .stroke--hi { stroke: var(--c-white); }
 
-.hero-visual .bar { fill: #1c1c1c; }
-.hero-visual .bar--strong { fill: #2a2a2a; }
+.hero-visual .bar { fill: #232323; }
+.hero-visual .bar--strong { fill: #343434; }
 
 /* Fundo preto que esconde o que está atrás (logo e celular) */
 .hero-visual .mask { fill: var(--c-ink); }
 
-/* ---------- Logo, celular e balão ---------- */
+/* ---------- Logo, celular e balão (cada um numa profundidade) ---------- */
 
 .hero-visual__logo {
   position: absolute;
@@ -165,6 +181,7 @@
   width: 36.25%;
   aspect-ratio: 1;
   padding: 2px;
+  transform: translateZ(55px);
 }
 
 .hero-visual__logo .logo {
@@ -172,12 +189,12 @@
 }
 
 .hero-visual__phone {
-  --drift: -5px;
   position: absolute;
   top: 28.2143%;
   left: 70.3125%;
   width: 25%;
   aspect-ratio: 160 / 316;
+  transform: translateZ(95px);
 }
 
 .hero-visual__phone-svg {
@@ -202,6 +219,7 @@
   font-size: clamp(0.75rem, 2.3cqi, 0.9375rem);
   line-height: 1.35;
   box-shadow: 0 18px 40px -18px rgb(0 0 0 / 0.9);
+  transform: translateZ(140px);
 }
 
 .hero-visual__read {
@@ -220,93 +238,117 @@
   }
 }
 
-/* ---------- Animações ---------- */
+/* ---------- Entrada (uma vez, ~1,2 s; some com movimento reduzido) ---------- */
 
 @media (prefers-reduced-motion: no-preference) {
+  /* O texto só desliza (sem opacity): o título é o LCP e precisa estar visível desde o 1º quadro */
+  .hero__eyebrow,
+  .hero__title,
+  .hero__subtitle,
+  .hero__actions {
+    animation: hero-slide 0.8s var(--ease-out) backwards;
+  }
+
+  .hero__title { animation-delay: 70ms; }
+  .hero__subtitle { animation-delay: 150ms; }
+  .hero__actions { animation-delay: 230ms; }
+
+  .hero__mark::after {
+    animation: hero-measure 0.9s var(--ease-out) 0.55s backwards;
+  }
+
+  /* Traços do painel se desenham uma vez (usam --delay/--duration de cada elemento) */
   .hero-visual .stroke {
     opacity: 0;
     stroke-dasharray: 1;
-    animation: hero-draw var(--duration, 0.8s) var(--ease-out) var(--delay) forwards;
+    animation: hv-draw var(--duration, 0.8s) var(--ease-out) var(--delay) forwards;
   }
 
   .hero-visual .bar {
     opacity: 0;
-    animation: hero-fade 0.5s ease var(--delay) forwards;
+    animation: hv-fade 0.5s ease var(--delay) forwards;
   }
 
   .hero-visual__glow {
     opacity: 0;
-    animation: hero-fade 1.6s 0.4s forwards;
+    animation: hv-fade 1.6s 0.4s forwards;
   }
 
   .hero-visual__logo {
     opacity: 0;
-    animation: hero-rise 0.8s var(--ease-out) 0.75s forwards;
+    animation: hv-rise 0.8s var(--ease-out) 0.75s forwards;
   }
 
   .hero-visual__bubble {
-    --drift: -4px;
     opacity: 0;
-    animation:
-      hero-pop 0.6s var(--ease-out) 1.6s forwards,
-      hero-drift 7s var(--ease-in-out) 2.4s infinite alternate both;
-  }
-
-  .hero-visual__phone {
-    animation: hero-drift 9s var(--ease-in-out) 2.6s infinite alternate both;
-  }
-
-  /* Pausa tudo quando o hero sai da tela (atributo controlado pelo JS) */
-  .hero-visual[data-paused],
-  .hero-visual[data-paused] * {
-    animation-play-state: paused;
+    animation: hv-pop 0.6s var(--ease-out) 1.6s forwards;
   }
 }
 
-@keyframes hero-draw {
+/* Usam as propriedades individuais (translate/scale) para não brigar com o transform 3D */
+@keyframes hero-slide {
+  from {
+    translate: 0 1rem;
+  }
+}
+
+@keyframes hero-measure {
+  from {
+    scale: 0 1;
+  }
+}
+
+@keyframes hv-draw {
   from {
     opacity: 1;
     stroke-dashoffset: 1px;
   }
+
   to {
     opacity: 1;
     stroke-dashoffset: 0;
   }
 }
 
-@keyframes hero-fade {
+@keyframes hv-fade {
   to {
     opacity: 1;
   }
 }
 
-@keyframes hero-rise {
+@keyframes hv-rise {
   from {
     opacity: 0;
-    transform: scale(0.96);
+    scale: 0.94;
   }
+
   to {
     opacity: 1;
-    transform: none;
   }
 }
 
-@keyframes hero-pop {
+@keyframes hv-pop {
   from {
     opacity: 0;
-    transform: translateY(0.5rem) scale(0.96);
+    scale: 0.94;
   }
+
   to {
     opacity: 1;
-    transform: none;
   }
 }
 
-@keyframes hero-drift {
-  from {
-    translate: 0;
+/* ---------- Responsivo ---------- */
+
+@media (width < 30em) {
+  .hero__actions > a {
+    width: 100%;
   }
-  to {
-    translate: 0 var(--drift);
+}
+
+@media (width >= 60em) {
+  .hero__grid {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1.1fr);
+    min-height: min(46rem, calc(100svh - var(--header-h) - 7rem));
   }
 }

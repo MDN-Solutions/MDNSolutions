@@ -1,0 +1,198 @@
+/* ==========================================================================
+   Projetos: linhas editoriais com cena 3D (captura real em perspectiva)
+   Ganchos de JS (js/scene.js): --rx/--ry/--px/--py (ponteiro), --sp (-1 a 1, posição na tela).
+   Atenção: .case__scene usa preserve-3d; mantenha overflow/filter/opacity fora dos pais diretos.
+   ========================================================================== */
+
+.cases {
+  margin-top: clamp(2.5rem, 2rem + 3vw, 5rem);
+  counter-reset: case;
+}
+
+.case {
+  display: grid;
+  gap: 1.75rem;
+  padding-block: clamp(2.25rem, 1.5rem + 3vw, 4.5rem);
+  border-top: 1px solid var(--c-line);
+  counter-increment: case;
+}
+
+.case:last-child {
+  border-bottom: 1px solid var(--c-line);
+}
+
+/* ---------- Texto ---------- */
+
+.case__kicker {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  color: var(--c-pencil);
+  font-size: var(--fs-xs);
+  font-weight: 620;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+
+/* Número do caso; o segundo content (após "/") esconde o número dos leitores de tela */
+.case__kicker::before {
+  content: counter(case, decimal-leading-zero);
+  content: counter(case, decimal-leading-zero) / "";
+  color: var(--c-white);
+  font-variant-numeric: tabular-nums;
+}
+
+.case__kicker::after {
+  content: "";
+  width: 2rem;
+  height: 1px;
+  background: currentColor;
+  order: -1;
+}
+
+.case__title {
+  margin-top: 1rem;
+  font-size: clamp(2rem, 1.5rem + 2.2vw, 3.25rem);
+  letter-spacing: -0.04em;
+}
+
+.case__text {
+  max-width: 32rem;
+  margin-top: 1.25rem;
+  color: var(--c-chalk);
+}
+
+/* Ficha técnica */
+.spec {
+  max-width: 32rem;
+  margin-top: 1.75rem;
+  border-top: 1px solid var(--c-line);
+}
+
+.spec > div {
+  display: grid;
+  grid-template-columns: 5.5rem minmax(0, 1fr);
+  gap: 1rem;
+  padding: 0.75rem 0;
+  border-bottom: 1px solid var(--c-line);
+}
+
+.spec dt {
+  padding-top: 0.15em;
+  color: var(--c-pencil);
+  font-size: var(--fs-xs);
+  font-weight: 620;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+.spec dd {
+  margin: 0;
+  color: var(--c-paper);
+  font-size: var(--fs-sm);
+}
+
+/* ---------- Cena 3D ---------- */
+
+.case__media {
+  --persp: 1400px;
+  position: relative;
+  min-width: 0;
+  aspect-ratio: 1.3 / 1;
+  overflow: hidden; /* recorta a cena; o preserve-3d fica no filho (.case__scene) */
+  border: 1px solid var(--c-line);
+  border-radius: var(--r-lg);
+  background:
+    radial-gradient(ellipse 60% 55% at 50% 100%, rgb(var(--c-violet) / 0.2), transparent 70%),
+    linear-gradient(var(--grid-line) 1px, transparent 1px) 0 0 / 2.5rem 2.5rem,
+    linear-gradient(90deg, var(--grid-line) 1px, transparent 1px) 0 0 / 2.5rem 2.5rem,
+    var(--c-graphite);
+  perspective: var(--persp);
+  perspective-origin: 50% 40%;
+  touch-action: pan-y;
+}
+
+.case__scene {
+  position: absolute;
+  inset: 6% 5% 6%;
+  transform-style: preserve-3d;
+  transform: rotateX(calc(var(--rx, 0) * 1deg + 5deg))
+    rotateY(calc(var(--ry, 0) * 1deg + var(--sp, 0) * -7deg - 11deg));
+}
+
+.case__media[data-live="true"] .case__scene {
+  will-change: transform;
+}
+
+.case__main {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 90%;
+  transform: translate3d(calc(var(--px, 0) * -6px), 0, 0);
+}
+
+.case__phone {
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  width: 25%;
+  transform: translate3d(calc(var(--px, 0) * 14px), 0, 90px);
+}
+
+.case__media[data-active="true"] {
+  --glare: 1;
+}
+
+/* Alterna o lado da inclinação nos casos "flip" */
+.case--flip .case__scene {
+  transform: rotateX(calc(var(--rx, 0) * 1deg + 5deg))
+    rotateY(calc(var(--ry, 0) * 1deg + var(--sp, 0) * -7deg + 11deg));
+}
+
+.case--flip .case__main {
+  right: 0;
+  left: auto;
+}
+
+.case--flip .case__phone {
+  right: auto;
+  left: 0;
+}
+
+/* ---------- Responsivo ---------- */
+
+@media (width >= 60em) {
+  .case {
+    grid-template-columns: minmax(0, 7fr) minmax(0, 5fr);
+    align-items: center;
+    gap: clamp(2.5rem, 1rem + 5vw, 5.5rem);
+  }
+
+  /* No caso invertido a imagem vai para a 2ª coluna, então as colunas também se invertem (a imagem sempre fica com a maior) */
+  .case--flip {
+    grid-template-columns: minmax(0, 5fr) minmax(0, 7fr);
+  }
+
+  .case--flip .case__media {
+    order: 2;
+  }
+
+  .case__media {
+    aspect-ratio: 1.22 / 1;
+  }
+}
+
+@media (width < 30em) {
+  .case__scene {
+    inset: 12% 6% 8%;
+  }
+
+  .case__phone {
+    width: 28%;
+  }
+
+  .spec > div {
+    grid-template-columns: 4.75rem minmax(0, 1fr);
+  }
+}

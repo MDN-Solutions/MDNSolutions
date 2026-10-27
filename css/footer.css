@@ -3,8 +3,8 @@
    ========================================================================== */
 
 .footer {
-  /* Espaço extra no celular para o botão flutuante não cobrir o conteúdo */
-  padding-bottom: calc(5.5rem + env(safe-area-inset-bottom));
+  margin-top: var(--space-section);
+  padding-bottom: env(safe-area-inset-bottom);
   border-top: 1px solid var(--c-line);
 }
 
@@ -61,13 +61,14 @@
 
 .footer__links {
   display: grid;
-  gap: 0.25rem;
-  margin-top: 1rem;
+  margin-top: 0.5rem;
 }
 
 .footer__link {
   display: inline-flex;
   align-items: center;
+  min-width: var(--tap);
+  min-height: var(--tap);
   gap: 0.5rem;
   padding: 0.375rem 0;
   color: var(--c-chalk);
@@ -76,10 +77,6 @@
 
 .footer__link:hover {
   color: var(--c-white);
-}
-
-.footer__button {
-  margin-top: 1.25rem;
 }
 
 /* ---------- Copyright ---------- */
@@ -100,12 +97,6 @@
 
   .footer__brand-column {
     grid-column: 1 / -1;
-  }
-}
-
-@media (width >= 48em) {
-  .footer {
-    padding-bottom: 0;
   }
 }
 

@@ -1,0 +1,131 @@
+/* ==========================================================================
+   Como funciona: três etapas ligadas por uma linha que se desenha ao rolar
+   A linha usa animation-timeline: view() (progressivo). Sem suporte ou com movimento
+   reduzido ela aparece já desenhada.
+   ========================================================================== */
+
+.process {
+  position: relative;
+  display: grid;
+  gap: 2.5rem;
+  margin-top: clamp(2.5rem, 2rem + 3vw, 4.5rem);
+  padding-left: 2rem;
+}
+
+/* linha vertical (celular) / horizontal (desktop) */
+.process::before,
+.process::after {
+  content: "";
+  position: absolute;
+  top: 0.5rem;
+  bottom: 0.5rem;
+  left: 0;
+  width: 1px;
+  background: var(--c-line-strong);
+}
+
+.process::after {
+  background: rgb(var(--c-violet));
+  box-shadow: 0 0 14px rgb(var(--c-violet) / 0.8);
+  transform-origin: top;
+}
+
+.process__step {
+  position: relative;
+}
+
+/* nó da linha */
+.process__step::before {
+  content: "";
+  position: absolute;
+  top: 0.5rem;
+  left: -2rem;
+  width: 0.5625rem;
+  height: 0.5625rem;
+  margin-left: -0.28rem;
+  border-radius: 50%;
+  background: var(--c-ink);
+  box-shadow: 0 0 0 1px var(--c-white);
+}
+
+.process__number {
+  display: block;
+  /* Numeral com degradê (decorativo, aria-hidden). Evita text-stroke, que mostra os contornos
+     sobrepostos da fonte variável. */
+  background: linear-gradient(180deg, var(--c-white) 5%, var(--c-line-strong) 95%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  font-size: clamp(3.5rem, 2.5rem + 4vw, 6.5rem);
+  font-weight: 700;
+  line-height: 0.95;
+  letter-spacing: -0.05em;
+  font-variant-numeric: tabular-nums;
+}
+
+.process__title {
+  margin-top: 1.25rem;
+  font-size: var(--fs-h3);
+  letter-spacing: -0.03em;
+}
+
+.process__text {
+  max-width: 24rem;
+  margin-top: 0.625rem;
+  color: var(--c-chalk);
+}
+
+@supports (animation-timeline: view()) {
+  @media (prefers-reduced-motion: no-preference) {
+    .process::after {
+      animation: process-draw linear both;
+      animation-timeline: view();
+      animation-range: entry 10% cover 70%;
+    }
+  }
+}
+
+@keyframes process-draw {
+  from {
+    scale: 1 0;
+  }
+}
+
+@media (width >= 60em) {
+  .process {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: clamp(2rem, 1rem + 3vw, 4rem);
+    padding: 2.5rem 0 0;
+  }
+
+  .process::before,
+  .process::after {
+    inset: 0.5rem 0 auto;
+    width: auto;
+    height: 1px;
+  }
+
+  .process::after {
+    transform-origin: left;
+  }
+
+  .process__step::before {
+    top: -2.5rem;
+    left: 0;
+    margin: -0.28rem 0 0;
+  }
+
+  @supports (animation-timeline: view()) {
+    @media (prefers-reduced-motion: no-preference) {
+      .process::after {
+        animation-name: process-draw-x;
+      }
+    }
+  }
+}
+
+@keyframes process-draw-x {
+  from {
+    scale: 0 1;
+  }
+}
