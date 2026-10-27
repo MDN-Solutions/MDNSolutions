@@ -1,0 +1,210 @@
+/* ==========================================================================
+   Movimento extra: entradas escalonadas, micro-interações e barra de progresso
+   Tudo fica dentro de prefers-reduced-motion: no-preference. Nada repete para sempre:
+   as animações em ciclo duram no máximo ~5 s (WCAG 2.2.2). Para desligar a camada inteira,
+   remova este arquivo do index.html.
+   Os gatilhos são [data-reveal-state="shown"], definidos pelo js/main.js ao rolar.
+   ========================================================================== */
+
+@media (prefers-reduced-motion: no-preference) {
+  /* ---------- Barra de progresso de leitura (só onde há animation-timeline) ---------- */
+  @supports (animation-timeline: scroll()) {
+    .header::after {
+      content: "";
+      position: absolute;
+      inset: auto 0 -1px;
+      height: 2px;
+      background: linear-gradient(90deg, rgb(var(--c-violet)), var(--c-white));
+      transform-origin: left;
+      scale: 0 1;
+      animation: m-progress linear both;
+      animation-timeline: scroll(root block);
+    }
+  }
+
+  /* ---------- Títulos e legendas de seção ---------- */
+  [data-reveal-state="shown"] .section-kicker::before,
+  .case[data-reveal-state="shown"] .case__kicker::after {
+    transform-origin: left;
+    animation: m-draw 0.9s var(--ease-out) 0.1s backwards;
+  }
+
+  .section-head[data-reveal-state="shown"] .section-title {
+    animation: m-wipe 1s var(--ease-out) 0.12s backwards;
+  }
+
+  /* ---------- Projetos ---------- */
+  .case[data-reveal-state="shown"] :is(.case__kicker, .case__title, .case__text, .spec) {
+    animation: m-rise 0.8s var(--ease-out) backwards;
+  }
+
+  .case[data-reveal-state="shown"] .case__title { animation-delay: 0.1s; }
+  .case[data-reveal-state="shown"] .case__text { animation-delay: 0.2s; }
+  .case[data-reveal-state="shown"] .spec { animation-delay: 0.3s; }
+
+  .case[data-reveal-state="shown"] .spec > div {
+    animation: m-rise 0.7s var(--ease-out) backwards;
+  }
+
+  .case[data-reveal-state="shown"] .spec > div:nth-child(1) { animation-delay: 0.4s; }
+  .case[data-reveal-state="shown"] .spec > div:nth-child(2) { animation-delay: 0.5s; }
+  .case[data-reveal-state="shown"] .spec > div:nth-child(3) { animation-delay: 0.6s; }
+
+  .case[data-reveal-state="shown"] .case__main {
+    animation: m-device 1s var(--ease-out) 0.05s backwards;
+  }
+
+  .case[data-reveal-state="shown"] .case__phone {
+    animation: m-device 1s var(--ease-out) 0.3s backwards;
+  }
+
+  /* ---------- Serviços, Sobre e Processo ---------- */
+  .service[data-reveal-state="shown"] .service__icon,
+  .about__highlights > li[data-reveal-state="shown"] .about__icon {
+    animation: m-pop 0.7s var(--ease-out) 0.15s backwards;
+  }
+
+  .process__step[data-reveal-state="shown"]::before {
+    animation: m-ping 1s ease-out 0.25s backwards;
+  }
+
+  .process__step[data-reveal-state="shown"] .process__number {
+    animation: m-wipe 0.9s var(--ease-out) 0.1s backwards;
+  }
+
+  .about__visual[data-reveal-state="shown"] .about__badge {
+    animation: m-pop 1s var(--ease-out) 0.1s backwards;
+  }
+
+  @media (hover: hover) {
+    .service__icon {
+      transition:
+        translate var(--dur) var(--ease-out),
+        rotate var(--dur) var(--ease-out),
+        border-color var(--dur) ease,
+        box-shadow var(--dur) var(--ease-out);
+    }
+
+    .service:hover .service__icon {
+      translate: 0 -3px;
+      rotate: -5deg;
+    }
+  }
+
+  /* ---------- Botões: brilho que atravessa e seta que avança ---------- */
+  .button--primary {
+    position: relative;
+    overflow: hidden;
+    isolation: isolate;
+  }
+
+  .button--primary::before {
+    content: "";
+    position: absolute;
+    inset: 0 auto 0 0;
+    z-index: -1;
+    width: 45%;
+    background: linear-gradient(100deg, transparent, rgb(var(--c-violet) / 0.35), transparent);
+    translate: -130% 0;
+  }
+
+  @media (hover: hover) {
+    .button--primary:hover::before {
+      translate: 330% 0;
+      transition: translate 0.8s var(--ease-out);
+    }
+
+    .button .icon {
+      transition: translate var(--dur) var(--ease-out);
+    }
+
+    .button:hover .icon {
+      translate: 2px -2px;
+    }
+  }
+
+  /* anel que se expande no botão do contato (2 ciclos, ~4,8 s) */
+  .contact__panel[data-reveal-state="shown"] .button--primary {
+    animation: m-ring 2.4s ease-out 1s 2;
+  }
+
+  /* ---------- Hero: respiro das camadas (2 ciclos, ~4,8 s, depois para) ---------- */
+  .stage__a { animation: hero-rise 1s var(--ease-out) 120ms backwards, m-bob 2.4s ease-in-out 2s 2; }
+  .stage__b { animation: hero-rise 1s var(--ease-out) 240ms backwards, m-bob 2.4s ease-in-out 2.4s 2; }
+  .stage__c { animation: hero-rise 1s var(--ease-out) 360ms backwards, m-bob 2.4s ease-in-out 2.2s 2; }
+  .stage__chip--1 { animation: hero-rise 1s var(--ease-out) 520ms backwards, m-bob 2.4s ease-in-out 2.6s 2; }
+  .stage__chip--2 { animation: hero-rise 1s var(--ease-out) 600ms backwards, m-bob 2.4s ease-in-out 2.8s 2; }
+  .stage__chip--3 { animation: hero-rise 1s var(--ease-out) 680ms backwards, m-bob 2.4s ease-in-out 3s 2; }
+}
+
+@keyframes m-progress {
+  to {
+    scale: 1 1;
+  }
+}
+
+@keyframes m-draw {
+  from {
+    scale: 0 1;
+  }
+}
+
+@keyframes m-wipe {
+  from {
+    clip-path: inset(0 0 100% 0);
+    translate: 0 0.4em;
+  }
+}
+
+@keyframes m-rise {
+  from {
+    opacity: 0;
+    translate: 0 1.25rem;
+  }
+}
+
+@keyframes m-device {
+  from {
+    opacity: 0;
+    translate: 0 2.5rem;
+    scale: 0.96;
+  }
+}
+
+@keyframes m-pop {
+  from {
+    opacity: 0;
+    scale: 0.55;
+    rotate: -14deg;
+  }
+}
+
+@keyframes m-ping {
+  from {
+    box-shadow:
+      0 0 0 1px var(--c-white),
+      0 0 0 0 rgb(var(--c-violet) / 0.8);
+  }
+
+  to {
+    box-shadow:
+      0 0 0 1px var(--c-white),
+      0 0 0 14px rgb(var(--c-violet) / 0);
+  }
+}
+
+@keyframes m-ring {
+  from {
+    box-shadow: 0 0 0 0 rgb(var(--c-violet) / 0.55);
+  }
+
+  to {
+    box-shadow: 0 0 0 18px rgb(var(--c-violet) / 0);
+  }
+}
+
+@keyframes m-bob {
+  50% {
+    translate: 0 -0.5rem;
+  }
+}

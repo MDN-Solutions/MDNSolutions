@@ -14,6 +14,7 @@ css/
   header.css               Header fixo e menu mobile
   footer.css               Rodapé
   sections/                Um arquivo por seção: hero, projects, services, process, about, contact
+  motion.css               Movimento extra (entradas escalonadas, micro-interações, barra de progresso)
 js/main.js                 Header, menu, link ativo, entrada ao rolar, ano no rodapé
 js/scene.js                Inclinação 3D das cenas e brilho que segue o mouse
 assets/                    Fontes, logo, ícones e capturas dos projetos (assets/projects/)
@@ -102,6 +103,10 @@ se move responde ao ponteiro ou à rolagem (ou acontece uma vez, na entrada).
 | Entrada ao rolar (`data-reveal`) | Guiar a leitura | Igual | Conteúdo visível sem JS ou com movimento reduzido |
 | Linha de "Como funciona" | Mostrar a ordem das etapas | Linha vertical | Linha já desenhada |
 | Anéis da seção "Sobre" | Dar vida ao símbolo da marca | Giram ao rolar | Anéis parados |
+| Entradas escalonadas dos projetos, títulos que se revelam, ícones que "saltam" (`css/motion.css`) | Guiar a leitura | Igual | Aparece pronto |
+| Barra de progresso de leitura no header | Mostrar onde se está na página | Igual (navegadores com `animation-timeline`) | Sem barra |
+| Respiro das camadas do hero e anel no botão do contato | Dar vida sem distrair; param sozinhos em ~5 s | Igual | Parados |
+| Brilho que atravessa o botão principal | Feedback de interação | Só com mouse | Sem brilho |
 | Hover de links e botões | Feedback de interação | Não existe em toque | Mudança de cor e borda |
 
 O 3D é feito só com CSS (`perspective`, `preserve-3d`, `translate3d`) e um arquivo JS pequeno,
