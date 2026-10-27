@@ -114,7 +114,7 @@
 
 .case__scene {
   position: absolute;
-  inset: 9% 8% 8%;
+  inset: 6% 5% 6%;
   transform-style: preserve-3d;
   transform: rotateX(calc(var(--rx, 0) * 1deg + 5deg))
     rotateY(calc(var(--ry, 0) * 1deg + var(--sp, 0) * -7deg - 11deg));
@@ -128,7 +128,7 @@
   position: absolute;
   top: 0;
   left: 0;
-  width: 84%;
+  width: 90%;
   transform: translate3d(calc(var(--px, 0) * -6px), 0, 0);
 }
 
@@ -167,6 +167,11 @@
     grid-template-columns: minmax(0, 7fr) minmax(0, 5fr);
     align-items: center;
     gap: clamp(2.5rem, 1rem + 5vw, 5.5rem);
+  }
+
+  /* No caso invertido a imagem vai para a 2ª coluna, então as colunas também se invertem (a imagem sempre fica com a maior) */
+  .case--flip {
+    grid-template-columns: minmax(0, 5fr) minmax(0, 7fr);
   }
 
   .case--flip .case__media {
