@@ -721,8 +721,7 @@
       </section>
 
       <!-- ==================== MDN FLOW ==================== -->
-      <!-- Cena 6: o esquema ilustrativo (receitas, despesas e saldo; não são telas reais do produto)
-           vem de longe, avança e se organiza em camadas conforme a rolagem. -->
+      <!-- Cena 6: a tela real do MDN Flow vem de longe, avança e se organiza em camadas conforme a rolagem. -->
       <section
         class="section flowscene"
         id="mdn-flow"
@@ -736,45 +735,31 @@
         <div class="container">
           <aside class="product" data-reveal="zoom" data-spotlight aria-labelledby="product-title">
             <div class="product__visual">
-              <!-- Esquema ilustrativo da interface (decorativo): janela do sistema, gráfico de receitas e despesas,
-                   lançamentos e saldo, só com blocos e barras genéricos (sem números nem telas reais). -->
-              <div class="product__art" aria-hidden="true" data-stage="flow">
+              <!-- Tela real do MDN Flow (Receitas e despesas). Os dois destaques são recortes da própria tela,
+                   em outra profundidade, e por isso ficam escondidos dos leitores de tela (alt vazio). -->
+              <div class="product__art" data-stage="flow">
                 <div class="product__world">
-                  <div class="flow flow--base">
-                    <div class="flow__side"><i class="on"></i><i></i><i></i><i></i><i></i></div>
-                    <div class="flow__main">
-                      <div class="flow__top"><i></i><i></i><i></i></div>
-                      <div class="flow__grid"><i></i><i></i><i></i><i></i></div>
-                      <div class="flow__table"><i></i><i></i><i></i></div>
-                    </div>
+                  <figure class="flow flow--shot">
+                    <img
+                      src="assets/flow/flow-app.webp"
+                      srcset="assets/flow/flow-app-sm.webp 900w, assets/flow/flow-app.webp 1600w"
+                      sizes="(min-width: 60em) 60vw, 92vw"
+                      alt="Tela Receitas e despesas do MDN Flow: filtros por período, tipo, situação, conta e categoria, totais de receitas, despesas e resultado, e os botões Nova despesa e Nova receita. Menu lateral com Dashboard, Agenda, Clientes, Produtos e serviços, Contas a pagar, Contas a receber, Transferências, Notas fiscais e Relatórios."
+                      width="1600"
+                      height="742"
+                      loading="lazy"
+                      decoding="async"
+                    />
+                  </figure>
+                  <div class="flow flow--menu" aria-hidden="true">
+                    <img src="assets/flow/flow-menu.webp" alt="" width="373" height="317" loading="lazy" decoding="async" />
                   </div>
-                  <div class="flow flow--chart">
-                    <p class="flow__label">Receitas e despesas</p>
-                    <div class="flow__bars">
-                      <span><i style="--h: 52%"></i><i style="--h: 34%" class="is-out"></i></span>
-                      <span><i style="--h: 64%"></i><i style="--h: 40%" class="is-out"></i></span>
-                      <span><i style="--h: 48%"></i><i style="--h: 44%" class="is-out"></i></span>
-                      <span><i style="--h: 82%"></i><i style="--h: 46%" class="is-out"></i></span>
-                      <span><i style="--h: 60%"></i><i style="--h: 38%" class="is-out"></i></span>
-                      <span><i style="--h: 74%"></i><i style="--h: 50%" class="is-out"></i></span>
-                    </div>
+                  <div class="flow flow--totals" aria-hidden="true">
+                    <img src="assets/flow/flow-totais.webp" alt="" width="1078" height="103" loading="lazy" decoding="async" />
                   </div>
-                  <div class="flow flow--list">
-                    <p class="flow__label">Lançamentos</p>
-                    <div class="flow__row is-in"><b><svg class="icon" width="12" height="12"><use href="#icon-arrow-up-right" /></svg></b><span></span><em></em></div>
-                    <div class="flow__row is-out"><b><svg class="icon" width="12" height="12"><use href="#icon-arrow-up-right" /></svg></b><span></span><em></em></div>
-                    <div class="flow__row is-in"><b><svg class="icon" width="12" height="12"><use href="#icon-arrow-up-right" /></svg></b><span></span><em></em></div>
-                  </div>
-                  <div class="flow flow--balance">
-                    <p class="flow__label">Saldo</p>
-                    <span class="flow__big"></span>
-                    <svg class="flow__trend" viewBox="0 0 120 40" preserveAspectRatio="none"><path pathLength="1" d="M2 34 C 18 33 26 19 46 23 S 78 9 96 13 S 112 5 118 3" /></svg>
-                  </div>
-                  <div class="flow flow--chip flow--chip-in"><b></b>Receitas</div>
-                  <div class="flow flow--chip flow--chip-out"><b></b>Despesas</div>
                 </div>
               </div>
-              <p class="product__caption">Esquema ilustrativo da interface.</p>
+              <p class="product__caption">Tela de receitas e despesas do MDN Flow.</p>
             </div>
             <div class="product__copy">
               <p class="product__kicker">Produto próprio</p>

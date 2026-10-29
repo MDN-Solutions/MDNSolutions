@@ -127,7 +127,7 @@ se move responde ao ponteiro ou à rolagem (ou acontece uma vez, na entrada).
 | Entradas laterais e com zoom (`left`/`right`/`zoom` em `data-reveal`) | Narrativa de leitura por seção | Igual | Aparece pronto |
 | Fio violeta que se desenha no topo de cada seção | Transição entre blocos | Igual | Linha estática |
 | Cards de projeto/serviço: elevação, borda e brilho no hover/foco | Feedback e hierarquia | Só foco por teclado | Sem movimento |
-| MDN Flow: esquema ilustrativo em camadas 3D (janela do sistema, gráfico de receitas e despesas, lançamentos e saldo; só blocos e barras, sem números nem telas reais) | Destacar o produto sem inventar telas | Mesmo esquema, mais contido | Estático |
+| MDN Flow: tela real "Receitas e despesas" em camadas 3D (`assets/flow/`: a tela recortada e dois destaques tirados dela, menu Financeiro e totais) | Mostrar o produto de verdade | Mesma tela; no celular só o destaque do menu | Estático |
 | Serviços: janelas ilustrativas em 3D com etiquetas numeradas que acendem junto com o serviço em foco | Explicar o que cada serviço entrega | Não aparecem (cada serviço acende ao passar pelo centro) | Lista em papel |
 | Barra de progresso de leitura no header | Mostrar onde se está na página | Igual (navegadores com `animation-timeline`) | Sem barra |
 | Anel que se expande no botão do contato (2 ciclos, ~4,8 s) | Chamar atenção sem distrair | Igual | Parado |
@@ -180,12 +180,12 @@ scale, rotate, 3D) está em `css/scenes/`, usando só `transform`/`translate`/`s
 | 3 | Transições | A folha seguinte sobe cobrindo o palco: hero → projetos (cantos que se endireitam e luz violeta), projetos → serviços (a folha se deita em perspectiva), processo → MDN Flow (mudança de tom para índigo), Sobre → Contato (cúpula que se achata) | Rolagem normal |
 | 4 | Serviços | Seção em papel: o serviço em foco acende (barra violeta) e a janela ilustrativa dele (wireframe genérico, não é projeto) vem à frente em 3D, com etiquetas numeradas | Cada serviço acende ao passar pelo centro |
 | 5 | Como funciona | Linha horizontal em zigue-zague que se desenha com a rolagem; marcador com a logo na ponta; cada etapa liga quando a linha passa | Linha vertical que se desenha |
-| 6 | MDN Flow | Esquema ilustrativo em camadas que vem de longe, avança ao primeiro plano e abre em profundidades diferentes; barras crescem e a linha de tendência se desenha; texto e botão "Solicitar demonstração" ficam inteiros desde a chegada | Mesmo avanço, mais contido |
+| 6 | MDN Flow | Tela real do sistema que vem de longe, avança ao primeiro plano e abre em profundidades diferentes (tela ao fundo, menu e totais à frente); texto e botão "Solicitar demonstração" ficam inteiros desde a chegada | Mesmo avanço, mais contido |
 | 7 | Sobre | Anéis em planos diferentes giram com a rolagem, a "câmera" dá a volta e se aproxima, o brilho muda de lado e o texto acende na ordem de leitura | Anéis e câmera ligados à passagem pela tela |
 | 8 | Encerramento | O Contato sobe e fica fixo; símbolo, celular e a conversa do hero e anéis convergem para o botão do WhatsApp, que acende no fim; título palavra por palavra | Os elementos saem de uma faixa abaixo do botão e entram nele |
 
-Todas as ilustrações são decorativas (`aria-hidden`) e não mostram métricas, telas ou funções
-inventadas; o MDN Flow e os wireframes de serviços são esquemas genéricos.
+As ilustrações são decorativas (`aria-hidden`) e não mostram métricas, telas ou funções inventadas.
+O MDN Flow usa uma tela real (com `alt` descritivo e sem dados de clientes); os wireframes de serviços são esquemas genéricos.
 
 **Ajustes comuns.**
 

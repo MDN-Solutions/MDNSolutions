@@ -320,21 +320,9 @@
   .process__step[data-reveal-state="shown"] .process__title { animation-delay: 0.22s; }
   .process__step[data-reveal-state="shown"] .process__text { animation-delay: 0.34s; }
 
-  /* ---------- MDN Flow: barras crescem e as camadas flutuam 2 ciclos (sem as cenas de rolagem) ---------- */
-  .product[data-reveal-state="shown"] .flow__bars i {
-    animation: m-grow 0.9s var(--ease-out) backwards;
-  }
-
-  .product[data-reveal-state="shown"] .flow__bars i:nth-child(1) { animation-delay: 0.25s; }
-  .product[data-reveal-state="shown"] .flow__bars i:nth-child(2) { animation-delay: 0.33s; }
-  .product[data-reveal-state="shown"] .flow__bars i:nth-child(3) { animation-delay: 0.41s; }
-  .product[data-reveal-state="shown"] .flow__bars i:nth-child(4) { animation-delay: 0.49s; }
-  .product[data-reveal-state="shown"] .flow__bars i:nth-child(5) { animation-delay: 0.57s; }
-  .product[data-reveal-state="shown"] .flow__bars i:nth-child(6) { animation-delay: 0.65s; }
-
-  .product[data-reveal-state="shown"] .flow--chart { animation: m-float 2.8s ease-in-out 1.6s 2; }
-  .product[data-reveal-state="shown"] .flow--list { animation: m-float 2.6s ease-in-out 1.9s 2; }
-  .product[data-reveal-state="shown"] .flow--balance { animation: m-float 2.4s ease-in-out 2.2s 2; }
+  /* ---------- MDN Flow: os destaques da tela flutuam 2 ciclos (sem as cenas de rolagem) ---------- */
+  .product[data-reveal-state="shown"] .flow--menu { animation: m-float 2.8s ease-in-out 1.2s 2; }
+  .product[data-reveal-state="shown"] .flow--totals { animation: m-float 2.6s ease-in-out 1.6s 2; }
 
   /* ---------- Serviços: título acompanha o hover ---------- */
   .service__title {
@@ -411,8 +399,3 @@
   }
 }
 
-@keyframes m-grow {
-  from {
-    scale: 1 0;
-  }
-}

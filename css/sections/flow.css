@@ -2,19 +2,15 @@
    MDN Flow: produto próprio
    Aqui fica a faixa (layout estático e celular); com as cenas de rolagem ela vira o palco da
    seção (css/scenes/flow.css).
-   O esquema da interface é ILUSTRATIVO: janela do sistema, gráfico de receitas e despesas,
-   lançamentos e saldo só com blocos e barras genéricos, sem números, nomes ou telas reais.
-   Só mostra o que se sabe do produto: controle de receitas, despesas e saldo.
+   A imagem é a tela REAL "Receitas e despesas" do MDN Flow (recortada: só a área do sistema). Os dois
+   destaques (menu Financeiro e totais) são recortes da mesma tela, para dar profundidade; sem dados de clientes.
    Ganchos de JS: [data-spotlight] recebe --mx/--my (brilho do ponteiro); js/scene.js escreve --rx/--ry.
    Atenção ao 3D: .product__world usa preserve-3d. Nada entre ele e as camadas (.flow) pode ter
    overflow, filter, opacity < 1 ou contain; as camadas em si podem.
    ========================================================================== */
 
 .product {
-  --f-in: rgb(var(--c-violet)); /* receitas */
-  --f-out: #cfc6ff; /* despesas: lilás claro, distinto do violeta pela luminosidade */
   --f-line: rgb(255 255 255 / 0.13);
-  --f-card: linear-gradient(160deg, #1b1836 0%, #100e22 100%);
   position: relative;
   margin-top: clamp(2rem, 1.5rem + 2vw, 3rem);
   padding: clamp(1.5rem, 1rem + 2.5vw, 2.5rem);
@@ -80,12 +76,12 @@
   letter-spacing: 0.02em;
 }
 
-/* ---------- Esquema da interface (camadas em 3D) ---------- */
+/* ---------- Tela do sistema (camadas em 3D) ---------- */
 
 .product__art {
   position: relative;
   width: 100%;
-  aspect-ratio: 1.05 / 1;
+  aspect-ratio: 1.9 / 1;
   container-type: inline-size;
   perspective: 1200px;
   perspective-origin: 50% 40%;
@@ -96,7 +92,7 @@
   position: absolute;
   inset: 0;
   transform-style: preserve-3d;
-  transform: rotateX(calc(var(--rx, 0) * 1deg + 7deg)) rotateY(calc(var(--ry, 0) * 1deg - 10deg));
+  transform: rotateX(calc(var(--rx, 0) * 1deg + 5deg)) rotateY(calc(var(--ry, 0) * 1deg - 8deg));
 }
 
 .product__art[data-live="true"] .product__world {
@@ -106,303 +102,45 @@
 /* cartão de vidro escuro com luz vinda de cima à esquerda */
 .flow {
   position: absolute;
-  padding: 2cqw 2.2cqw;
+  margin: 0;
+  overflow: hidden;
   border: 1px solid var(--f-line);
-  border-radius: 2cqw;
-  background: var(--f-card);
+  border-radius: 1.6cqw;
+  background: #0c0c0e;
   box-shadow:
     inset 0 1px 0 rgb(255 255 255 / 0.14),
     0 3.5cqw 6cqw -3cqw rgb(0 0 0 / 0.95),
     0 0 7cqw -3cqw rgb(var(--c-violet) / 0.55);
 }
 
-.flow__label {
-  margin-bottom: 1.6cqw;
-  color: var(--c-chalk);
-  font-size: max(0.75rem, 1.6cqw);
-  font-weight: 620;
-  letter-spacing: 0.08em;
-  line-height: 1.2;
-  text-transform: uppercase;
-}
-
-/* janela do sistema ao fundo: menu lateral, barra superior e quatro blocos */
-.flow--base {
-  inset: 7% 0 2% 10%;
-  display: grid;
-  grid-template-columns: 14% minmax(0, 1fr);
-  padding: 0;
-  overflow: hidden;
-  background: linear-gradient(160deg, #15122b, #0a0916);
-  transform: translateZ(-50px);
-}
-
-.flow__side {
-  display: grid;
-  align-content: start;
-  gap: 2cqw;
-  padding: 2.4cqw 1.6cqw;
-  border-right: 1px solid var(--f-line);
-}
-
-.flow__side i {
-  height: 1cqw;
-  border-radius: 99px;
-  background: rgb(255 255 255 / 0.2);
-}
-
-.flow__side i.on {
-  background: rgb(var(--c-violet));
-  box-shadow: 0 0 1.6cqw rgb(var(--c-violet) / 0.8);
-}
-
-.flow__main {
-  display: grid;
-  align-content: start;
-  gap: 1.8cqw;
-  padding: 2.4cqw;
-}
-
-.flow__top {
-  display: flex;
-  gap: 1cqw;
-}
-
-.flow__top i {
-  width: 14%;
-  height: 1.1cqw;
-  border-radius: 99px;
-  background: rgb(255 255 255 / 0.16);
-}
-
-.flow__grid {
-  display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 1.6cqw;
-}
-
-/* cada bloco: duas linhas de texto */
-.flow__grid i {
-  position: relative;
-  height: 11cqw;
-  border: 1px solid var(--f-line);
-  border-radius: 1.2cqw;
-  background: rgb(255 255 255 / 0.035);
-}
-
-.flow__grid i::before,
-.flow__grid i::after {
-  content: "";
-  position: absolute;
-  left: 1.8cqw;
-  height: 1cqw;
-  border-radius: 99px;
-  background: rgb(255 255 255 / 0.16);
-}
-
-.flow__grid i::before {
-  top: 1.8cqw;
-  width: 30%;
-}
-
-.flow__grid i::after {
-  bottom: 1.8cqw;
-  width: 52%;
-  background: rgb(var(--c-violet) / 0.5);
-}
-
-/* tabela: linhas finas */
-.flow__table {
-  display: grid;
-  gap: 3cqw;
-  padding-top: 1.2cqw;
-}
-
-.flow__table i {
-  height: 1px;
-  background: var(--f-line);
-}
-
-/* gráfico: receitas (violeta) e despesas (lilás) lado a lado, mês a mês */
-.flow--chart {
-  top: 13%;
-  left: 0;
-  width: 56%;
-  height: 57%;
-  transform: translateZ(0);
-}
-
-.flow__bars {
-  display: flex;
-  align-items: flex-end;
-  justify-content: space-between;
-  gap: 1.6cqw;
-  height: calc(100% - 4.6cqw);
-  border-bottom: 1px solid rgb(255 255 255 / 0.2);
-  background: repeating-linear-gradient(
-    to top,
-    transparent 0 calc(25% - 1px),
-    rgb(255 255 255 / 0.07) calc(25% - 1px) 25%
-  );
-}
-
-.flow__bars span {
-  display: flex;
-  flex: 1;
-  align-items: flex-end;
-  gap: 0.5cqw;
-  height: 100%;
-}
-
-.flow__bars i {
-  flex: 1;
-  height: var(--h);
-  border-radius: 0.7cqw 0.7cqw 0 0;
-  background: linear-gradient(to top, rgb(var(--c-violet) / 0.55), var(--f-in));
-  box-shadow: 0 0 2cqw -0.4cqw rgb(var(--c-violet) / 0.7);
-  transform-origin: bottom;
-}
-
-.flow__bars i.is-out {
-  background: linear-gradient(to top, rgb(207 198 255 / 0.45), var(--f-out));
-  box-shadow: none;
-}
-
-/* lançamentos: cada linha é uma receita (seta que entra) ou uma despesa (seta que sai) */
-.flow--list {
-  right: 0;
-  bottom: 0;
-  width: 52%;
-  transform: translateZ(60px);
-}
-
-.flow__row {
-  display: grid;
-  grid-template-columns: 3.8cqw minmax(0, 1fr) 7.5cqw;
-  align-items: center;
-  gap: 1.6cqw;
-  padding-block: 1.2cqw;
-  border-top: 1px solid var(--f-line);
-}
-
-.flow__row b {
-  display: grid;
-  place-items: center;
-  width: 3.8cqw;
-  height: 3.8cqw;
-  border-radius: 50%;
-  background: rgb(var(--c-violet) / 0.28);
-  box-shadow: inset 0 0 0 1px rgb(var(--c-violet) / 0.8);
-  color: #fff;
-}
-
-.flow__row b .icon {
-  width: 1.9cqw;
-  height: 1.9cqw;
-  stroke-width: 2.4;
-  rotate: 180deg; /* receita: a seta entra */
-}
-
-.flow__row span {
-  height: 1cqw;
-  border-radius: 99px;
-  background: rgb(255 255 255 / 0.24);
-}
-
-.flow__row em {
-  height: 1.2cqw;
-  border-radius: 99px;
-  background: var(--f-in);
-}
-
-.flow__row.is-out b {
-  background: var(--f-out);
-  box-shadow: none;
-  color: #1b1836;
-}
-
-.flow__row.is-out b .icon {
-  rotate: 0deg; /* despesa: a seta sai */
-}
-
-.flow__row.is-out em {
-  background: var(--f-out);
-}
-
-/* saldo: valor (bloco), tendência (linha que se desenha) */
-.flow--balance {
-  top: 0;
-  right: 3%;
-  width: 36%;
-  transform: translateZ(100px);
-}
-
-.flow__big {
+.flow img {
   display: block;
-  width: 64%;
-  height: 3cqw;
-  margin-bottom: 1.6cqw;
-  border-radius: 0.8cqw;
-  background: linear-gradient(90deg, #fff, rgb(255 255 255 / 0.55));
-}
-
-.flow__trend {
   width: 100%;
-  height: 6.5cqw;
-  fill: none;
-  stroke: var(--f-in);
-  stroke-width: 2;
-  stroke-linecap: round;
-  vector-effect: non-scaling-stroke;
-  overflow: visible;
+  height: auto;
 }
 
-.flow__trend path {
-  vector-effect: non-scaling-stroke;
-  stroke-dasharray: 1;
-  stroke-dashoffset: 0;
+/* a tela inteira, ao fundo */
+.flow--shot {
+  top: 0;
+  left: 7%;
+  width: 93%;
+  transform: translateZ(-30px);
 }
 
-/* etiquetas flutuantes: legenda do gráfico, em outra profundidade */
-.flow--chip {
-  display: flex;
-  align-items: center;
-  gap: 1.2cqw;
-  padding: 1cqw 2.2cqw 1cqw 1.6cqw;
-  border-radius: 99px;
-  background: #1b1836;
-  color: #fff;
-  font-size: max(0.75rem, 1.7cqw);
-  font-weight: 620;
-  letter-spacing: 0.02em;
-  white-space: nowrap;
+/* destaque 1: o menu Financeiro, à frente e à esquerda */
+.flow--menu {
+  top: 26%;
+  left: 0;
+  width: 23%;
+  transform: translateZ(70px);
 }
 
-.flow--chip b {
-  width: 1.6cqw;
-  height: 1.6cqw;
-  border-radius: 50%;
-}
-
-.flow--chip-in {
-  top: 33%;
-  left: 40%;
+/* destaque 2: os totais (receitas, despesas e resultado), mais à frente e embaixo */
+.flow--totals {
+  right: 7%;
+  bottom: 1%;
+  width: 62%;
   transform: translateZ(120px);
-}
-
-.flow--chip-in b {
-  background: var(--f-in);
-  box-shadow: 0 0 1.6cqw var(--f-in);
-}
-
-.flow--chip-out {
-  top: 66%;
-  left: 5%;
-  transform: translateZ(150px);
-}
-
-.flow--chip-out b {
-  background: var(--f-out);
 }
 
 /* ---------- Faixa: ao lado do texto em telas médias e largas ---------- */
@@ -423,5 +161,20 @@
 @media (width < 48em) {
   .product__visual {
     margin-bottom: 1.75rem;
+  }
+
+  /* no celular a tela inteira fica pequena para ler: o destaque do menu cresce e os totais (faixa
+     muito larga, ilegível nessa largura) saem */
+  .product__art {
+    aspect-ratio: 1.45 / 1;
+  }
+
+  .flow--menu {
+    top: 32%;
+    width: 46%;
+  }
+
+  .flow--totals {
+    display: none;
   }
 }
