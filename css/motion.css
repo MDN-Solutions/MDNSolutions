@@ -23,8 +23,7 @@
   }
 
   /* ---------- Títulos e legendas de seção ---------- */
-  [data-reveal-state="shown"] .section-kicker::before,
-  .case[data-reveal-state="shown"] .case__kicker::after {
+  [data-reveal-state="shown"] .section-kicker::before {
     transform-origin: left;
     animation: m-draw 0.9s var(--ease-out) 0.1s backwards;
   }
@@ -33,22 +32,21 @@
     animation: m-wipe 1s var(--ease-out) 0.12s backwards;
   }
 
-  /* ---------- Projetos ---------- */
-  .case[data-reveal-state="shown"] :is(.case__kicker, .case__title, .case__text, .spec) {
-    animation: m-rise 0.8s var(--ease-out) backwards;
+  /* ---------- Projetos ----------
+     Cada bloco de texto entra quando ele mesmo chega à tela (data-reveal em cada um): no celular o caso
+     é alto e a entrada pelo cartão inteiro acontecia com o texto ainda abaixo da dobra, fora de vista. */
+  .case__kicker[data-reveal-state="shown"]::after {
+    transform-origin: left;
+    animation: m-draw 0.9s var(--ease-out) 0.1s backwards;
   }
 
-  .case[data-reveal-state="shown"] .case__title { animation-delay: 0.1s; }
-  .case[data-reveal-state="shown"] .case__text { animation-delay: 0.2s; }
-  .case[data-reveal-state="shown"] .spec { animation-delay: 0.3s; }
-
-  .case[data-reveal-state="shown"] .spec > div {
+  .spec[data-reveal-state="shown"] > div {
     animation: m-rise 0.7s var(--ease-out) backwards;
   }
 
-  .case[data-reveal-state="shown"] .spec > div:nth-child(1) { animation-delay: 0.4s; }
-  .case[data-reveal-state="shown"] .spec > div:nth-child(2) { animation-delay: 0.5s; }
-  .case[data-reveal-state="shown"] .spec > div:nth-child(3) { animation-delay: 0.6s; }
+  .spec[data-reveal-state="shown"] > div:nth-child(1) { animation-delay: 0.1s; }
+  .spec[data-reveal-state="shown"] > div:nth-child(2) { animation-delay: 0.2s; }
+  .spec[data-reveal-state="shown"] > div:nth-child(3) { animation-delay: 0.3s; }
 
   .case[data-reveal-state="shown"] .case__main {
     animation: m-device 1s var(--ease-out) 0.05s backwards;
@@ -59,7 +57,6 @@
   }
 
   /* ---------- Serviços, Sobre e Processo ---------- */
-  .service[data-reveal-state="shown"] .service__icon,
   .about__highlights > li[data-reveal-state="shown"] .about__icon {
     animation: m-pop 0.7s var(--ease-out) 0.15s backwards;
   }
@@ -124,7 +121,7 @@
   }
 
   /* anel que se expande no botão do contato (2 ciclos, ~4,8 s) */
-  .contact__panel[data-reveal-state="shown"] .button--primary {
+  .contact__actions[data-reveal-state="shown"] .button--primary {
     animation: m-ring 2.4s ease-out 1s 2;
   }
 

@@ -7,7 +7,7 @@
      3. as camadas (símbolo, celular e balão) se afastam em profundidade.
    --x: "cortina", a próxima seção (Projetos) sobe e cobre o palco; ele recua e escurece.
    O texto e os botões ficam inteiros até a cortina (só perdem um pouco de presença enquanto são cobertos).
-   No lite (celular) o hero rola normalmente e os mesmos movimentos acontecem com metade da intensidade (--hk).
+   No lite (celular) o hero rola normalmente e os mesmos movimentos acontecem com 85% da intensidade (--hk).
    ========================================================================== */
 
 html[data-scenes] .hero {
@@ -20,7 +20,7 @@ html[data-scenes] .hero {
 /* No celular o hero rola normalmente e o painel fica abaixo do texto: --q anda pelo hero inteiro
    (data-q="leave"), então o desenho vira site enquanto o painel sobe pela tela (~60 a 410 px de rolagem) */
 html[data-scenes="lite"] .hero {
-  --hk: 0.5;
+  --hk: 0.85;
   --p0: 0.06;
   --pd: 0.34;
 }
@@ -28,6 +28,7 @@ html[data-scenes="lite"] .hero {
 /* o quadriculado cresce com a rolagem; no celular o palco não é fixo, então ele corta o excesso
    (senão a página ganha rolagem horizontal) */
 html[data-scenes] .hero__stage {
+  overflow: hidden; /* navegador sem overflow: clip */
   overflow: clip;
 }
 
@@ -88,6 +89,13 @@ html[data-scenes] .hero__copy {
   translate: 0 calc(var(--p) * var(--hk) * var(--lift) * -1);
   scale: calc(1 - var(--p) * var(--hk) * 0.05);
   opacity: calc(1 - var(--x, 0) * 0.4);
+}
+
+/* navegador sem svh (iOS 15.3 e anteriores, Chrome < 108): vh no lugar */
+@supports not (height: 1svh) {
+  html[data-scenes] .hero__copy {
+    --lift: 6vh;
+  }
 }
 
 /* ---------- Objeto 3D: o desenho se endireita e se aproxima; a cortina o afasta ---------- */

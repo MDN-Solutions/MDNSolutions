@@ -19,22 +19,36 @@
  * Os valores avançam suavizados (inércia curta); ao parar de rolar, o loop termina sozinho.
  * Voltar a rolar para cima desfaz tudo na mesma proporção.
  *
- * Modos (atributo data-scenes no <html>, definido também por um script no <head>):
- *   "pin"  telas largas (>= 60em e >= 36em de altura): trilhos [data-pin] viram palcos fixos
- *   "lite" telas menores: sem palco fixo; as cenas viram efeitos leves na rolagem normal
- *   ausente: "reduzir movimento" ligado ou sem JS; a página fica estática e em fluxo normal
+ * Modos (atributo data-scenes no <html>):
+ *   "pin"  telas largas (>= 60em e >= 36em de altura) com svh, cqw e overflow: clip: trilhos [data-pin]
+ *          viram palcos fixos
+ *   "lite" as demais telas com transformações individuais: sem palco fixo; as cenas viram efeitos leves
+ *          na rolagem normal (sem svh/cqw/overflow: clip o CSS usa alternativas, ver @supports)
+ *   ausente: "reduzir movimento" ligado, navegador sem transformações individuais, sem JS ou motor com
+ *          erro; a página fica estática e em fluxo normal (as entradas por observador seguem em main.js)
+ * Quem decide o modo é window.MDNMotion (script no <head> do index.html, antes da 1ª pintura); este arquivo
+ * só o aplica de novo quando a tela muda. O motivo fica em <html data-scenes-why> e no console.
  */
 (function () {
   "use strict";
 
   const root = document.documentElement;
-  const reduceQuery = window.matchMedia("(prefers-reduced-motion: reduce)");
-  const pinQuery = window.matchMedia("(min-width: 60em) and (min-height: 36em)");
-  // o CSS das cenas usa svh, cqw, overflow: clip e translate/scale/rotate individuais; sem eles, estático
-  const css = window.CSS;
-  const supported = Boolean(
-    css && css.supports && css.supports("height: 1svh") && css.supports("width: 1cqw") && css.supports("overflow: clip") && css.supports("translate: 1px"),
-  );
+  const motion = window.MDNMotion; // detecção de recursos e modo (script no <head>)
+  if (!motion) {
+    root.removeAttribute("data-scenes");
+    root.setAttribute("data-scenes-why", "off:sem-detector");
+    if (window.console) console.warn("[MDN] Cenas de rolagem desligadas: o detector (window.MDNMotion) não está na página.");
+    return;
+  }
+
+  // matchMedia().addEventListener não existe no Safari 13 e anteriores: addListener faz o mesmo
+  const listen = (query, handler) => {
+    if (!query) return;
+    if (query.addEventListener) query.addEventListener("change", handler);
+    else if (query.addListener) query.addListener(handler);
+  };
+  const reduceQuery = motion.features.matchMedia ? window.matchMedia("(prefers-reduced-motion: reduce)") : null;
+  const pinQuery = motion.features.matchMedia ? window.matchMedia("(min-width: 60em) and (min-height: 36em)") : null;
 
   const SMOOTH = 0.16; // fração do caminho percorrida por quadro (a 60 fps)
   const EPSILON = 0.0006;
@@ -82,21 +96,45 @@
   }
 
   /* ---------- Modo ---------- */
+  let failed = false; // o motor deu erro: fica estático até recarregar
+  let reported = "";
+
+  // registra o modo uma vez por mudança: info quando é esperado, aviso quando falta recurso ou há erro
+  function report(why) {
+    if (why === reported || !window.console) return;
+    reported = why;
+    const expected = why === "pin" || why === "lite:tela-pequena" || why === "off:movimento-reduzido";
+    (expected ? console.info : console.warn).call(console, "[MDN] Cenas de rolagem: " + why);
+  }
+
   function applyMode() {
-    const next = !supported || reduceQuery.matches ? null : pinQuery.matches ? "pin" : "lite";
-    mode = next;
-    if (next) {
-      root.setAttribute("data-scenes", next);
-      root.setAttribute("data-engine", "on");
-    } else {
-      root.removeAttribute("data-scenes");
-      root.removeAttribute("data-engine");
-    }
+    if (failed) return;
+    const result = motion.apply();
+    mode = result.mode;
+    if (mode) root.setAttribute("data-engine", "on");
     scenes.forEach((s) => {
-      s.pinned = next === "pin" && s.pin;
-      s.enabled = next !== null && !(s.liteOnly && next === "pin");
+      s.pinned = mode === "pin" && s.pin;
+      s.enabled = mode !== null && !(s.liteOnly && mode === "pin");
       if (!s.enabled) clearScene(s);
     });
+    report(result.why);
+  }
+
+  // erro inesperado: devolve a página ao layout estático (todo o conteúdo visível) e diz por quê
+  function fail(error) {
+    failed = true;
+    mode = null;
+    if (raf) window.cancelAnimationFrame(raf);
+    raf = 0;
+    scenes.forEach((s) => {
+      s.enabled = false;
+      s.pinned = false;
+      clearScene(s);
+    });
+    root.removeAttribute("data-scenes");
+    root.removeAttribute("data-engine");
+    root.setAttribute("data-scenes-why", "off:erro-no-motor");
+    if (window.console) console.error("[MDN] Cenas de rolagem desligadas por erro:", error);
   }
 
   function clearScene(s) {
@@ -109,6 +147,15 @@
 
   /* ---------- Medidas (só quando o layout muda) ---------- */
   function measure() {
+    if (failed) return;
+    try {
+      measureScenes();
+    } catch (error) {
+      fail(error);
+    }
+  }
+
+  function measureScenes() {
     vh = window.innerHeight;
     const y = window.scrollY;
     docMax = Math.max(0, root.scrollHeight - vh);
@@ -194,6 +241,15 @@
 
   function frame(now) {
     raf = 0;
+    if (failed) return;
+    try {
+      step(now);
+    } catch (error) {
+      fail(error);
+    }
+  }
+
+  function step(now) {
     const dt = last ? Math.min(64, now - last) : 16.667;
     last = now;
     const y = window.scrollY;
@@ -310,29 +366,33 @@
     window.requestAnimationFrame(syncHash);
   }
 
-  window.addEventListener("scroll", request, { passive: true });
-  window.addEventListener("resize", () => {
-    applyMode();
-    measure();
-  });
-  window.addEventListener("load", onLoad);
-  if (document.fonts && document.fonts.ready) document.fonts.ready.then(measure);
-  if ("ResizeObserver" in window) {
-    let height = document.body.offsetHeight;
-    new ResizeObserver(() => {
-      if (document.body.offsetHeight !== height) {
-        height = document.body.offsetHeight;
-        measure();
-      }
-    }).observe(document.body);
-  }
-
   const onModeChange = () => {
-    applyMode();
-    measure();
+    try {
+      applyMode();
+      measure();
+    } catch (error) {
+      fail(error);
+    }
   };
-  reduceQuery.addEventListener("change", onModeChange);
-  pinQuery.addEventListener("change", onModeChange);
 
-  setup();
+  try {
+    window.addEventListener("scroll", request, { passive: true });
+    window.addEventListener("resize", onModeChange);
+    window.addEventListener("load", onLoad);
+    if (document.fonts && document.fonts.ready) document.fonts.ready.then(measure);
+    if ("ResizeObserver" in window) {
+      let height = document.body.offsetHeight;
+      new ResizeObserver(() => {
+        if (document.body.offsetHeight !== height) {
+          height = document.body.offsetHeight;
+          measure();
+        }
+      }).observe(document.body);
+    }
+    listen(reduceQuery, onModeChange);
+    listen(pinQuery, onModeChange);
+    setup();
+  } catch (error) {
+    fail(error);
+  }
 })();

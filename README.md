@@ -16,7 +16,7 @@ css/
   sections/                Um arquivo por seção: hero, projects, services, flow (MDN Flow), process, about, contact
   motion.css               Movimento extra (entradas escalonadas, micro-interações, barra de progresso)
   scenes/                  Cenas de rolagem (scrollytelling): core + hero, projects, services, process,
-                           flow, about e closing
+                           flow, about, closing e lite (movimentos extras do celular)
 js/main.js                 Header, menu, link ativo, entrada ao rolar, ano no rodapé
 js/scene.js                Inclinação 3D das cenas e brilho que segue o mouse
 js/scenes.js               Motor das cenas de rolagem (lê a rolagem e escreve --e, --q, --x, --st)
@@ -163,15 +163,30 @@ scale, rotate, 3D) está em `css/scenes/`, usando só `transform`/`translate`/`s
 | `--st` | só com `data-stations="N"`: posição de 0 a N-1, com pausas (`data-hold`) em cada item |
 | `--page` | na raiz: progresso do documento (barra do header) |
 
-**Três modos**, definidos em `html[data-scenes]` (por um script no `<head>`, antes da primeira pintura):
+**Modos**, definidos em `html[data-scenes]` por `window.MDNMotion` (script no `<head>`, antes da primeira
+pintura; `js/scenes.js` só o reaplica quando a tela muda). Cada recurso tem o seu requisito, e faltar um só
+não desliga tudo:
 
-- `pin`: telas largas (≥ 60em de largura e ≥ 36em de altura). Os trilhos `[data-pin]` ficam altos
-  e o palco (`[data-pinbox]`) usa `position: sticky` durante a história.
-- `lite`: celulares e telas baixas. Nada fica fixo; as mesmas cenas viram efeitos mais leves na
-  rolagem normal (linha do processo vertical, serviços que acendem no centro, projetos em lista).
-- sem o atributo: `prefers-reduced-motion: reduce`, navegador sem `svh`/`cqw`/`overflow: clip`/`translate`, sem JS ou se o motor falhar (o script do
-  `<head>` remove `data-scenes` após 5 s sem resposta). A página fica estática, em fluxo normal, com
-  todo o conteúdo e os links, e sem pinagem, sem parallax e sem animações.
+| Modo | Quando | O que é |
+|---|---|---|
+| `pin` | ≥ 60em de largura, ≥ 36em de altura e `svh`, `cqw` e `overflow: clip` | Trilhos `[data-pin]` altos; o palco (`[data-pinbox]`) fica fixo (`position: sticky`) durante a história |
+| `lite` | qualquer outra tela, com `translate`/`scale`/`rotate` individuais | Nada fixo; as mesmas cenas viram efeitos na rolagem normal (linha do processo vertical, serviços que acendem no centro, projetos que chegam à tela). Sem `svh`, `cqw` ou `overflow: clip` o CSS usa alternativas (`@supports not`) |
+| (sem o atributo) | "reduzir movimento" ligado, sem transformações individuais, sem `matchMedia`, sem JS ou motor com erro | Página estática, em fluxo normal, com todo o conteúdo e os links. Sem "reduzir movimento", as entradas por observador (`data-reveal`) continuam, com `transform` no lugar de `translate` se preciso |
+
+O **motivo** fica em `<html data-scenes-why>` e no console (`[MDN] Cenas de rolagem: ...`; aviso quando falta
+recurso ou há erro): `pin`, `lite:tela-pequena`, `lite:sem-cqw` (e `svh`, `overflow-clip`),
+`off:movimento-reduzido`, `off:sem-transformacoes-individuais`, `off:sem-matchMedia`, `off:motor-nao-iniciou`,
+`off:erro-no-motor`, `off:sem-detector`. Para depurar, abra o console e leia `document.documentElement.dataset`
+(`scenes`, `scenesWhy`, `engine`) e `window.MDNMotion.features`.
+
+Plano B das entradas (`js/main.js`): sem `IntersectionObserver`, ou se ele não responder em 2 s, ou se o
+`matchMedia` não tiver `addEventListener` (Safari 13 e anteriores), nada fica escondido. Cada parte do
+`main.js` (menu, entradas) roda isolada, para um erro em uma não impedir a outra.
+
+Movimentos do celular em `css/scenes/lite.css`: caso de projeto sobe e cresce até o centro (celular da captura
+em outra velocidade), serviço em foco desliza e o ícone gira, etapas do processo entram pela esquerda quando
+a linha chega, anéis do Sobre giram mais, botão do contato ganha presença. Textos dos projetos entram cada
+um quando aparecem (`data-reveal` em cada bloco), não pelo cartão inteiro.
 
 | # | Cena | O que a rolagem faz (telas largas) | Celular (`lite`) |
 | --- | --- | --- | --- |
@@ -209,12 +224,17 @@ O MDN Flow usa uma tela real (com `alt` descritivo e sem dados de clientes); os 
   `@media (max-height: 46em)` / `(max-height: 40em)` (ex.: o "Como funciona" vira uma linha reta, o
   "Serviços" esconde a chamada). Ao criar ou mexer numa cena, confira de 576 a 1080 px de altura e de
   960 a 1920 de largura; abaixo de 36em de altura a página usa o modo `lite`.
-- *Desligar tudo:* tire o script do `<head>` que define `data-scenes`, `js/scenes.js` e os links de
-  `css/scenes/`; a página volta ao layout estático.
+- *Desligar tudo:* tire o script do `<head>` que define `window.MDNMotion`, `js/scenes.js` e os links de
+  `css/scenes/`; a página volta ao layout estático. Só os extras do celular: tire `css/scenes/lite.css`.
 
 **Cuidado:** o palco fixo usa `overflow: clip`. O que sair do palco (ex.: blocos que crescem com a
 rolagem) é cortado; em `lite`, quem pode estourar a largura precisa de `overflow: clip` no pai
 (foi o caso do quadriculado do hero).
+
+**Teste de recursos ausentes:** para simular um navegador sem `cqw`, `svh`, `overflow: clip` ou `translate`, injete
+um script antes da página que faça `CSS.supports` devolver `false` para o recurso (no Playwright:
+`context.add_init_script`) e confira `data-scenes-why` e a rolagem. Para o plano B das entradas, apague
+`window.IntersectionObserver`.
 
 ## Como conferir uma mudança
 
