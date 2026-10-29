@@ -137,6 +137,143 @@
   }
 }
 
+/* ---------- MDN Flow: esquema ilustrativo da interface (sem dados reais) ----------
+   Camadas em 3D: gráfico, lançamentos e saldo. São só blocos e barras genéricas, não telas do produto.
+   js/scene.js escreve --rx/--ry. Sem overflow/filter/opacity<1 em .product__world (achata o 3D). */
+
+.product__art {
+  position: relative;
+  min-height: 15rem;
+  margin-bottom: 1.5rem;
+  perspective: 1000px;
+  perspective-origin: 50% 40%;
+  touch-action: pan-y;
+}
+
+.product__world {
+  position: absolute;
+  inset: 0;
+  transform-style: preserve-3d;
+  transform: rotateX(calc(var(--rx, 0) * 1deg + 8deg)) rotateY(calc(var(--ry, 0) * 1deg - 14deg));
+}
+
+.product__art[data-live="true"] .product__world {
+  will-change: transform;
+}
+
+.flow {
+  position: absolute;
+  padding: 0.875rem 1rem;
+  border: 1px solid var(--c-line-strong);
+  border-radius: var(--r-sm);
+  background: var(--c-graphite-2);
+  box-shadow: 0 24px 40px -22px rgb(0 0 0 / 0.9);
+}
+
+.flow__label {
+  margin-bottom: 0.625rem;
+  color: var(--c-pencil);
+  font-size: 0.6875rem;
+  font-weight: 620;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.flow--chart {
+  top: 6%;
+  left: 0;
+  width: 55%;
+  height: 62%;
+  transform: translateZ(0);
+}
+
+.flow__bars {
+  display: flex;
+  align-items: flex-end;
+  gap: 0.5rem;
+  height: calc(100% - 1.75rem);
+}
+
+.flow__bars i {
+  flex: 1;
+  height: var(--h);
+  border-radius: 4px 4px 0 0;
+  background: #333;
+  transform-origin: bottom;
+}
+
+.flow__bars i.is-hi {
+  background: rgb(var(--c-violet));
+  box-shadow: 0 0 18px -2px rgb(var(--c-violet) / 0.7);
+}
+
+.flow--list {
+  right: 0;
+  bottom: 2%;
+  width: 47%;
+  transform: translateZ(60px);
+}
+
+.flow__row {
+  display: grid;
+  grid-template-columns: 1.25rem minmax(0, 1fr) 2.5rem;
+  align-items: center;
+  gap: 0.625rem;
+  padding-block: 0.4rem;
+  border-top: 1px solid var(--c-line);
+}
+
+.flow__row b {
+  width: 1.25rem;
+  height: 1.25rem;
+  border: 1px solid var(--c-line-strong);
+  border-radius: 50%;
+}
+
+.flow__row span,
+.flow__row em {
+  height: 0.4rem;
+  border-radius: 2px;
+  background: #2f2f2f;
+}
+
+.flow--balance {
+  top: 0;
+  right: 4%;
+  width: 34%;
+  transform: translateZ(110px);
+}
+
+.flow__meter {
+  display: block;
+  height: 0.5rem;
+  border-radius: 999px;
+  background: #2f2f2f;
+}
+
+.flow__meter i {
+  display: block;
+  width: 64%;
+  height: 100%;
+  border-radius: inherit;
+  background: linear-gradient(90deg, rgb(var(--c-violet)), var(--c-white));
+}
+
+@media (width >= 48em) {
+  .product {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1.05fr);
+    align-items: center;
+    column-gap: clamp(2rem, 1rem + 4vw, 4rem);
+  }
+
+  .product__art {
+    order: 2;
+    min-height: 17rem;
+    margin-bottom: 0;
+  }
+}
+
 /* ---------- Responsivo ---------- */
 
 @media (width >= 60em) {

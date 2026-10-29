@@ -257,3 +257,173 @@
     text-align: right;
   }
 }
+
+/* ==========================================================================
+   Camada 2: hero vivo, cards de projeto, transições entre seções e MDN Flow
+   (tudo em prefers-reduced-motion: no-preference; nada repete para sempre)
+   ========================================================================== */
+
+@media (prefers-reduced-motion: no-preference) {
+  /* ---------- Hero: as camadas flutuam 2 ciclos (~5 s) e param; o painel desliza mais devagar que a página ---------- */
+  .hero-visual__logo {
+    animation:
+      hv-rise 0.8s var(--ease-out) 0.75s forwards,
+      m-float 2.4s ease-in-out 2.2s 2;
+  }
+
+  .hero-visual__phone {
+    animation: m-float 2.6s ease-in-out 2.4s 2;
+  }
+
+  .hero-visual__bubble {
+    animation:
+      hv-pop 0.6s var(--ease-out) 1.6s forwards,
+      m-float 2.2s ease-in-out 2.6s 2;
+  }
+
+  @supports (animation-timeline: scroll()) {
+    .hero-visual__world {
+      animation: m-hero-drift linear both;
+      animation-timeline: scroll(root block);
+      animation-range: 0 75vh;
+    }
+  }
+
+  /* ---------- Seções: um fio de luz se desenha na entrada de cada uma ---------- */
+  @supports (animation-timeline: view()) {
+    .section {
+      position: relative;
+    }
+
+    .section::before {
+      content: "";
+      position: absolute;
+      top: 0;
+      left: 50%;
+      width: min(26rem, 60%);
+      height: 1px;
+      translate: -50% 0;
+      background: linear-gradient(90deg, transparent, rgb(var(--c-violet) / 0.9), transparent);
+      transform-origin: center;
+      animation: m-hairline linear both;
+      animation-timeline: view();
+      animation-range: entry 0% entry 70%;
+      pointer-events: none;
+    }
+  }
+
+  /* ---------- Como funciona: número, título e texto entram em sequência ---------- */
+  .process__step[data-reveal-state="shown"] :is(.process__title, .process__text) {
+    animation: m-rise 0.8s var(--ease-out) backwards;
+  }
+
+  .process__step[data-reveal-state="shown"] .process__title { animation-delay: 0.22s; }
+  .process__step[data-reveal-state="shown"] .process__text { animation-delay: 0.34s; }
+
+  /* ---------- MDN Flow: barras crescem, medidor enche, camadas flutuam 2 ciclos ---------- */
+  .product[data-reveal-state="shown"] .flow__bars i {
+    animation: m-grow 0.9s var(--ease-out) backwards;
+  }
+
+  .product[data-reveal-state="shown"] .flow__bars i:nth-child(1) { animation-delay: 0.25s; }
+  .product[data-reveal-state="shown"] .flow__bars i:nth-child(2) { animation-delay: 0.33s; }
+  .product[data-reveal-state="shown"] .flow__bars i:nth-child(3) { animation-delay: 0.41s; }
+  .product[data-reveal-state="shown"] .flow__bars i:nth-child(4) { animation-delay: 0.49s; }
+  .product[data-reveal-state="shown"] .flow__bars i:nth-child(5) { animation-delay: 0.57s; }
+  .product[data-reveal-state="shown"] .flow__bars i:nth-child(6) { animation-delay: 0.65s; }
+
+  .product[data-reveal-state="shown"] .flow__meter i {
+    transform-origin: left;
+    animation: m-meter 1.2s var(--ease-out) 0.7s backwards;
+  }
+
+  .product[data-reveal-state="shown"] .flow--chart { animation: m-float 2.8s ease-in-out 1.6s 2; }
+  .product[data-reveal-state="shown"] .flow--list { animation: m-float 2.6s ease-in-out 1.9s 2; }
+  .product[data-reveal-state="shown"] .flow--balance { animation: m-float 2.4s ease-in-out 2.2s 2; }
+
+  /* ---------- Serviços: título acompanha o hover ---------- */
+  .service__title {
+    transition: translate var(--dur) var(--ease-out);
+  }
+}
+
+/* ---------- Cards de projeto: elevação, profundidade e destaque (só com mouse) ---------- */
+@media (prefers-reduced-motion: no-preference) and (hover: hover) and (pointer: fine) {
+  .case__media {
+    transition:
+      translate 0.45s var(--ease-out),
+      border-color var(--dur) ease,
+      box-shadow 0.45s var(--ease-out);
+  }
+
+  .case:hover .case__media {
+    translate: 0 -6px;
+    border-color: rgb(var(--c-violet) / 0.55);
+    box-shadow:
+      0 36px 60px -34px rgb(var(--c-violet) / 0.5),
+      0 0 0 1px rgb(var(--c-violet) / 0.2);
+  }
+
+  .case__main,
+  .case__phone {
+    transition: scale 0.5s var(--ease-out);
+  }
+
+  .case:hover .case__main {
+    scale: 1.025;
+  }
+
+  .case:hover .case__phone {
+    scale: 1.06;
+  }
+
+  .case__title {
+    width: fit-content;
+    padding-bottom: 0.25rem;
+    background: linear-gradient(90deg, rgb(var(--c-violet)), var(--c-white)) left bottom / 0 2px no-repeat;
+    transition: background-size 0.6s var(--ease-out);
+  }
+
+  .case:hover .case__title {
+    background-size: 100% 2px;
+  }
+
+  .case:hover .spec dt {
+    color: var(--c-chalk);
+  }
+
+  .service:hover .service__title {
+    translate: 4px 0;
+  }
+}
+
+@keyframes m-float {
+  50% {
+    translate: 0 -0.5rem;
+  }
+}
+
+@keyframes m-hero-drift {
+  to {
+    translate: 0 -3.5rem;
+  }
+}
+
+@keyframes m-hairline {
+  from {
+    scale: 0 1;
+    opacity: 0;
+  }
+}
+
+@keyframes m-grow {
+  from {
+    scale: 1 0;
+  }
+}
+
+@keyframes m-meter {
+  from {
+    scale: 0 1;
+  }
+}

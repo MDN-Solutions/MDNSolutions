@@ -105,6 +105,11 @@ se move responde ao ponteiro ou à rolagem (ou acontece uma vez, na entrada).
 | Linha de "Como funciona" | Mostrar a ordem das etapas | Linha vertical | Linha já desenhada |
 | Giroscópio 3D da seção "Sobre" (3 anéis em planos diferentes cruzando a logo) | Dar vida ao símbolo da marca | Os anéis giram ao rolar e inclinam com o dedo | Composição 3D parada |
 | Entradas escalonadas dos projetos, títulos que se revelam, ícones que "saltam" (`css/motion.css`) | Guiar a leitura | Igual | Aparece pronto |
+| Hero: flutuação (2 ciclos) e deriva em parallax ao rolar (`css/motion.css`) | Profundidade sem distrair | Só a deriva por rolagem | Estático |
+| Entradas laterais e com zoom (`left`/`right`/`zoom` em `data-reveal`) | Narrativa de leitura por seção | Igual | Aparece pronto |
+| Fio violeta que se desenha no topo de cada seção | Transição entre blocos | Igual | Linha estática |
+| Cards de projeto/serviço: elevação, borda e brilho no hover/foco | Feedback e hierarquia | Só foco por teclado | Sem movimento |
+| MDN Flow: esquema ilustrativo em 3D (barras que crescem, medidor) | Destacar o produto sem inventar telas | Inclinação por ponteiro/rolagem | Estático |
 | Barra de progresso de leitura no header | Mostrar onde se está na página | Igual (navegadores com `animation-timeline`) | Sem barra |
 | Anel que se expande no botão do contato (2 ciclos, ~4,8 s) | Chamar atenção sem distrair | Igual | Parado |
 | Brilho que atravessa o botão principal | Feedback de interação | Só com mouse | Sem brilho |

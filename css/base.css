@@ -294,7 +294,25 @@ main:focus {
   [data-reveal-state] {
     transition:
       opacity var(--dur-reveal) var(--ease-out) var(--reveal-delay, 0s),
-      translate calc(var(--dur-reveal) + 0.12s) var(--ease-out) var(--reveal-delay, 0s);
+      translate calc(var(--dur-reveal) + 0.12s) var(--ease-out) var(--reveal-delay, 0s),
+      scale calc(var(--dur-reveal) + 0.12s) var(--ease-out) var(--reveal-delay, 0s);
+  }
+
+  /* Cada tipo de elemento entra de um jeito: sobe, vem da lateral ou cresce */
+  [data-reveal="left"][data-reveal-state="hidden"] {
+    opacity: 0;
+    translate: calc(var(--reveal-shift) * -2.5) 0;
+  }
+
+  [data-reveal="right"][data-reveal-state="hidden"] {
+    opacity: 0;
+    translate: calc(var(--reveal-shift) * 2) 0;
+  }
+
+  [data-reveal="zoom"][data-reveal-state="hidden"] {
+    opacity: 0;
+    translate: 0 calc(var(--reveal-shift) * 1.25);
+    scale: 0.965;
   }
 
   [data-reveal="up"][data-reveal-state="hidden"] {
@@ -305,6 +323,7 @@ main:focus {
   [data-reveal-state="hidden"]:focus-within {
     opacity: 1;
     translate: none;
+    scale: none;
     transition: none;
   }
 }
@@ -324,6 +343,7 @@ main:focus {
   [data-reveal-state] {
     opacity: 1 !important;
     translate: none !important;
+    scale: none !important;
     transition: none !important;
   }
 }
