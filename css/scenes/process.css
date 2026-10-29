@@ -1,0 +1,274 @@
+/* ==========================================================================
+   Cena 5: linha do tempo do desenvolvimento
+   --line (0 a 1, derivada de --q): quanto da linha já foi desenhada. O marcador viaja na ponta
+   da linha e cada etapa "liga" (--on) quando a linha passa pelo seu nó.
+   Telas largas: palco fixo, linha horizontal em zigue-zague (etapas acima e abaixo).
+   Celular: linha vertical que se desenha na rolagem normal. Estático: linha já desenhada.
+   ========================================================================== */
+
+.process__marker {
+  display: none;
+}
+
+html[data-scenes] .process-section {
+  --line: clamp(0, calc((var(--q, 0) - 0.06) / 0.86), 1);
+}
+
+html[data-scenes] .process-track {
+  position: relative;
+}
+
+/* a linha e as etapas deixam de usar animation-timeline e passam a seguir --line */
+html[data-scenes] .process::after {
+  animation: none;
+  scale: 1 var(--line);
+}
+
+html[data-scenes] .process__step {
+  --on: clamp(0, calc((var(--line) - var(--i) / 3 + 0.02) * 9), 1); /* 1 depois que a linha passa pelo nó */
+}
+
+/* o texto das etapas que a linha ainda não alcançou fica mais fraco, mas nunca abaixo de ~0,62
+   (contraste mínimo de leitura); só o numeral decorativo apaga mais */
+html[data-scenes] .process__number {
+  opacity: calc(0.3 + var(--on) * 0.7);
+}
+
+html[data-scenes] .process__title,
+html[data-scenes] .process__text {
+  opacity: calc(0.62 + var(--on) * 0.38);
+}
+
+html[data-scenes] .process__step::before {
+  background-color: var(--c-ink);
+  background-image: linear-gradient(rgb(var(--c-violet) / var(--on)), rgb(var(--c-violet) / var(--on)));
+  box-shadow:
+    0 0 0 1px var(--c-white),
+    0 0 calc(var(--on) * 16px) calc(var(--on) * 3px) rgb(var(--c-violet) / 0.7);
+}
+
+html[data-scenes] .process__number {
+  scale: calc(0.88 + var(--on) * 0.12);
+  transform-origin: left bottom;
+}
+
+html[data-scenes] .process__marker {
+  position: absolute;
+  z-index: 2;
+  display: block;
+  width: 2.25rem;
+  height: 2.25rem;
+  overflow: hidden;
+  border: 1px solid var(--c-white);
+  border-radius: 50%;
+  background: var(--c-ink);
+  box-shadow:
+    0 0 0 6px rgb(var(--c-violet) / 0.16),
+    0 0 30px rgb(var(--c-violet) / 0.65);
+  pointer-events: none;
+}
+
+html[data-scenes] .process__marker img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* ---------- Celular: linha vertical ---------- */
+
+html[data-scenes="lite"] .process__marker {
+  top: calc(0.5rem + var(--line) * (100% - 1rem));
+  left: 0;
+  translate: -50% -50%;
+}
+
+html[data-scenes="lite"] .process-track {
+  padding-block: 0.25rem;
+}
+
+/* ---------- Palco fixo: zigue-zague horizontal ---------- */
+
+html[data-scenes="pin"] .process-section {
+  height: calc(100svh * 3.1); /* 1 palco + 1,1 de história + 1 de cortina (o MDN Flow sobe por cima) */
+  padding-top: 0;
+}
+
+html[data-scenes="pin"] .process-section__sheet {
+  display: grid;
+  align-content: center;
+  height: 100%;
+  padding-top: var(--header-h);
+  background:
+    radial-gradient(ellipse 45% 55% at 20% 70%, rgb(var(--c-violet) / 0.1), transparent 70%),
+    var(--c-ink);
+  /* na cortina o palco recua enquanto o MDN Flow sobe por cima */
+  scale: calc(1 - var(--x, 0) * 0.08);
+  opacity: calc(1 - var(--x, 0) * 0.6);
+}
+
+html[data-scenes="pin"] .process-section .section-title {
+  font-size: clamp(2rem, 1rem + 4svh, 3.5rem);
+}
+
+html[data-scenes="pin"] .process-track {
+  margin-top: clamp(1rem, 3svh, 2.5rem);
+  perspective: 1600px;
+  perspective-origin: 50% 50%;
+}
+
+html[data-scenes="pin"] .process {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  grid-template-rows: 1fr 1fr;
+  gap: 0 clamp(2rem, 1rem + 3vw, 4rem);
+  height: min(28rem, calc(100svh - var(--header-h) - 15rem));
+  min-height: 15rem;
+  margin-top: 0;
+  padding: 0;
+}
+
+/* a linha cruza o meio; o fundo e o preenchimento usam a mesma geometria */
+html[data-scenes="pin"] .process::before,
+html[data-scenes="pin"] .process::after {
+  inset: 50% 0 auto;
+  width: auto;
+  height: 1px;
+}
+
+html[data-scenes="pin"] .process::after {
+  transform-origin: left;
+  scale: var(--line) 1;
+}
+
+html[data-scenes="pin"] .process__step {
+  position: relative;
+  transform-origin: 0 50%;
+  transform: translateZ(calc((1 - var(--on)) * -90px)) rotateY(calc((1 - var(--on)) * 12deg));
+}
+
+/* cada etapa na sua coluna; a 1 e a 3 abaixo da linha, a 2 acima */
+html[data-scenes="pin"] .process__step:nth-child(1) { grid-column: 1; }
+html[data-scenes="pin"] .process__step:nth-child(2) { grid-column: 2; }
+html[data-scenes="pin"] .process__step:nth-child(3) { grid-column: 3; }
+
+html[data-scenes="pin"] .process__step:nth-child(odd) {
+  grid-row: 2;
+  align-self: start;
+  padding-top: 2.25rem;
+}
+
+html[data-scenes="pin"] .process__step:nth-child(even) {
+  grid-row: 1;
+  align-self: end;
+  padding-bottom: 2.25rem;
+}
+
+html[data-scenes="pin"] .process__step:nth-child(odd)::before {
+  top: -0.28rem;
+  left: 0;
+  margin: 0;
+}
+
+html[data-scenes="pin"] .process__step:nth-child(even)::before {
+  top: auto;
+  bottom: -0.28rem;
+  left: 0;
+  margin: 0;
+}
+
+/* haste que liga o nó ao texto */
+html[data-scenes="pin"] .process__step::after {
+  content: "";
+  position: absolute;
+  left: 0.28rem;
+  width: 1px;
+  height: 1.75rem;
+  background: linear-gradient(var(--c-line-strong), transparent);
+}
+
+html[data-scenes="pin"] .process__step:nth-child(odd)::after {
+  top: 0.25rem;
+}
+
+html[data-scenes="pin"] .process__step:nth-child(even)::after {
+  bottom: 0.25rem;
+  rotate: 180deg;
+}
+
+html[data-scenes="pin"] .process__number {
+  font-size: clamp(3rem, 2rem + 6svh, 6.5rem);
+}
+
+html[data-scenes="pin"] .process__title {
+  margin-top: 0.75rem;
+}
+
+html[data-scenes="pin"] .process-track {
+  container-type: inline-size;
+}
+
+/* anda só com translate (compositor), usando a largura da trilha como referência */
+html[data-scenes="pin"] .process__marker {
+  top: 50%;
+  left: 0;
+  translate: calc(var(--line) * 100cqw - 50%) -50%;
+}
+
+html[data-scenes="pin"] .process-section[data-live="true"] .process__marker {
+  will-change: translate;
+}
+
+/* ---------- Telas baixas (e estreitas): a linha fica reta, com as três etapas abaixo dela ----------
+   O zigue-zague precisa de duas fileiras de texto, uma acima e outra abaixo da linha; em notebooks
+   com pouca altura (≤ 40em) ou estreitos e baixos (≤ 75em de largura e ≤ 46em de altura) isso não cabe.
+   A linha vai para o topo da trilha e as etapas ficam lado a lado, todas abaixo dela. */
+
+@media (max-height: 40em), (max-width: 75em) and (max-height: 46em) {
+  html[data-scenes="pin"] .process-track {
+    margin-top: clamp(1.25rem, 5svh, 2.5rem);
+  }
+
+  html[data-scenes="pin"] .process {
+    grid-template-rows: auto;
+    height: auto;
+    min-height: 0;
+  }
+
+  html[data-scenes="pin"] .process::before,
+  html[data-scenes="pin"] .process::after {
+    inset: 0 0 auto;
+  }
+
+  html[data-scenes="pin"] .process__step:nth-child(odd),
+  html[data-scenes="pin"] .process__step:nth-child(even) {
+    grid-row: 1;
+    align-self: start;
+    padding: 2.25rem 0 0;
+  }
+
+  html[data-scenes="pin"] .process__step:nth-child(odd)::before,
+  html[data-scenes="pin"] .process__step:nth-child(even)::before {
+    top: -0.28rem;
+    bottom: auto;
+    left: 0;
+    margin: 0;
+  }
+
+  html[data-scenes="pin"] .process__step:nth-child(odd)::after,
+  html[data-scenes="pin"] .process__step:nth-child(even)::after {
+    top: 0.25rem;
+    bottom: auto;
+    rotate: none;
+  }
+
+  html[data-scenes="pin"] .process__number {
+    font-size: clamp(2.25rem, 1rem + 5svh, 4.5rem);
+  }
+
+  html[data-scenes="pin"] .process__title {
+    margin-top: 0.5rem;
+  }
+
+  html[data-scenes="pin"] .process__marker {
+    top: 0;
+  }
+}

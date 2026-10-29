@@ -1,0 +1,156 @@
+/* ==========================================================================
+   Cena 6: MDN Flow como produto
+   A tela do sistema (css/sections/flow.css, imagem real do MDN Flow) é conduzida pela rolagem:
+     1. chegar de longe, deitado, e se endireitar já enquanto a folha sobe (--pre, de --e): quando o
+        palco fica fixo ele já está a meio caminho e o texto já está inteiro (sem tela vazia)
+     2. avançar para o primeiro plano e abrir as camadas no espaço (--ae e --se, até q ≈ 0,4)
+     3. girar discretamente até o fim da seção (--b)
+   Camadas planas (.flow) podem ter opacity; o "mundo" (preserve-3d) não pode.
+   ========================================================================== */
+
+/* ---------- Progresso (todas as telas com cenas) ---------- */
+
+html[data-scenes] .flowscene {
+  --pre: clamp(0, calc((var(--e, 0) - 0.25) / 0.75), 1); /* a folha sobe: 0 a 1 */
+  --c: calc(var(--pre) * var(--pre) * (3 - 2 * var(--pre))); /* chegada do texto */
+  --a: clamp(0, calc(var(--pre) * 0.45 + var(--q, 0) * 1.4), 1);
+  --ae: calc(var(--a) * var(--a) * (3 - 2 * var(--a))); /* aproximação da tela */
+  --s: clamp(0, calc(var(--pre) * 0.15 + (var(--q, 0) - 0.04) / 0.45), 1);
+  --se: calc(var(--s) * var(--s) * (3 - 2 * var(--s))); /* camadas se afastando em profundidade */
+  --b: clamp(0, calc((var(--q, 0) - 0.35) / 0.65), 1); /* giro final */
+}
+
+/* a flutuação do motion.css dá lugar ao progresso da rolagem */
+html[data-scenes] .product .flow {
+  animation: none !important;
+}
+
+html[data-scenes] .product__world {
+  transform: translate3d(
+      calc((1 - var(--ae)) * 6%),
+      calc((1 - var(--ae)) * 12%),
+      calc((1 - var(--ae)) * -520px)
+    )
+    rotateX(calc(5deg + (1 - var(--ae)) * 36deg - var(--b) * 3deg + var(--rx, 0) * 1deg))
+    rotateY(calc(-8deg + var(--b) * 7deg + var(--ry, 0) * 1deg))
+    rotateZ(calc((1 - var(--ae)) * -14deg));
+}
+
+html[data-scenes] .flowscene[data-live="true"] .product__world {
+  will-change: transform;
+}
+
+html[data-scenes] .product .flow {
+  opacity: calc(0.25 + var(--ae) * 0.75);
+}
+
+html[data-scenes] .flow--shot {
+  transform: translateZ(calc(var(--se) * -30px));
+}
+
+html[data-scenes] .flow--menu {
+  transform: translate3d(calc((1 - var(--se)) * 30%), calc((1 - var(--se)) * -14%), calc(var(--se) * 70px));
+}
+
+html[data-scenes] .flow--totals {
+  transform: translate3d(calc((1 - var(--se)) * -16%), calc((1 - var(--se)) * 70%), calc(var(--se) * 120px));
+}
+
+/* o texto chega junto com a folha, antes de o palco parar */
+html[data-scenes] .product__copy {
+  opacity: var(--c);
+  translate: calc((1 - var(--c)) * -2rem) 0;
+}
+
+html[data-scenes] .product__caption {
+  opacity: var(--c);
+}
+
+/* ---------- Palco fixo (telas largas) ---------- */
+
+html[data-scenes="pin"] .flowscene {
+  height: calc(100svh * 2); /* 1 palco + 1 de história */
+  padding-top: 0;
+}
+
+html[data-scenes="pin"] .flowscene__sheet {
+  position: relative;
+  display: grid;
+  align-content: center;
+  height: 100%;
+  padding-top: var(--header-h);
+  overflow: clip;
+  border-top: 1px solid rgb(255 255 255 / 0.1);
+  border-radius: calc((1 - var(--e, 0)) * 2.25rem) calc((1 - var(--e, 0)) * 2.25rem) 0 0;
+  background: var(--c-ink);
+  opacity: calc(1 - var(--x, 0) * 0.5);
+}
+
+/* o tom do fundo muda: índigo profundo que vai surgindo com a entrada da folha */
+html[data-scenes="pin"] .flowscene__sheet::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(ellipse 58% 70% at 68% 48%, rgb(var(--c-violet) / 0.32), transparent 72%),
+    radial-gradient(ellipse 40% 50% at 8% 100%, rgb(var(--c-violet) / 0.14), transparent 70%),
+    linear-gradient(180deg, #0b0818, #02010a 70%);
+  opacity: var(--e, 0);
+  pointer-events: none;
+}
+
+html[data-scenes="pin"] .flowscene__sheet > .container {
+  position: relative;
+}
+
+html[data-scenes="pin"] .product {
+  display: grid;
+  grid-template-columns: minmax(0, 3.7fr) minmax(0, 8.3fr);
+  align-items: center;
+  column-gap: clamp(2rem, 1rem + 4vw, 5rem);
+  margin: 0;
+  padding: 0;
+  overflow: visible;
+  border: 0;
+  background: none;
+}
+
+html[data-scenes="pin"] .product__visual {
+  order: 2;
+  min-width: 0;
+  margin-right: calc(-1 * min(5vw, 4.5rem)); /* a tela passa um pouco da coluna; o palco corta o que sobra */
+}
+
+/* a tela ocupa a altura disponível sem passar da tela (as camadas da frente "crescem" um pouco
+   pela perspectiva, por isso a folga de 9rem) */
+html[data-scenes="pin"] .product__art {
+  width: min(100%, calc((100svh - var(--header-h) - 9rem) * 1.9));
+  margin-left: auto;
+  aspect-ratio: 1.9 / 1;
+  perspective: 1400px;
+}
+
+html[data-scenes="pin"] .product__caption {
+  margin: 1.75rem min(5vw, 4.5rem) 0 auto; /* acompanha a coluna (a tela passa um pouco dela, a legenda não) */
+  text-align: right;
+}
+
+html[data-scenes="pin"] .product__title {
+  font-size: clamp(2.5rem, 1.5rem + 3.2vw, 4.25rem);
+  line-height: 1;
+}
+
+html[data-scenes="pin"] .product__text {
+  font-size: var(--fs-lead);
+}
+
+/* telas baixas: menos folga em volta da tela */
+@media (max-height: 40em) {
+  html[data-scenes="pin"] .product__art {
+    width: min(100%, calc((100svh - var(--header-h) - 8rem) * 1.9));
+  }
+}
+
+/* ---------- Celular: o mesmo avanço, mais contido ---------- */
+
+

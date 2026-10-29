@@ -1,0 +1,172 @@
+/* ==========================================================================
+   Cena 7: Sobre, o giroscópio de anéis com "câmera" ligada à rolagem
+   --q (0 a 1) conduz tudo: os anéis giram (cada um para um lado), a câmera dá a volta
+   (rotateX/rotateY) e se aproxima um pouco, o brilho cresce e muda de lado, e o texto vai
+   se acendendo na ordem de leitura (--t de cada bloco é o ponto da rolagem em que ele acende).
+   Telas largas: palco fixo. Celular: os mesmos movimentos na rolagem normal.
+   Estático (movimento reduzido ou sem JS): composição parada, como no layout original.
+   O 3D segue a regra do projeto: nada com overflow, filter ou opacity entre o mundo e os anéis.
+   ========================================================================== */
+
+/* ---------- Anéis e câmera (pin e lite) ---------- */
+
+/* a rotação por animation-timeline: view() dá lugar ao progresso do motor de cenas */
+html[data-scenes] .orbit__ring {
+  animation: none;
+  rotate: calc(var(--q, 0) * var(--turn) * 1.5);
+}
+
+html[data-scenes] .about__world {
+  transform: translateZ(calc(var(--q, 0) * 60px))
+    rotateX(calc(var(--rx, 0) * 1.4deg + 12deg + var(--q, 0) * 30deg))
+    rotateY(calc(var(--ry, 0) * 1.4deg - 18deg + var(--q, 0) * 54deg))
+    rotateZ(calc(var(--q, 0) * -14deg));
+}
+
+/* planos em profundidades diferentes: com a câmera girando, um passa na frente do outro */
+html[data-scenes] .orbit--a {
+  transform: translateZ(calc(var(--q, 0) * 46px)) rotateX(64deg);
+}
+
+html[data-scenes] .orbit--b {
+  transform: translateZ(calc(var(--q, 0) * -34px)) rotateY(66deg) rotateX(14deg);
+}
+
+html[data-scenes] .orbit--c {
+  transform: translateZ(calc(var(--q, 0) * 22px)) rotateX(-30deg) rotateY(34deg);
+}
+
+html[data-scenes] .about__badge {
+  transform: translateZ(calc(10px + var(--q, 0) * 54px));
+}
+
+/* "luz": uma cópia violeta de cada anel contínuo vai aparecendo por cima (só opacity) */
+html[data-scenes] .orbit__ring:not(.orbit__ring--dashed)::after {
+  content: "";
+  position: absolute;
+  inset: -1px;
+  border: 1px solid rgb(var(--c-violet));
+  border-radius: 50%;
+  box-shadow: 0 0 14px rgb(var(--c-violet) / 0.55);
+  opacity: calc(var(--q, 0) * 0.95);
+}
+
+/* o brilho atrás da composição cresce e atravessa para o outro lado enquanto a câmera gira */
+html[data-scenes] .about__visual::before {
+  opacity: calc(0.45 + var(--q, 0) * 0.55);
+  scale: calc(0.8 + var(--q, 0) * 0.55);
+  translate: calc((0.5 - var(--q, 0)) * 18%) calc((var(--q, 0) - 0.5) * 12%);
+}
+
+html[data-scenes] .about[data-live="true"] .about__world {
+  will-change: transform;
+}
+
+/* ---------- Palco fixo (telas largas) ---------- */
+
+html[data-scenes="pin"] .about {
+  height: calc(100svh * 3.1); /* 1 palco + 1,1 de história + 1 de cortina (o Contato sobe por cima) */
+  padding-top: 0;
+}
+
+html[data-scenes="pin"] .about__stage {
+  display: grid;
+  align-content: center;
+  padding-top: var(--header-h);
+  /* na cortina o palco recua e escurece enquanto o Contato sobe */
+  transform-origin: 50% 40%;
+  scale: calc(1 - var(--x, 0) * 0.08);
+  opacity: calc(1 - var(--x, 0) * 0.65);
+}
+
+/* luz ambiente: um halo largo, de baixo do símbolo, que anda de um lado ao outro com a rolagem */
+html[data-scenes="pin"] .about__stage::before {
+  content: "";
+  position: absolute;
+  top: 50%;
+  left: 0;
+  z-index: -1;
+  width: max(70vmax, 40rem);
+  aspect-ratio: 1;
+  background: radial-gradient(closest-side, rgb(var(--c-violet) / 0.2), transparent);
+  opacity: var(--e, 0);
+  translate: calc(-30% + var(--q, 0) * 34%) -50%;
+  pointer-events: none;
+}
+
+html[data-scenes="pin"] .about__visual {
+  /* nunca mais alto que a tela */
+  width: min(100%, calc(100svh - var(--header-h) - 6rem));
+  overflow: visible; /* a câmera se aproxima: o palco (overflow: clip) é quem corta */
+}
+
+/* o visual não usa a entrada por observador: ele já está no palco */
+html[data-scenes="pin"] .about__visual[data-reveal] {
+  opacity: 1;
+  translate: none;
+}
+
+/* ---------- Texto: acende na ordem de leitura, sem nunca ficar ilegível ---------- */
+
+html[data-scenes="pin"] .about [data-reveal]:not(.about__visual) {
+  --r: clamp(0, calc((var(--q, 0) - var(--t, 0)) / 0.14), 1);
+  opacity: calc(0.75 + var(--r) * 0.25);
+  translate: 0 calc((1 - var(--r)) * 1.6rem);
+}
+
+/* a legenda (cinza-lápis) apaga menos que o texto corrido, para manter 4,5:1 mesmo no começo da cena */
+html[data-scenes="pin"] .about [data-reveal].section-kicker {
+  opacity: calc(0.92 + var(--r) * 0.08);
+}
+
+html[data-scenes="pin"] .about__icon {
+  scale: calc(0.8 + var(--r, 1) * 0.2);
+}
+
+/* ---------- Alturas de tela mais baixas (notebook 1280×720 e menos) ---------- */
+
+@media (max-height: 46em) {
+  html[data-scenes="pin"] .about__title {
+    margin-top: 0.75rem;
+    font-size: clamp(2rem, 1rem + 4svh, 3.25rem);
+  }
+
+  html[data-scenes="pin"] .about__lead {
+    margin-top: 1rem;
+    font-size: clamp(0.9375rem, 0.4rem + 1.7svh, var(--fs-lead));
+  }
+
+  html[data-scenes="pin"] .about__highlights {
+    margin-top: 1.25rem;
+  }
+
+  html[data-scenes="pin"] .about__highlights > li {
+    padding-block: 0.875rem;
+  }
+}
+
+@media (max-height: 40em) {
+  html[data-scenes="pin"] .about__title {
+    font-size: clamp(1.75rem, 0.5rem + 4.4svh, 2.5rem);
+  }
+
+  html[data-scenes="pin"] .about__lead {
+    margin-top: 0.625rem;
+    font-size: 0.9375rem;
+    line-height: 1.5;
+  }
+
+  html[data-scenes="pin"] .about__highlights {
+    margin-top: 0.875rem;
+  }
+
+  html[data-scenes="pin"] .about__highlights > li {
+    padding-block: 0.625rem;
+  }
+
+  html[data-scenes="pin"] .about__highlight-text {
+    margin-top: 0.25rem;
+    font-size: 0.8125rem;
+    line-height: 1.45;
+  }
+}

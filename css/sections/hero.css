@@ -1,13 +1,18 @@
 /* ==========================================================================
    Hero: título + cena 3D com os projetos reais em camadas
-   Ganchos de JS (js/scene.js): --rx/--ry (inclinação), --px/--py (posição do ponteiro, -1 a 1),
-   --spread (0 a 1, quanto o hero já saiu da tela). Sem JS ou com movimento reduzido a
-   composição fica parada no ângulo inicial.
+   Ganchos de JS (js/scene.js): --rx/--ry (inclinação) e --px (posição horizontal do ponteiro, -1 a 1).
+   Sem JS ou com movimento reduzido a composição fica parada no ângulo inicial.
    Atenção: .hero-visual__world usa preserve-3d. Nenhum elemento entre ele e as camadas pode ter
    overflow, filter, opacity < 1 ou contain, senão o 3D "achata".
    ========================================================================== */
 
 .hero {
+  position: relative;
+}
+
+/* Palco do hero. Com as cenas de rolagem (css/scenes/hero.css) ele fica fixo na tela
+   enquanto a rolagem conduz a animação; sem elas é só um bloco comum. */
+.hero__stage {
   position: relative;
   isolation: isolate; /* mantém o quadriculado (z-index -1) dentro do hero */
   padding-top: calc(var(--header-h) + clamp(2rem, 1rem + 5vw, 5rem));
@@ -15,7 +20,7 @@
 }
 
 /* "Planta": quadriculado fino que some nas bordas + brilho violeta atrás da cena */
-.hero::before {
+.hero__stage::before {
   content: "";
   position: absolute;
   inset: 0 0 auto;
@@ -169,6 +174,11 @@
 
 /* Fundo preto que esconde o que está atrás (logo e celular) */
 .hero-visual .mask { fill: var(--c-ink); }
+
+/* Capturas reais que entram por cima do desenho (css/scenes/hero.css); sem as cenas não existem */
+.hero-visual__shot {
+  display: none;
+}
 
 /* ---------- Logo, celular e balão (cada um numa profundidade) ---------- */
 

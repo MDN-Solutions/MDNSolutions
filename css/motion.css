@@ -209,3 +209,193 @@
     opacity: 0;
   }
 }
+
+/* ---------- Serviços: faixa de luz que segue o mouse ---------- */
+.service::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background: radial-gradient(
+    circle 16rem at var(--mx, 85%) var(--my, 50%),
+    rgb(var(--c-violet) / 0.16),
+    transparent 70%
+  );
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity var(--dur) ease;
+}
+
+.service {
+  isolation: isolate;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .service:hover::after {
+    opacity: 1;
+  }
+}
+
+/* ---------- Header: porcentagem de leitura (só em telas largas) ---------- */
+.header__pct {
+  display: none;
+  color: var(--c-pencil);
+  font-size: var(--fs-xs);
+  font-variant-numeric: tabular-nums;
+  font-weight: 620;
+  letter-spacing: 0.08em;
+}
+
+.header__pct[hidden] {
+  display: none !important;
+}
+
+@media (width >= 75em) {
+  .header__pct {
+    display: inline-block;
+    min-width: 3.5ch;
+    text-align: right;
+  }
+}
+
+/* ==========================================================================
+   Camada 2: hero vivo, cards de projeto, transições entre seções e MDN Flow
+   (tudo em prefers-reduced-motion: no-preference; nada repete para sempre)
+   ========================================================================== */
+
+@media (prefers-reduced-motion: no-preference) {
+  /* ---------- Hero: as camadas flutuam 2 ciclos (~5 s) e param; o painel desliza mais devagar que a página ---------- */
+  .hero-visual__logo {
+    animation:
+      hv-rise 0.8s var(--ease-out) 0.75s forwards,
+      m-float 2.4s ease-in-out 2.2s 2;
+  }
+
+  .hero-visual__phone {
+    animation: m-float 2.6s ease-in-out 2.4s 2;
+  }
+
+  .hero-visual__bubble {
+    animation:
+      hv-pop 0.6s var(--ease-out) 1.6s forwards,
+      m-float 2.2s ease-in-out 2.6s 2;
+  }
+
+  @supports (animation-timeline: scroll()) {
+    .hero-visual__world {
+      animation: m-hero-drift linear both;
+      animation-timeline: scroll(root block);
+      animation-range: 0 75vh;
+    }
+  }
+
+  /* ---------- Seções: um fio de luz se desenha na entrada de cada uma ---------- */
+  @supports (animation-timeline: view()) {
+    .section {
+      position: relative;
+    }
+
+    .section::before {
+      content: "";
+      position: absolute;
+      top: 0;
+      left: 50%;
+      width: min(26rem, 60%);
+      height: 1px;
+      translate: -50% 0;
+      background: linear-gradient(90deg, transparent, rgb(var(--c-violet) / 0.9), transparent);
+      transform-origin: center;
+      animation: m-hairline linear both;
+      animation-timeline: view();
+      animation-range: entry 0% entry 70%;
+      pointer-events: none;
+    }
+  }
+
+  /* ---------- Como funciona: número, título e texto entram em sequência ---------- */
+  .process__step[data-reveal-state="shown"] :is(.process__title, .process__text) {
+    animation: m-rise 0.8s var(--ease-out) backwards;
+  }
+
+  .process__step[data-reveal-state="shown"] .process__title { animation-delay: 0.22s; }
+  .process__step[data-reveal-state="shown"] .process__text { animation-delay: 0.34s; }
+
+  /* ---------- MDN Flow: os destaques da tela flutuam 2 ciclos (sem as cenas de rolagem) ---------- */
+  .product[data-reveal-state="shown"] .flow--menu { animation: m-float 2.8s ease-in-out 1.2s 2; }
+  .product[data-reveal-state="shown"] .flow--totals { animation: m-float 2.6s ease-in-out 1.6s 2; }
+
+  /* ---------- Serviços: título acompanha o hover ---------- */
+  .service__title {
+    transition: translate var(--dur) var(--ease-out);
+  }
+}
+
+/* ---------- Cards de projeto: elevação, profundidade e destaque (só com mouse) ---------- */
+@media (prefers-reduced-motion: no-preference) and (hover: hover) and (pointer: fine) {
+  .case__media {
+    transition:
+      translate 0.45s var(--ease-out),
+      border-color var(--dur) ease,
+      box-shadow 0.45s var(--ease-out);
+  }
+
+  .case:hover .case__media {
+    translate: 0 -6px;
+    border-color: rgb(var(--c-violet) / 0.55);
+    box-shadow:
+      0 36px 60px -34px rgb(var(--c-violet) / 0.5),
+      0 0 0 1px rgb(var(--c-violet) / 0.2);
+  }
+
+  .case__main,
+  .case__phone {
+    transition: scale 0.5s var(--ease-out);
+  }
+
+  .case:hover .case__main {
+    scale: 1.025;
+  }
+
+  .case:hover .case__phone {
+    scale: 1.06;
+  }
+
+  .case__title {
+    width: fit-content;
+    padding-bottom: 0.25rem;
+    background: linear-gradient(90deg, rgb(var(--c-violet)), var(--c-white)) left bottom / 0 2px no-repeat;
+    transition: background-size 0.6s var(--ease-out);
+  }
+
+  .case:hover .case__title {
+    background-size: 100% 2px;
+  }
+
+  .case:hover .spec dt {
+    color: var(--c-chalk);
+  }
+
+  .service:hover .service__title {
+    translate: 4px 0;
+  }
+}
+
+@keyframes m-float {
+  50% {
+    translate: 0 -0.5rem;
+  }
+}
+
+@keyframes m-hero-drift {
+  to {
+    translate: 0 -3.5rem;
+  }
+}
+
+@keyframes m-hairline {
+  from {
+    scale: 0 1;
+    opacity: 0;
+  }
+}
+

@@ -1,0 +1,251 @@
+/* ==========================================================================
+   Cena 1: hero cinematográfica, "do papel ao site"
+   Com o palco fixo (pin): --q vai de 0 a 1 enquanto o hero fica parado (rolagem da cena);
+   --p é o mesmo progresso numa escala própria (0 a 1 nos primeiros ~75% da cena):
+     1. o desenho (planta) se aproxima e se endireita;
+     2. a captura real do site (Tio Pet) "se constrói" por cima do desenho, de cima para baixo;
+     3. as camadas (símbolo, celular e balão) se afastam em profundidade.
+   --x: "cortina", a próxima seção (Projetos) sobe e cobre o palco; ele recua e escurece.
+   O texto e os botões ficam inteiros até a cortina (só perdem um pouco de presença enquanto são cobertos).
+   No lite (celular) o hero rola normalmente e os mesmos movimentos acontecem com metade da intensidade (--hk).
+   ========================================================================== */
+
+html[data-scenes] .hero {
+  --hk: 1; /* intensidade dos movimentos */
+  --p0: 0; /* em que ponto da cena (--q) o progresso --p começa... */
+  --pd: 0.75; /* ...e quanto da cena ele leva para ir de 0 a 1 */
+  --p: clamp(0, calc((var(--q, 0) - var(--p0)) / var(--pd)), 1);
+}
+
+/* No celular o hero rola normalmente e o painel fica abaixo do texto: --q anda pelo hero inteiro
+   (data-q="leave"), então o desenho vira site enquanto o painel sobe pela tela (~60 a 410 px de rolagem) */
+html[data-scenes="lite"] .hero {
+  --hk: 0.5;
+  --p0: 0.06;
+  --pd: 0.34;
+}
+
+/* o quadriculado cresce com a rolagem; no celular o palco não é fixo, então ele corta o excesso
+   (senão a página ganha rolagem horizontal) */
+html[data-scenes] .hero__stage {
+  overflow: clip;
+}
+
+/* ---------- Palco fixo (telas largas) ---------- */
+
+html[data-scenes="pin"] .hero {
+  height: calc(100svh * 2.75); /* 1 palco + 0,75 de história + 1 de cortina */
+}
+
+html[data-scenes="pin"] .hero__stage {
+  display: grid;
+  grid-template-rows: minmax(0, 1fr) auto;
+  padding-block: calc(var(--header-h) + 1rem) 1.25rem;
+  transform-origin: 50% 42%;
+  scale: calc(1 - var(--x, 0) * 0.08);
+}
+
+html[data-scenes="pin"] .hero__grid {
+  min-height: 0;
+  align-content: center;
+}
+
+html[data-scenes="pin"] .hero__place {
+  margin-top: 0;
+}
+
+/* Em notebooks (1366×657, 1280×720) o texto tem de caber entre o header e o pé da tela, também
+   depois de subir com a rolagem: título, chamada e botões acompanham a altura (svh). Em telas altas
+   os valores ficam os do layout original (os mínimos/máximos do clamp). */
+html[data-scenes="pin"] .hero__title {
+  margin-top: clamp(0.75rem, 2.6svh, 1.5rem);
+  font-size: min(var(--fs-hero), 8.2svh);
+}
+
+html[data-scenes="pin"] .hero__subtitle {
+  font-size: clamp(1rem, 2.6svh, var(--fs-lead));
+}
+
+html[data-scenes="pin"] .hero__actions {
+  margin-top: clamp(1.25rem, 3.6svh, 2.25rem);
+}
+
+/* O painel nunca passa da altura da tela; em telas largas ele "vaza" um pouco para a margem direita
+   (composição fora do eixo), sem sair da janela */
+html[data-scenes="pin"] .hero-visual {
+  width: min(100%, 44rem, calc((100svh - var(--header-h) - 7rem) * 1.1429));
+}
+
+html[data-scenes="pin"] .hero__art {
+  margin-right: calc(-1 * clamp(0px, (100vw - 75rem) / 2 - 1rem, 3rem));
+}
+
+/* ---------- Texto: sobe um pouco e encolhe; só perde presença quando a próxima seção o cobre ---------- */
+
+html[data-scenes] .hero__copy {
+  --lift: 6svh; /* o quanto o texto sobe até o fim do palco */
+  transform-origin: 0 50%;
+  translate: 0 calc(var(--p) * var(--hk) * var(--lift) * -1);
+  scale: calc(1 - var(--p) * var(--hk) * 0.05);
+  opacity: calc(1 - var(--x, 0) * 0.4);
+}
+
+/* ---------- Objeto 3D: o desenho se endireita e se aproxima; a cortina o afasta ---------- */
+
+html[data-scenes] .hero-visual__world {
+  animation: none; /* a deriva por animation-timeline (motion.css) é substituída por --p */
+  transform: translate3d(
+      0,
+      calc(var(--p) * var(--hk) * -2%),
+      calc(var(--p) * var(--hk) * 90px - var(--x, 0) * 480px)
+    )
+    rotateX(calc(var(--rx, 0) * 1deg + 4deg - var(--p) * var(--hk) * 2deg + var(--x, 0) * 8deg))
+    rotateY(calc(var(--ry, 0) * 1deg - 9deg + var(--p) * var(--hk) * 5deg - var(--x, 0) * 22deg));
+}
+
+html[data-scenes] .hero-visual__logo {
+  transform: translate3d(calc(var(--p) * var(--hk) * -2%), 0, calc(55px + var(--p) * var(--hk) * 50px));
+}
+
+html[data-scenes] .hero-visual__phone {
+  transform: translate3d(
+    calc(var(--p) * var(--hk) * 1.5%),
+    calc(var(--p) * var(--hk) * -2%),
+    calc(95px + var(--p) * var(--hk) * 80px)
+  );
+}
+
+html[data-scenes] .hero-visual__bubble {
+  transform: translate3d(
+    calc(var(--p) * var(--hk) * -3%),
+    calc(var(--p) * var(--hk) * 6%),
+    calc(140px + var(--p) * var(--hk) * 170px)
+  );
+}
+
+/* Brilho e quadriculado acompanham: a "câmera" entra na planta */
+html[data-scenes] .hero-visual__glow {
+  scale: calc(1 + var(--p) * var(--hk) * 0.6);
+  translate: calc(var(--p) * var(--hk) * 14%) calc(var(--p) * var(--hk) * -6%);
+}
+
+html[data-scenes] .hero__stage::before {
+  transform-origin: 70% 38%;
+  scale: calc(1 + var(--p) * var(--hk) * 0.25);
+  translate: 0 calc(var(--p) * var(--hk) * -6%);
+}
+
+html[data-scenes] .hero[data-live="true"] .hero-visual__world,
+html[data-scenes] .hero[data-live="true"] .hero__stage::before {
+  will-change: transform;
+}
+
+/* ---------- Do papel ao site: a captura real se constrói por cima do desenho ----------
+   A janela do desenho (navegador e celular) é preenchida de cima para baixo, com a borda suave.
+   Posições em % da área útil de cada moldura do SVG (viewBox 640 x 560). Decorativo (aria-hidden). */
+
+html[data-scenes] .hero-visual__shot {
+  --w: clamp(0, calc((var(--p) - 0.04) / 0.8), 1);
+  position: absolute;
+  display: block;
+  overflow: hidden;
+  -webkit-mask-image: linear-gradient(180deg, #000 calc(var(--w) * 130% - 30%), transparent calc(var(--w) * 130%));
+  mask-image: linear-gradient(180deg, #000 calc(var(--w) * 130% - 30%), transparent calc(var(--w) * 130%));
+}
+
+html[data-scenes] .hero-visual__shot img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: top left;
+  background: #fff;
+}
+
+html[data-scenes] .hero-visual__shot--browser {
+  top: 11.4286%;
+  left: 14%;
+  width: 74.5%;
+  height: 49.7%;
+  border-radius: 0 0 2.9cqw 2.9cqw;
+  transform: translateZ(6px);
+}
+
+html[data-scenes] .hero-visual__shot--phone {
+  top: 9.494%;
+  left: 3.75%;
+  width: 92.5%;
+  height: 88.6%;
+  border-radius: 0 0 3.75cqw 3.75cqw;
+}
+
+/* ---------- Indicador de rolagem (some quando a rolagem começa) ---------- */
+
+.hero__cue {
+  display: none;
+}
+
+/* alinhado à margem direita do conteúdo (a esquerda tem o "Atendimento em...") */
+html[data-scenes="pin"] .hero__cue {
+  position: absolute;
+  right: max(var(--gutter), (100% - var(--container)) / 2);
+  bottom: 1.1rem;
+  z-index: 2;
+  display: grid;
+  justify-items: center;
+  gap: 0.5rem;
+  color: var(--c-pencil);
+  font-size: 0.6875rem;
+  font-weight: 620;
+  letter-spacing: 0.26em;
+  text-transform: uppercase;
+  opacity: calc(1 - var(--q, 0) * 7);
+  pointer-events: none;
+}
+
+html[data-scenes="pin"] .hero__cue i {
+  position: relative;
+  width: 1px;
+  height: 2.75rem;
+  overflow: hidden;
+  background: var(--c-line-strong);
+}
+
+/* o brilho desce 3 vezes (~5 s) e para; depois a linha fica fixa */
+html[data-scenes="pin"] .hero__cue i::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(transparent, var(--c-white) 55%, transparent);
+  translate: 0 -100%;
+  animation: hero-cue 1.7s ease-in-out 1.8s 3;
+}
+
+@keyframes hero-cue {
+  to {
+    translate: 0 100%;
+  }
+}
+
+/* ---------- Véu: escurece o palco enquanto a próxima seção o cobre ---------- */
+
+.hero__veil {
+  display: none;
+}
+
+html[data-scenes="pin"] .hero__veil {
+  position: absolute;
+  inset: 0;
+  z-index: 4;
+  display: block;
+  background: var(--c-ink);
+  opacity: calc(var(--x, 0) * 0.94);
+  pointer-events: none;
+}
+
+/* ---------- Telas baixas: o texto sobe menos, para não passar por baixo do header ---------- */
+
+@media (max-height: 46em) {
+  html[data-scenes="pin"] .hero__copy {
+    --lift: 5svh;
+  }
+}

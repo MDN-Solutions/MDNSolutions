@@ -1,6 +1,6 @@
 /* ==========================================================================
    Projetos: linhas editoriais com cena 3D (captura real em perspectiva)
-   Ganchos de JS (js/scene.js): --rx/--ry/--px/--py (ponteiro), --sp (-1 a 1, posição na tela).
+   Ganchos de JS (js/scene.js): --rx/--ry/--px (ponteiro), --sp (-1 a 1, posição na tela).
    Atenção: .case__scene usa preserve-3d; mantenha overflow/filter/opacity fora dos pais diretos.
    ========================================================================== */
 
@@ -114,21 +114,23 @@
 
 .case__scene {
   position: absolute;
-  inset: 6% 5% 6%;
+  inset: 5% 4% 5%;
   transform-style: preserve-3d;
-  transform: rotateX(calc(var(--rx, 0) * 1deg + 5deg))
-    rotateY(calc(var(--ry, 0) * 1deg + var(--sp, 0) * -7deg - 11deg));
+  /* inclinação leve: o suficiente para dar profundidade sem borrar a captura do site */
+  transform: rotateX(calc(var(--rx, 0) * 1deg + 2deg))
+    rotateY(calc(var(--ry, 0) * 1deg + var(--sp, 0) * -4deg - 6deg));
 }
 
 .case__media[data-live="true"] .case__scene {
   will-change: transform;
 }
 
+/* navegador no alto à esquerda, celular na quina de baixo à direita (não cobre o título do site) */
 .case__main {
   position: absolute;
   top: 0;
   left: 0;
-  width: 90%;
+  width: 92%;
   transform: translate3d(calc(var(--px, 0) * -6px), 0, 0);
 }
 
@@ -136,42 +138,38 @@
   position: absolute;
   right: 0;
   bottom: 0;
-  width: 25%;
-  transform: translate3d(calc(var(--px, 0) * 14px), 0, 90px);
+  width: 22%;
+  transform: translate3d(calc(var(--px, 0) * 14px), 0, 70px);
 }
 
 .case__media[data-active="true"] {
   --glare: 1;
 }
 
-/* Alterna o lado da inclinação nos casos "flip" */
+/* Alterna o lado da inclinação nos casos "flip": a borda mais próxima fica sempre do lado do texto */
 .case--flip .case__scene {
-  transform: rotateX(calc(var(--rx, 0) * 1deg + 5deg))
-    rotateY(calc(var(--ry, 0) * 1deg + var(--sp, 0) * -7deg + 11deg));
+  transform: rotateX(calc(var(--rx, 0) * 1deg + 2deg))
+    rotateY(calc(var(--ry, 0) * 1deg + var(--sp, 0) * -4deg + 6deg));
 }
 
-.case--flip .case__main {
-  right: 0;
-  left: auto;
-}
+/* ---------- CTA do caso ---------- */
 
-.case--flip .case__phone {
-  right: auto;
-  left: 0;
+.case__actions {
+  margin-top: clamp(1rem, 0.8rem + 1vw, 1.5rem);
 }
 
 /* ---------- Responsivo ---------- */
 
 @media (width >= 60em) {
   .case {
-    grid-template-columns: minmax(0, 7fr) minmax(0, 5fr);
+    grid-template-columns: minmax(0, 8fr) minmax(0, 5fr);
     align-items: center;
     gap: clamp(2.5rem, 1rem + 5vw, 5.5rem);
   }
 
   /* No caso invertido a imagem vai para a 2ª coluna, então as colunas também se invertem (a imagem sempre fica com a maior) */
   .case--flip {
-    grid-template-columns: minmax(0, 5fr) minmax(0, 7fr);
+    grid-template-columns: minmax(0, 5fr) minmax(0, 8fr);
   }
 
   .case--flip .case__media {
@@ -179,7 +177,7 @@
   }
 
   .case__media {
-    aspect-ratio: 1.22 / 1;
+    aspect-ratio: 1.3 / 1;
   }
 }
 

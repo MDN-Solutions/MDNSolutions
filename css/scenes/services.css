@@ -1,0 +1,721 @@
+/* ==========================================================================
+   Cena 4: serviços em papel
+   Seção clara (data-tone="paper", tokens em css/base.css): é o respiro entre as seções escuras.
+   --st (0 a 2): serviço em foco. O item atual acende (barra, tinta, ícone cheio) e os outros recuam
+   sem perder leitura; as janelas ilustrativas (esquemas de landing page, site e sistema, não são
+   projetos) avançam em 3D e só a do foco mostra os rótulos numerados.
+   --e: a folha sobe inclinada e se deita (transição projetos → serviços). --x: ao sair, ela encolhe como um cartão.
+   Celular (lite): cada serviço acende quando passa pelo centro da tela. Estático: lista simples, em papel.
+   ========================================================================== */
+
+.deck {
+  display: none; /* só existe com as cenas fixas */
+}
+
+/* o fundo claro: na rolagem normal é da própria seção; com o palco fixo é da folha (que se inclina) */
+.services__sheet {
+  position: relative;
+}
+
+/* papel quadriculado, só do lado do desenho (a área do texto fica limpa) */
+.services__sheet::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background-image:
+    linear-gradient(var(--grid-line) 1px, transparent 1px),
+    linear-gradient(90deg, var(--grid-line) 1px, transparent 1px);
+  background-size: 4rem 4rem;
+  background-position: center top;
+  mask-image: radial-gradient(ellipse 60% 70% at 78% 50%, #000, transparent 80%);
+  pointer-events: none;
+}
+
+.services__layout {
+  position: relative; /* acima do quadriculado */
+}
+
+/* ---------- Palco fixo + folha que se deita (telas largas) ---------- */
+
+html[data-scenes="pin"] .services {
+  height: calc(100svh * 3); /* 1 palco + 2 de história */
+  padding-block: 0;
+  background: none; /* o papel é da folha: assim os cantos inclinados mostram o fundo escuro da página */
+}
+
+html[data-scenes="pin"] .services__stage {
+  perspective: 1800px;
+  perspective-origin: 50% 0;
+}
+
+html[data-scenes="pin"] .services__sheet {
+  height: 100%;
+  padding-top: var(--header-h);
+  border-top: 1px solid rgb(12 11 17 / 0.12);
+  /* sobe com os cantos de cima arredondados e se deita; ao sair, vira um cartão que encolhe e arredonda embaixo */
+  border-radius: calc((1 - var(--e, 0)) * 2.25rem) calc((1 - var(--e, 0)) * 2.25rem) calc(var(--x, 0) * 2.25rem)
+    calc(var(--x, 0) * 2.25rem);
+  background:
+    radial-gradient(ellipse 48% 64% at 76% 56%, rgb(var(--c-violet) / 0.14), transparent 72%),
+    var(--c-ink);
+  box-shadow: 0 -2.5rem 6rem -2rem rgb(0 0 0 / calc(0.6 * (1 - var(--e, 0))));
+  transform-origin: 50% 100%;
+  transform: rotateX(calc((1 - var(--e, 0)) * 14deg));
+  scale: calc(1 - var(--x, 0) * 0.06);
+}
+
+html[data-scenes="pin"] .services__sheet::before {
+  border-radius: inherit;
+}
+
+html[data-scenes="pin"] .services__layout {
+  grid-template-columns: minmax(0, 5fr) minmax(0, 6fr);
+  grid-template-rows: auto auto;
+  align-content: center;
+  align-items: start;
+  column-gap: clamp(2rem, 1rem + 4vw, 5rem);
+  row-gap: clamp(0.5rem, 1.6svh, 1.25rem);
+  height: 100%;
+}
+
+html[data-scenes="pin"] .services__head {
+  position: static;
+  grid-column: 1;
+  grid-row: 1;
+}
+
+/* A coluna da esquerda (cabeçalho + 3 serviços) tem de caber entre o header e o pé da tela em
+   qualquer notebook: tamanhos e espaços acompanham a altura (svh) em vez de ficarem fixos. */
+html[data-scenes="pin"] .services__head .section-title {
+  margin-top: clamp(0.5rem, 1.6svh, 1.25rem);
+  font-size: clamp(1.75rem, 5.3svh, 3.5rem);
+}
+
+html[data-scenes="pin"] .services__head .lead {
+  margin-top: clamp(0.5rem, 1.6svh, 1.5rem);
+  font-size: clamp(0.9375rem, 0.4rem + 1.6svh, 1.3125rem);
+}
+
+html[data-scenes="pin"] .services__list {
+  grid-column: 1;
+  grid-row: 2;
+  border-bottom: 0;
+}
+
+/* ---------- Serviço em foco: --a vale 1 no item atual e 0 nos demais ---------- */
+
+html[data-scenes="pin"] .service {
+  --o: calc(var(--i) - var(--st, 0));
+  --oa: clamp(0, max(var(--o), var(--o) * -1), 1);
+  --a: calc(1 - var(--oa));
+  --pad: clamp(0.75rem, 2.2svh, 2rem);
+  padding-block: var(--pad);
+}
+
+html[data-scenes="pin"] .service::before {
+  top: var(--pad);
+  right: 0.5rem;
+}
+
+html[data-scenes="pin"] .service__title {
+  font-size: clamp(1.25rem, 3.3svh, 2rem);
+}
+
+html[data-scenes="pin"] .service__text {
+  margin-top: clamp(0.25rem, 0.7svh, 0.625rem);
+  font-size: clamp(0.875rem, 0.3rem + 1.4svh, 1.0625rem);
+  line-height: 1.5;
+}
+
+html[data-scenes="pin"] .service__icon {
+  width: clamp(2.5rem, 5.6svh, 3.25rem);
+  height: clamp(2.5rem, 5.6svh, 3.25rem);
+}
+
+/* O que muda com o foco (telas largas e celular usam a mesma receita, cada um com o seu --a).
+   Fora de foco o texto fica a ~4,7:1 de contraste no papel; o foco aparece pela barra violeta, pela
+   tinta de fundo, pelo ícone cheio e pelo deslocamento, não só por transparência.
+   (o ::after do .service é do brilho que segue o ponteiro, em motion.css) */
+html[data-scenes] .service {
+  padding-left: 1.25rem;
+  border-top-color: rgb(var(--c-violet) / calc(0.14 + var(--a) * 0.5));
+  background: linear-gradient(90deg, rgb(var(--c-violet) / calc(var(--a) * 0.1)), transparent 80%);
+  box-shadow: inset calc(var(--a) * 3px) 0 0 rgb(var(--c-violet)); /* barra do foco, na borda esquerda */
+  translate: calc(var(--a) * 0.75rem) 0;
+}
+
+html[data-scenes] .service__title {
+  opacity: calc(0.62 + var(--a) * 0.38);
+}
+
+html[data-scenes] .service__text {
+  opacity: calc(0.72 + var(--a) * 0.28);
+}
+
+html[data-scenes] .service__icon {
+  border-color: rgb(var(--c-violet) / calc(0.3 + var(--a) * 0.7));
+  background: rgb(var(--c-violet) / calc(0.05 + var(--a) * 0.15));
+  color: rgb(var(--c-violet));
+  box-shadow: 0 0 0 calc(var(--a) * 6px) rgb(var(--c-violet) / calc(var(--a) * 0.14));
+}
+
+/* ---------- Janelas em camadas ---------- */
+
+.deck {
+  /* cores das janelas (claras, sobre o papel) */
+  --w-bg: #fff;
+  --w-chrome: #f5f3ee;
+  --w-line: #dfdbd0;
+  --w-soft: #ebe8df;
+  --w-mid: #cfcabd;
+  --w-ink: #2a2932;
+}
+
+html[data-scenes="pin"] .deck {
+  position: relative;
+  grid-column: 2;
+  grid-row: 1 / span 2;
+  align-self: center;
+  display: block;
+  width: 100%;
+  max-height: calc(100svh - var(--header-h) - 5rem);
+  aspect-ratio: 1.12 / 1;
+  perspective: 1400px;
+  perspective-origin: 50% 40%;
+  touch-action: pan-y;
+}
+
+html[data-scenes="pin"] .deck__world {
+  position: absolute;
+  inset: 0;
+  transform-style: preserve-3d;
+  transform: rotateX(calc(var(--rx, 0) * 1deg + 7deg)) rotateY(calc(var(--ry, 0) * 1deg - 13deg));
+}
+
+html[data-scenes="pin"] .services[data-live="true"] .deck__world {
+  will-change: transform;
+}
+
+html[data-scenes="pin"] .deck__layer {
+  --o: calc(var(--i) - var(--st, 0));
+  --oa: clamp(0, max(var(--o), var(--o) * -1), 1);
+  --a: calc(1 - var(--oa)); /* 1 na janela em foco */
+  position: absolute;
+  inset: 12% 4% 12% 4%;
+  container-type: inline-size;
+  opacity: calc(1 - var(--oa) * 0.5);
+  transform: translate3d(calc(var(--o) * 9%), calc(var(--o) * -10%), calc(var(--oa) * -200px + (1 - var(--oa)) * 60px))
+    rotateY(calc(var(--o) * 5deg));
+}
+
+/* rótulos numerados: aparecem só na janela em foco, um depois do outro */
+.deck__tag {
+  --t: clamp(0, calc((var(--a, 0) - 0.5 - var(--k, 0) * 0.1) * 4), 1);
+  position: absolute;
+  top: var(--y);
+  left: var(--x);
+  display: inline-flex;
+  align-items: center;
+  gap: 0.55em;
+  padding: 0.35em 0.9em 0.35em 0.35em;
+  border: 1px solid rgb(var(--c-violet) / 0.5);
+  border-radius: 99px;
+  background: #fff;
+  color: var(--w-ink);
+  font-size: max(0.75rem, 2.5cqw);
+  font-weight: 620;
+  line-height: 1.1;
+  white-space: nowrap;
+  box-shadow: 0 0.7em 1.5em -0.7em rgb(35 20 110 / 0.5);
+  opacity: var(--t);
+  translate: 0 calc((1 - var(--t)) * 0.8em);
+}
+
+.deck__tag b {
+  display: grid;
+  flex: none;
+  place-items: center;
+  width: 1.7em;
+  height: 1.7em;
+  border-radius: 50%;
+  background: rgb(var(--c-violet));
+  color: #fff;
+  font-size: 0.82em;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+}
+
+/* ---------- Janela (esquema genérico) ---------- */
+
+.wf {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  border: 1px solid var(--w-line);
+  border-radius: 2.6cqw;
+  background: var(--w-bg);
+  box-shadow:
+    0 3cqw 7cqw -2.5cqw rgb(35 20 110 / 0.4),
+    0 0.5cqw 1.5cqw -0.5cqw rgb(35 20 110 / 0.22);
+}
+
+.wf__bar {
+  display: flex;
+  flex: none;
+  align-items: center;
+  gap: 1.1cqw;
+  padding: 1.5cqw 2.4cqw;
+  border-bottom: 1px solid var(--w-line);
+  background: var(--w-chrome);
+}
+
+.wf__bar i {
+  width: 1.5cqw;
+  height: 1.5cqw;
+  border-radius: 50%;
+  background: var(--w-mid);
+}
+
+.wf__bar b {
+  width: 38%;
+  height: 2.3cqw;
+  margin-left: 3cqw;
+  border: 1px solid var(--w-line);
+  border-radius: 99px;
+  background: #fff;
+}
+
+.wf__body {
+  flex: 1;
+  min-height: 0;
+  padding: 3.4cqw;
+}
+
+/* blocos genéricos */
+.wf i,
+.wf b,
+.wf em {
+  display: block;
+}
+
+.wf .t {
+  width: 82%;
+  height: 3.6cqw;
+  margin-bottom: 1.5cqw;
+  border-radius: 99px;
+  background: var(--w-ink);
+}
+
+.wf .t--s {
+  width: 56%;
+}
+
+.wf .l {
+  width: 92%;
+  height: 1.5cqw;
+  margin-top: 1.3cqw;
+  border-radius: 99px;
+  background: var(--w-soft);
+}
+
+.wf .l--s {
+  width: 64%;
+}
+
+/* "foto": bloco lilás com o X de planta */
+.wf__img,
+.wf .img {
+  position: relative;
+  overflow: hidden;
+  border-radius: 1.6cqw;
+  background:
+    linear-gradient(to top right, transparent calc(50% - 0.5px), rgb(var(--c-violet) / 0.28), transparent calc(50% + 0.5px)),
+    linear-gradient(to bottom right, transparent calc(50% - 0.5px), rgb(var(--c-violet) / 0.28), transparent calc(50% + 0.5px)),
+    linear-gradient(135deg, rgb(var(--c-violet) / 0.2), rgb(var(--c-violet) / 0.05));
+}
+
+/* landing page: título, chamada para o WhatsApp, imagem e três diferenciais */
+.wf__body--landing {
+  display: grid;
+  grid-template-columns: 1.1fr 0.9fr;
+  grid-template-rows: minmax(0, 1fr) auto;
+  gap: 3.2cqw;
+}
+
+.wf__copy {
+  align-self: center;
+}
+
+.wf__actions {
+  display: flex;
+  gap: 1.6cqw;
+  margin-top: 3cqw;
+}
+
+.wf .cta {
+  display: grid;
+  place-items: center;
+  width: 19cqw;
+  height: 5cqw;
+  border-radius: 99px;
+  background: rgb(var(--c-violet));
+  box-shadow: 0 1.4cqw 3cqw -1.2cqw rgb(var(--c-violet) / 0.75);
+  color: #fff;
+}
+
+.wf .cta .icon {
+  width: 2.6cqw;
+  height: 2.6cqw;
+}
+
+.wf .ghost {
+  width: 12cqw;
+  height: 5cqw;
+  border: 1px solid var(--w-mid);
+  border-radius: 99px;
+}
+
+.wf__body--landing .wf__img {
+  min-height: 0;
+  border-radius: 2cqw;
+}
+
+.wf__cards {
+  display: grid;
+  grid-column: 1 / -1;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 2.4cqw;
+}
+
+.wf__cards i {
+  position: relative;
+  height: 12.5cqw;
+  border: 1px solid var(--w-line);
+  border-radius: 1.8cqw;
+}
+
+/* cada cartão: um ícone redondo e duas linhas */
+.wf__cards i::before {
+  content: "";
+  position: absolute;
+  top: 2cqw;
+  left: 2cqw;
+  width: 3.6cqw;
+  height: 3.6cqw;
+  border-radius: 50%;
+  background: rgb(var(--c-violet) / 0.16);
+  box-shadow: inset 0 0 0 1px rgb(var(--c-violet) / 0.55);
+}
+
+.wf__cards i::after {
+  content: "";
+  position: absolute;
+  right: 2cqw;
+  bottom: 2cqw;
+  left: 2cqw;
+  height: 1.3cqw;
+  border-radius: 99px;
+  background: var(--w-soft);
+  box-shadow: 0 -2.5cqw 0 var(--w-soft);
+}
+
+/* site profissional: menu, faixa institucional, catálogo e cardápio */
+.wf__body--site {
+  display: grid;
+  grid-template-rows: auto auto minmax(0, 1fr);
+  gap: 2.8cqw;
+}
+
+.wf__nav {
+  display: flex;
+  align-items: center;
+  gap: 2.6cqw;
+}
+
+.wf__nav .logo {
+  width: 5cqw;
+  height: 5cqw;
+  border-radius: 1.4cqw;
+  background: rgb(var(--c-violet));
+}
+
+.wf__nav .link {
+  width: 8cqw;
+  height: 1.5cqw;
+  border-radius: 99px;
+  background: var(--w-mid);
+}
+
+.wf__nav .btn {
+  width: 12cqw;
+  height: 4cqw;
+  margin-left: auto;
+  border-radius: 99px;
+  background: var(--w-ink);
+}
+
+.wf__banner {
+  padding: 3.2cqw 3.6cqw;
+  border-radius: 2cqw;
+  background: linear-gradient(120deg, rgb(var(--c-violet) / 0.22), rgb(var(--c-violet) / 0.05) 75%);
+}
+
+.wf__banner .t {
+  width: 44%;
+}
+
+.wf__banner .l {
+  width: 32%;
+}
+
+.wf__banner .pill {
+  width: 13cqw;
+  height: 3.8cqw;
+  margin-top: 2.2cqw;
+  border-radius: 99px;
+  background: rgb(var(--c-violet));
+}
+
+.wf__split {
+  display: grid;
+  grid-template-columns: 1.3fr 1fr;
+  gap: 3cqw;
+  min-height: 0;
+}
+
+.wf__catalog {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 2cqw;
+}
+
+.wf__catalog > div {
+  display: grid;
+  grid-template-rows: minmax(0, 1fr) auto auto;
+  gap: 1.2cqw;
+}
+
+.wf__catalog .img {
+  min-height: 0;
+}
+
+.wf__catalog .l {
+  width: 80%;
+  margin-top: 0.4cqw;
+}
+
+.wf__catalog .price {
+  width: 46%;
+  height: 2.4cqw;
+  border-radius: 99px;
+  background: rgb(var(--c-violet) / 0.85);
+}
+
+.wf__menu {
+  display: grid;
+  align-content: space-between;
+  gap: 2.1cqw;
+  padding: 2.2cqw 2.4cqw;
+  border: 1px solid var(--w-line);
+  border-radius: 1.8cqw;
+}
+
+.wf__menu > div {
+  display: grid;
+  grid-template-columns: 34% minmax(0, 1fr) 8cqw;
+  align-items: center;
+  gap: 1.2cqw;
+}
+
+.wf__menu .n {
+  height: 1.5cqw;
+  border-radius: 99px;
+  background: var(--w-ink);
+  opacity: 0.8;
+}
+
+.wf__menu .dots {
+  height: 0;
+  border-top: 0.45cqw dotted var(--w-mid);
+}
+
+.wf__menu .p {
+  height: 2.2cqw;
+  border-radius: 99px;
+  background: rgb(var(--c-violet) / 0.22);
+}
+
+/* sistema: menu lateral, indicadores, agenda e clientes */
+.wf__body--system {
+  display: grid;
+  grid-template-columns: 15% minmax(0, 1fr);
+  gap: 2.6cqw;
+  padding: 2.6cqw;
+}
+
+.wf__side {
+  display: grid;
+  align-content: start;
+  gap: 2.2cqw;
+  padding: 1.6cqw 2cqw 1.6cqw 0.6cqw;
+  border-right: 1px solid var(--w-line);
+}
+
+.wf__side i {
+  height: 2.4cqw;
+  border-radius: 99px;
+  background: var(--w-soft);
+}
+
+.wf__side i.on {
+  background: rgb(var(--c-violet));
+  box-shadow: 0 1cqw 2.4cqw -1cqw rgb(var(--c-violet) / 0.8);
+}
+
+.wf__main {
+  display: grid;
+  grid-template-rows: auto auto minmax(0, 1fr);
+  gap: 2.6cqw;
+}
+
+.wf__top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.wf__top .search {
+  width: 38%;
+  height: 3.8cqw;
+  border: 1px solid var(--w-line);
+  border-radius: 99px;
+}
+
+.wf__top .avatar {
+  width: 4cqw;
+  height: 4cqw;
+  border-radius: 50%;
+  background: rgb(var(--c-violet) / 0.25);
+  box-shadow: inset 0 0 0 1px rgb(var(--c-violet) / 0.55);
+}
+
+.wf__stats {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 2cqw;
+}
+
+.wf__stats > div {
+  padding: 2cqw 2.2cqw;
+  border: 1px solid var(--w-line);
+  border-radius: 1.8cqw;
+}
+
+.wf__stats .l {
+  width: 55%;
+  margin-top: 0;
+}
+
+.wf__stats .big {
+  width: 70%;
+  height: 4cqw;
+  margin-top: 1.6cqw;
+  border-radius: 1cqw;
+  background: var(--w-ink);
+  opacity: 0.85;
+}
+
+.wf__stats > div:nth-child(2) .big {
+  background: rgb(var(--c-violet));
+  opacity: 1;
+}
+
+.wf__panels {
+  display: grid;
+  grid-template-columns: 1.15fr 1fr;
+  gap: 2.2cqw;
+  min-height: 0;
+}
+
+.wf__agenda {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  grid-auto-rows: minmax(0, 1fr);
+  gap: 1cqw;
+  padding: 2cqw;
+  border: 1px solid var(--w-line);
+  border-radius: 1.8cqw;
+}
+
+.wf__agenda i {
+  border-radius: 0.8cqw;
+  background: var(--w-soft);
+}
+
+.wf__agenda i.mid {
+  background: rgb(var(--c-violet) / 0.3);
+}
+
+.wf__agenda i.on {
+  background: rgb(var(--c-violet));
+}
+
+.wf__clients {
+  display: grid;
+  align-content: space-between;
+  gap: 1.9cqw;
+  padding: 2cqw 2.2cqw;
+  border: 1px solid var(--w-line);
+  border-radius: 1.8cqw;
+}
+
+.wf__clients > div {
+  display: grid;
+  grid-template-columns: 4cqw minmax(0, 1fr) 7cqw;
+  align-items: center;
+  gap: 1.6cqw;
+}
+
+.wf__clients b {
+  width: 4cqw;
+  height: 4cqw;
+  border-radius: 50%;
+  background: rgb(var(--c-violet) / 0.2);
+  box-shadow: inset 0 0 0 1px rgb(var(--c-violet) / 0.5);
+}
+
+.wf__clients i {
+  height: 1.5cqw;
+  border-radius: 99px;
+  background: var(--w-mid);
+}
+
+.wf__clients em {
+  height: 2.2cqw;
+  border: 1px solid rgb(var(--c-violet) / 0.55);
+  border-radius: 99px;
+}
+
+/* ---------- Celular (lite): o serviço que passa pelo centro acende ---------- */
+
+html[data-scenes="lite"] .service {
+  --a: clamp(0, 1 - max(var(--q, 0.5) - 0.5, 0.5 - var(--q, 0.5)) * 3.6, 1);
+}
+
+/* ---------- Telas estreitas (< 75em): a lista ganha largura e a pilha de janelas encolhe um pouco ---------- */
+
+@media (width < 75em) {
+  html[data-scenes="pin"] .services__layout {
+    grid-template-columns: minmax(0, 6fr) minmax(0, 5fr);
+  }
+}
+
+/* ---------- Telas muito baixas (notebook com barras do navegador): sem a chamada do cabeçalho ---------- */
+
+@media (max-height: 40em) {
+  html[data-scenes="pin"] .services__head .lead {
+    display: none;
+  }
+}
