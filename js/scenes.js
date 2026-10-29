@@ -30,6 +30,11 @@
   const root = document.documentElement;
   const reduceQuery = window.matchMedia("(prefers-reduced-motion: reduce)");
   const pinQuery = window.matchMedia("(min-width: 60em) and (min-height: 36em)");
+  // o CSS das cenas usa svh, cqw, overflow: clip e translate/scale/rotate individuais; sem eles, estático
+  const css = window.CSS;
+  const supported = Boolean(
+    css && css.supports && css.supports("height: 1svh") && css.supports("width: 1cqw") && css.supports("overflow: clip") && css.supports("translate: 1px"),
+  );
 
   const SMOOTH = 0.16; // fração do caminho percorrida por quadro (a 60 fps)
   const EPSILON = 0.0006;
@@ -78,7 +83,7 @@
 
   /* ---------- Modo ---------- */
   function applyMode() {
-    const next = reduceQuery.matches ? null : pinQuery.matches ? "pin" : "lite";
+    const next = !supported || reduceQuery.matches ? null : pinQuery.matches ? "pin" : "lite";
     mode = next;
     if (next) {
       root.setAttribute("data-scenes", next);

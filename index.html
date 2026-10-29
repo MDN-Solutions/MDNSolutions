@@ -81,7 +81,10 @@
       (function () {
         var d = document.documentElement;
         var m = window.matchMedia;
-        if (!m || m("(prefers-reduced-motion: reduce)").matches) return;
+        var c = window.CSS;
+        // navegador sem unidades svh/cqw, overflow: clip ou translate individual: layout estático
+        var ok = c && c.supports && c.supports("height: 1svh") && c.supports("width: 1cqw") && c.supports("overflow: clip") && c.supports("translate: 1px");
+        if (!m || !ok || m("(prefers-reduced-motion: reduce)").matches) return;
         d.setAttribute("data-scenes", m("(min-width: 60em) and (min-height: 36em)").matches ? "pin" : "lite");
         // se o motor (js/scenes.js) não iniciar, volta ao layout estático
         window.setTimeout(function () {

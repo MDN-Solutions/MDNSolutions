@@ -156,7 +156,7 @@ scale, rotate, 3D) está em `css/scenes/`, usando só `transform`/`translate`/`s
   e o palco (`[data-pinbox]`) usa `position: sticky` durante a história.
 - `lite`: celulares e telas baixas. Nada fica fixo; as mesmas cenas viram efeitos mais leves na
   rolagem normal (linha do processo vertical, serviços que acendem no centro, projetos em lista).
-- sem o atributo: `prefers-reduced-motion: reduce`, sem JS ou se o motor falhar (o script do
+- sem o atributo: `prefers-reduced-motion: reduce`, navegador sem `svh`/`cqw`/`overflow: clip`/`translate`, sem JS ou se o motor falhar (o script do
   `<head>` remove `data-scenes` após 5 s sem resposta). A página fica estática, em fluxo normal, com
   todo o conteúdo e os links, e sem pinagem, sem parallax e sem animações.
 
