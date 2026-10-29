@@ -209,3 +209,51 @@
     opacity: 0;
   }
 }
+
+/* ---------- Serviços: faixa de luz que segue o mouse ---------- */
+.service::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background: radial-gradient(
+    circle 16rem at var(--mx, 85%) var(--my, 50%),
+    rgb(var(--c-violet) / 0.16),
+    transparent 70%
+  );
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity var(--dur) ease;
+}
+
+.service {
+  isolation: isolate;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .service:hover::after {
+    opacity: 1;
+  }
+}
+
+/* ---------- Header: porcentagem de leitura (só em telas largas) ---------- */
+.header__pct {
+  display: none;
+  color: var(--c-pencil);
+  font-size: var(--fs-xs);
+  font-variant-numeric: tabular-nums;
+  font-weight: 620;
+  letter-spacing: 0.08em;
+}
+
+.header__pct[hidden] {
+  display: none !important;
+}
+
+@media (width >= 75em) {
+  .header__pct {
+    display: inline-block;
+    min-width: 3.5ch;
+    text-align: right;
+  }
+}

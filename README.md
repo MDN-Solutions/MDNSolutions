@@ -13,10 +13,11 @@ css/
   components.css           Botões, logo e molduras de dispositivo (navegador e celular)
   header.css               Header fixo e menu mobile
   footer.css               Rodapé
-  sections/                Um arquivo por seção: hero, projects, services, process, about, contact
+  sections/                Um arquivo por seção: hero, projects, strip, services, process, about, contact
   motion.css               Movimento extra (entradas escalonadas, micro-interações, barra de progresso)
 js/main.js                 Header, menu, link ativo, entrada ao rolar, ano no rodapé
 js/scene.js                Inclinação 3D das cenas e brilho que segue o mouse
+js/extras.js               Faixa de projetos (pausa), numerais que contam e % de leitura
 assets/                    Fontes, logo, ícones e capturas dos projetos (assets/projects/)
 ```
 
@@ -107,6 +108,11 @@ se move responde ao ponteiro ou à rolagem (ou acontece uma vez, na entrada).
 | Barra de progresso de leitura no header | Mostrar onde se está na página | Igual (navegadores com `animation-timeline`) | Sem barra |
 | Anel que se expande no botão do contato (2 ciclos, ~4,8 s) | Chamar atenção sem distrair | Igual | Parado |
 | Brilho que atravessa o botão principal | Feedback de interação | Só com mouse | Sem brilho |
+| Faixa de projetos que rola sozinha (`css/sections/strip.css`, `js/extras.js`) | Mostrar os trabalhos logo no começo de "Projetos" | Igual | Lista rolável com o dedo/mouse, sem animação |
+| Faixa: pausa no hover, no foco do teclado e pelo botão "Pausar faixa" | Cumprir WCAG 2.2.2 (movimento de mais de 5 s precisa poder parar) | Botão de pausa | Botão some (não há movimento) |
+| Numerais "01, 02, 03" de "Como funciona" contam a partir de 0 (uma vez) | Dar ritmo à entrada da seção | Igual | Numerais prontos |
+| Porcentagem de leitura no header (só telas largas) | Mostrar onde se está na página | Não aparece | Não aparece |
+| Faixa de luz que segue o mouse nos serviços e nos cartões da faixa | Feedback de foco | Só com mouse | Sem brilho |
 | Hover de links e botões | Feedback de interação | Não existe em toque | Mudança de cor e borda |
 
 O 3D é feito só com CSS (`perspective`, `preserve-3d`, `translate3d`) e um arquivo JS pequeno,

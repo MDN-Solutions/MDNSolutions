@@ -64,10 +64,12 @@
     <link rel="stylesheet" href="css/sections/process.css" />
     <link rel="stylesheet" href="css/sections/about.css" />
     <link rel="stylesheet" href="css/sections/contact.css" />
+    <link rel="stylesheet" href="css/sections/strip.css" />
     <link rel="stylesheet" href="css/motion.css" />
 
     <script src="js/main.js" defer></script>
     <script src="js/scene.js" defer></script>
+    <script src="js/extras.js" defer></script>
   </head>
 
   <body>
@@ -151,6 +153,7 @@
         </nav>
 
         <div class="header__actions">
+          <span class="header__pct" aria-hidden="true" hidden><span data-read-pct>0</span>%</span>
           <a
             class="button button--primary button--sm header__cta"
             href="https://wa.me/5581998576040?text=Ol%C3%A1%21%20Conheci%20a%20MDN%20Solutions%20pelo%20site%20e%20gostaria%20de%20solicitar%20um%20or%C3%A7amento."
@@ -334,9 +337,31 @@
             <h2 class="section-title" id="projetos-title">Trabalhos reais, feitos para negócios locais.</h2>
           </header>
 
+          <!-- Faixa de projetos: rola sozinha com JS (pausa no hover/foco ou pelo botão); sem JS ou com movimento reduzido vira uma lista rolável -->
+          <div class="strip" data-strip role="region" aria-label="Projetos em destaque">
+            <div class="strip__viewport">
+              <div class="strip__track">
+                <ul class="strip__group">
+                  <li><a class="strip__item" href="#trio-vilela" data-spotlight><img src="assets/projects/trio-thumb.webp" alt="" width="480" height="300" loading="lazy" decoding="async" /><span class="strip__meta"><span class="strip__kicker">Site de banda</span><span class="strip__name">Trio Vilela</span></span></a></li>
+                  <li><a class="strip__item" href="#tio-pet" data-spotlight><img src="assets/projects/tiopet-thumb.webp" alt="" width="480" height="300" loading="lazy" decoding="async" /><span class="strip__meta"><span class="strip__kicker">Site de pet shop</span><span class="strip__name">Tio Pet</span></span></a></li>
+                  <li><a class="strip__item" href="#studio-monique-marques" data-spotlight><img src="assets/projects/monique-thumb.webp" alt="" width="480" height="300" loading="lazy" decoding="async" /><span class="strip__meta"><span class="strip__kicker">Landing page de salão</span><span class="strip__name">Studio Monique Marques</span></span></a></li>
+                </ul>
+                <ul class="strip__group" aria-hidden="true">
+                  <li><a class="strip__item" href="#trio-vilela" tabindex="-1" data-spotlight><img src="assets/projects/trio-thumb.webp" alt="" width="480" height="300" loading="lazy" decoding="async" /><span class="strip__meta"><span class="strip__kicker">Site de banda</span><span class="strip__name">Trio Vilela</span></span></a></li>
+                  <li><a class="strip__item" href="#tio-pet" tabindex="-1" data-spotlight><img src="assets/projects/tiopet-thumb.webp" alt="" width="480" height="300" loading="lazy" decoding="async" /><span class="strip__meta"><span class="strip__kicker">Site de pet shop</span><span class="strip__name">Tio Pet</span></span></a></li>
+                  <li><a class="strip__item" href="#studio-monique-marques" tabindex="-1" data-spotlight><img src="assets/projects/monique-thumb.webp" alt="" width="480" height="300" loading="lazy" decoding="async" /><span class="strip__meta"><span class="strip__kicker">Landing page de salão</span><span class="strip__name">Studio Monique Marques</span></span></a></li>
+                </ul>
+              </div>
+            </div>
+            <button class="strip__pause" type="button" aria-pressed="false" hidden>
+              <svg class="icon" width="14" height="14" aria-hidden="true" viewBox="0 0 24 24" fill="currentColor"><rect class="strip__bar" x="6" y="5" width="4" height="14" rx="1" /><rect class="strip__bar" x="14" y="5" width="4" height="14" rx="1" /></svg>
+              <span class="strip__pause-label">Pausar faixa</span>
+            </button>
+          </div>
+
           <ol class="cases">
             <!-- Trio Vilela -->
-            <li class="case" data-reveal="up">
+            <li class="case" id="trio-vilela" data-reveal="up">
               <div class="case__media" data-tilt-scene>
                 <div class="case__scene">
                   <figure class="device device--browser case__main">
@@ -363,7 +388,7 @@
             </li>
 
             <!-- Tio Pet -->
-            <li class="case case--flip" data-reveal="up">
+            <li class="case case--flip" id="tio-pet" data-reveal="up">
               <div class="case__media" data-tilt-scene>
                 <div class="case__scene">
                   <figure class="device device--browser case__main">
@@ -371,7 +396,7 @@
                     <img src="assets/projects/tiopet-desktop.webp" srcset="assets/projects/tiopet-desktop-sm.webp 800w, assets/projects/tiopet-desktop.webp 1200w" sizes="(min-width: 60em) 455px, 70vw" alt="Página inicial do site do Tio Pet, em tons de azul, com o título &quot;Seu pet merece um cuidado especial&quot; e a ilustração de um cachorro no banho." width="1200" height="750" loading="lazy" decoding="async" />
                   </figure>
                   <figure class="device device--phone case__phone">
-                    <img src="assets/projects/tiopet-mobile.webp" alt="Versão para celular do site do Tio Pet." width="420" height="909" loading="lazy" decoding="async" />
+                    <img src="assets/projects/tiopet-mobile.webp" alt="Versão para celular do site do Tio Pet." width="340" height="736" loading="lazy" decoding="async" />
                   </figure>
                 </div>
               </div>
@@ -392,7 +417,7 @@
             </li>
 
             <!-- Studio Monique Marques -->
-            <li class="case" data-reveal="up">
+            <li class="case" id="studio-monique-marques" data-reveal="up">
               <div class="case__media" data-tilt-scene>
                 <div class="case__scene">
                   <figure class="device device--browser case__main">
@@ -400,7 +425,7 @@
                     <img src="assets/projects/monique-desktop.webp" srcset="assets/projects/monique-desktop-sm.webp 800w, assets/projects/monique-desktop.webp 1200w" sizes="(min-width: 60em) 455px, 70vw" alt="Página inicial do site do Studio Monique Marques, em tons claros e dourado, com o título &quot;Seu cabelo. Sua essência. Sua melhor versão.&quot; e o retrato da Monique em moldura de arco." width="1200" height="750" loading="lazy" decoding="async" />
                   </figure>
                   <figure class="device device--phone case__phone">
-                    <img src="assets/projects/monique-mobile.webp" alt="Versão para celular do site do Studio Monique Marques." width="420" height="909" loading="lazy" decoding="async" />
+                    <img src="assets/projects/monique-mobile.webp" alt="Versão para celular do site do Studio Monique Marques." width="340" height="736" loading="lazy" decoding="async" />
                   </figure>
                 </div>
               </div>
@@ -434,7 +459,7 @@
           </header>
 
           <ul class="services__list">
-            <li class="service" data-reveal="up">
+            <li class="service" data-reveal="up" data-spotlight>
               <span class="service__icon" aria-hidden="true">
                 <svg class="icon" width="26" height="26"><use href="#icon-chat" /></svg>
               </span>
@@ -444,7 +469,7 @@
                 direcionar visitantes para o contato pelo WhatsApp.
               </p>
             </li>
-            <li class="service" data-reveal="up">
+            <li class="service" data-reveal="up" data-spotlight>
               <span class="service__icon" aria-hidden="true">
                 <svg class="icon" width="26" height="26"><use href="#icon-devices" /></svg>
               </span>
@@ -454,7 +479,7 @@
                 seus serviços e informações de contato com clareza.
               </p>
             </li>
-            <li class="service" data-reveal="up">
+            <li class="service" data-reveal="up" data-spotlight>
               <span class="service__icon" aria-hidden="true">
                 <svg class="icon" width="26" height="26"><use href="#icon-layout-list" /></svg>
               </span>
