@@ -61,10 +61,10 @@
     <link rel="stylesheet" href="css/sections/hero.css" />
     <link rel="stylesheet" href="css/sections/projects.css" />
     <link rel="stylesheet" href="css/sections/services.css" />
+    <link rel="stylesheet" href="css/sections/flow.css" />
     <link rel="stylesheet" href="css/sections/process.css" />
     <link rel="stylesheet" href="css/sections/about.css" />
     <link rel="stylesheet" href="css/sections/contact.css" />
-    <link rel="stylesheet" href="css/sections/strip.css" />
     <link rel="stylesheet" href="css/motion.css" />
     <link rel="stylesheet" href="css/scenes/core.css" />
     <link rel="stylesheet" href="css/scenes/hero.css" />
@@ -315,6 +315,12 @@
                 <rect class="stroke stroke--mid" x="24" y="240" width="232" height="232" rx="36" pathLength="1" style="--delay: 0.3s; --duration: 1s" />
               </svg>
 
+              <!-- Capturas reais (Tio Pet) que preenchem o desenho conforme a rolagem: "do papel ao site".
+                   Só aparecem com as cenas de rolagem ligadas; as mesmas imagens são usadas em Projetos. -->
+              <div class="hero-visual__shot hero-visual__shot--browser">
+                <img src="assets/projects/tiopet-desktop-sm.webp" srcset="assets/projects/tiopet-desktop-sm.webp 800w, assets/projects/tiopet-desktop.webp 1200w" sizes="(min-width: 60em) 560px, 72vw" alt="" width="800" height="500" loading="lazy" decoding="async" />
+              </div>
+
               <div class="hero-visual__logo">
                 <img class="logo" src="assets/img/logo-512.webp" alt="" width="512" height="512" />
               </div>
@@ -340,6 +346,9 @@
                   <rect class="bar" x="472" y="407" width="92" height="5" rx="2.5" style="--delay: 1.24s" />
                   <path class="stroke stroke--soft" d="M510 456H550" pathLength="1" style="--delay: 1.2s; --duration: 0.4s" />
                 </svg>
+                <div class="hero-visual__shot hero-visual__shot--phone">
+                  <img src="assets/projects/tiopet-mobile.webp" alt="" width="340" height="736" loading="lazy" decoding="async" />
+                </div>
               </div>
 
               <div class="hero-visual__bubble">
@@ -395,30 +404,6 @@
             </nav>
           </div>
 
-          <div class="container projects__strip">
-          <!-- Faixa de projetos: rola sozinha com JS (pausa no hover/foco ou pelo botão); sem JS ou com movimento reduzido vira uma lista rolável -->
-          <div class="strip" data-strip role="region" aria-label="Projetos em destaque">
-            <div class="strip__viewport">
-              <div class="strip__track">
-                <ul class="strip__group">
-                  <li><a class="strip__item" href="#trio-vilela" data-spotlight><img src="assets/projects/trio-thumb.webp" alt="" width="480" height="300" loading="lazy" decoding="async" /><span class="strip__meta"><span class="strip__kicker">Site de banda</span><span class="strip__name">Trio Vilela</span></span></a></li>
-                  <li><a class="strip__item" href="#tio-pet" data-spotlight><img src="assets/projects/tiopet-thumb.webp" alt="" width="480" height="300" loading="lazy" decoding="async" /><span class="strip__meta"><span class="strip__kicker">Site de pet shop</span><span class="strip__name">Tio Pet</span></span></a></li>
-                  <li><a class="strip__item" href="#studio-monique-marques" data-spotlight><img src="assets/projects/monique-thumb.webp" alt="" width="480" height="300" loading="lazy" decoding="async" /><span class="strip__meta"><span class="strip__kicker">Landing page de salão</span><span class="strip__name">Studio Monique Marques</span></span></a></li>
-                </ul>
-                <ul class="strip__group" aria-hidden="true">
-                  <li><a class="strip__item" href="#trio-vilela" tabindex="-1" data-spotlight><img src="assets/projects/trio-thumb.webp" alt="" width="480" height="300" loading="lazy" decoding="async" /><span class="strip__meta"><span class="strip__kicker">Site de banda</span><span class="strip__name">Trio Vilela</span></span></a></li>
-                  <li><a class="strip__item" href="#tio-pet" tabindex="-1" data-spotlight><img src="assets/projects/tiopet-thumb.webp" alt="" width="480" height="300" loading="lazy" decoding="async" /><span class="strip__meta"><span class="strip__kicker">Site de pet shop</span><span class="strip__name">Tio Pet</span></span></a></li>
-                  <li><a class="strip__item" href="#studio-monique-marques" tabindex="-1" data-spotlight><img src="assets/projects/monique-thumb.webp" alt="" width="480" height="300" loading="lazy" decoding="async" /><span class="strip__meta"><span class="strip__kicker">Landing page de salão</span><span class="strip__name">Studio Monique Marques</span></span></a></li>
-                </ul>
-              </div>
-            </div>
-            <button class="strip__pause" type="button" aria-pressed="false" hidden>
-              <svg class="icon" width="14" height="14" aria-hidden="true" viewBox="0 0 24 24" fill="currentColor"><rect class="strip__bar" x="6" y="5" width="4" height="14" rx="1" /><rect class="strip__bar" x="14" y="5" width="4" height="14" rx="1" /></svg>
-              <span class="strip__pause-label">Pausar faixa</span>
-            </button>
-          </div>
-          </div>
-
           <div class="rail" data-rail>
           <ol class="container cases">
             <!-- Trio Vilela -->
@@ -427,7 +412,7 @@
                 <div class="case__scene">
                   <figure class="device device--browser case__main">
                     <div class="device__bar"><i></i><i></i><i></i></div>
-                    <img src="assets/projects/trio-desktop.webp" srcset="assets/projects/trio-desktop-sm.webp 800w, assets/projects/trio-desktop.webp 1200w" sizes="(min-width: 60em) 455px, 70vw" alt="Página inicial do site do Trio Vilela, com título em letras grandes, foto da banda e botão de contratação." width="1200" height="750" loading="lazy" decoding="async" />
+                    <img src="assets/projects/trio-desktop.webp" srcset="assets/projects/trio-desktop-sm.webp 800w, assets/projects/trio-desktop.webp 1200w" sizes="(min-width: 60em) 640px, 92vw" alt="Página inicial do site do Trio Vilela, com título em letras grandes, foto da banda e botão de contratação." width="1200" height="750" loading="lazy" decoding="async" />
                   </figure>
                   <figure class="device device--phone case__phone">
                     <img src="assets/projects/trio-mobile.webp" alt="Versão para celular do site do Trio Vilela." width="300" height="649" loading="lazy" decoding="async" />
@@ -442,9 +427,16 @@
                   vídeos, tipos de evento atendidos e contato direto pelo WhatsApp.
                 </p>
                 <dl class="spec">
-                  <div><dt>Local</dt><dd>Olinda, PE</dd></div>
+                  <div data-minor><dt>Local</dt><dd>Olinda, PE</dd></div>
                   <div><dt>Seções</dt><dd>Sobre, Cultura, Galeria, Vídeos, Eventos, Contato</dd></div>
                 </dl>
+                <div class="case__actions">
+                  <a class="button button--secondary button--sm case__link" href="https://trio-vilela.vercel.app/" target="_blank" rel="noopener noreferrer">
+                    <span>Visitar site</span>
+                    <svg class="icon" width="16" height="16" aria-hidden="true"><use href="#icon-arrow-up-right" /></svg>
+                    <span class="visually-hidden">do Trio Vilela (abre em nova aba)</span>
+                  </a>
+                </div>
               </div>
             </li>
 
@@ -454,7 +446,7 @@
                 <div class="case__scene">
                   <figure class="device device--browser case__main">
                     <div class="device__bar"><i></i><i></i><i></i></div>
-                    <img src="assets/projects/tiopet-desktop.webp" srcset="assets/projects/tiopet-desktop-sm.webp 800w, assets/projects/tiopet-desktop.webp 1200w" sizes="(min-width: 60em) 455px, 70vw" alt="Página inicial do site do Tio Pet, em tons de azul, com o título &quot;Seu pet merece um cuidado especial&quot; e a ilustração de um cachorro no banho." width="1200" height="750" loading="lazy" decoding="async" />
+                    <img src="assets/projects/tiopet-desktop.webp" srcset="assets/projects/tiopet-desktop-sm.webp 800w, assets/projects/tiopet-desktop.webp 1200w" sizes="(min-width: 60em) 640px, 92vw" alt="Página inicial do site do Tio Pet, em tons de azul, com o título &quot;Seu pet merece um cuidado especial&quot; e a ilustração de um cachorro no banho." width="1200" height="750" loading="lazy" decoding="async" />
                   </figure>
                   <figure class="device device--phone case__phone">
                     <img src="assets/projects/tiopet-mobile.webp" alt="Versão para celular do site do Tio Pet." width="340" height="736" loading="lazy" decoding="async" />
@@ -470,10 +462,17 @@
                   MotoDog.
                 </p>
                 <dl class="spec">
-                  <div><dt>Local</dt><dd>Olinda, PE</dd></div>
+                  <div data-minor><dt>Local</dt><dd>Olinda, PE</dd></div>
                   <div><dt>Seções</dt><dd>Início, Sobre, Serviços, MotoDog, Como agendar, Instagram, Localização</dd></div>
                   <div><dt>Destaque</dt><dd>MotoDog e botão “Como chegar”</dd></div>
                 </dl>
+                <div class="case__actions">
+                  <a class="button button--secondary button--sm case__link" href="https://tio-pet.vercel.app/" target="_blank" rel="noopener noreferrer">
+                    <span>Visitar site</span>
+                    <svg class="icon" width="16" height="16" aria-hidden="true"><use href="#icon-arrow-up-right" /></svg>
+                    <span class="visually-hidden">do Tio Pet (abre em nova aba)</span>
+                  </a>
+                </div>
               </div>
             </li>
 
@@ -483,7 +482,7 @@
                 <div class="case__scene">
                   <figure class="device device--browser case__main">
                     <div class="device__bar"><i></i><i></i><i></i></div>
-                    <img src="assets/projects/monique-desktop.webp" srcset="assets/projects/monique-desktop-sm.webp 800w, assets/projects/monique-desktop.webp 1200w" sizes="(min-width: 60em) 455px, 70vw" alt="Página inicial do site do Studio Monique Marques, em tons claros e dourado, com o título &quot;Seu cabelo. Sua essência. Sua melhor versão.&quot; e o retrato da Monique em moldura de arco." width="1200" height="750" loading="lazy" decoding="async" />
+                    <img src="assets/projects/monique-desktop.webp" srcset="assets/projects/monique-desktop-sm.webp 800w, assets/projects/monique-desktop.webp 1200w" sizes="(min-width: 60em) 640px, 92vw" alt="Página inicial do site do Studio Monique Marques, em tons claros e dourado, com o título &quot;Seu cabelo. Sua essência. Sua melhor versão.&quot; e o retrato da Monique em moldura de arco." width="1200" height="750" loading="lazy" decoding="async" />
                   </figure>
                   <figure class="device device--phone case__phone">
                     <img src="assets/projects/monique-mobile.webp" alt="Versão para celular do site do Studio Monique Marques." width="340" height="736" loading="lazy" decoding="async" />
@@ -502,6 +501,13 @@
                   <div><dt>Seções</dt><dd>Abertura em vídeo, Início, Sobre, Serviços, Por dentro do Studio, Contato</dd></div>
                   <div><dt>Estado</dt><dd>Em desenvolvimento</dd></div>
                 </dl>
+                <div class="case__actions">
+                  <a class="button button--secondary button--sm case__link" href="https://monique-megahair.vercel.app/" target="_blank" rel="noopener noreferrer">
+                    <span>Visitar site</span>
+                    <svg class="icon" width="16" height="16" aria-hidden="true"><use href="#icon-arrow-up-right" /></svg>
+                    <span class="visually-hidden">do Studio Monique Marques (abre em nova aba)</span>
+                  </a>
+                </div>
               </div>
             </li>
           </ol>
@@ -516,6 +522,7 @@
       <section
         class="section services"
         id="servicos"
+        data-tone="paper"
         aria-labelledby="servicos-title"
         data-scene="services"
         data-pin
@@ -568,33 +575,60 @@
             </li>
           </ul>
 
-          <!-- Janelas ilustrativas em camadas (decorativas; só aparecem com as cenas de rolagem) -->
+          <!-- Janelas ilustrativas em camadas (decorativas; só aparecem com as cenas de rolagem).
+               São esquemas genéricos, não projetos; os rótulos repetem o que o texto de cada serviço já diz. -->
           <div class="deck" aria-hidden="true" data-stage="deck">
             <div class="deck__world">
+              <!-- 1 · Landing page: apresenta, destaca e leva ao WhatsApp -->
               <div class="deck__layer" style="--i: 0">
                 <div class="wf">
                   <div class="wf__bar"><i></i><i></i><i></i><b></b></div>
                   <div class="wf__body wf__body--landing">
-                    <div class="wf__copy"><i class="t"></i><i class="t t--s"></i><i class="l"></i><i class="l l--s"></i><i class="cta"></i></div>
+                    <div class="wf__copy">
+                      <i class="t"></i><i class="t t--s"></i>
+                      <i class="l"></i><i class="l l--s"></i>
+                      <div class="wf__actions">
+                        <i class="cta"><svg class="icon" width="12" height="12"><use href="#icon-chat" /></svg></i>
+                        <i class="ghost"></i>
+                      </div>
+                    </div>
                     <div class="wf__img"></div>
                     <div class="wf__cards"><i></i><i></i><i></i></div>
                   </div>
                 </div>
+                <p class="deck__tag" style="--k: 0; --x: 40%; --y: 13%"><b>1</b>Produtos e serviços</p>
+                <p class="deck__tag" style="--k: 1; --x: 54%; --y: 75%"><b>2</b>Diferenciais</p>
+                <p class="deck__tag" style="--k: 2; --x: 3%; --y: 61%"><b>3</b>Contato pelo WhatsApp</p>
               </div>
+
+              <!-- 2 · Site profissional: institucional, catálogo e cardápio digital -->
               <div class="deck__layer" style="--i: 1">
                 <div class="wf">
                   <div class="wf__bar"><i></i><i></i><i></i><b></b></div>
                   <div class="wf__body wf__body--site">
                     <div class="wf__nav"><i class="logo"></i><i class="link"></i><i class="link"></i><i class="link"></i><i class="btn"></i></div>
-                    <div class="wf__banner"><i class="t"></i><i class="l"></i></div>
-                    <div class="wf__cols">
-                      <div><i class="img"></i><i class="l"></i><i class="l l--s"></i></div>
-                      <div><i class="img"></i><i class="l"></i><i class="l l--s"></i></div>
-                      <div><i class="img"></i><i class="l"></i><i class="l l--s"></i></div>
+                    <div class="wf__banner"><i class="t"></i><i class="l"></i><i class="pill"></i></div>
+                    <div class="wf__split">
+                      <div class="wf__catalog">
+                        <div><i class="img"></i><i class="l"></i><i class="price"></i></div>
+                        <div><i class="img"></i><i class="l"></i><i class="price"></i></div>
+                        <div><i class="img"></i><i class="l"></i><i class="price"></i></div>
+                      </div>
+                      <div class="wf__menu">
+                        <div><i class="n"></i><i class="dots"></i><i class="p"></i></div>
+                        <div><i class="n"></i><i class="dots"></i><i class="p"></i></div>
+                        <div><i class="n"></i><i class="dots"></i><i class="p"></i></div>
+                        <div><i class="n"></i><i class="dots"></i><i class="p"></i></div>
+                      </div>
                     </div>
                   </div>
                 </div>
+                <p class="deck__tag" style="--k: 0; --x: 5%; --y: 20%"><b>1</b>Institucional</p>
+                <p class="deck__tag" style="--k: 1; --x: 6%; --y: 49%"><b>2</b>Catálogo</p>
+                <p class="deck__tag" style="--k: 2; --x: 61%; --y: 49%"><b>3</b>Cardápio digital</p>
               </div>
+
+              <!-- 3 · Sistema sob medida: agendamento, cadastro de clientes e painel -->
               <div class="deck__layer" style="--i: 2">
                 <div class="wf">
                   <div class="wf__bar"><i></i><i></i><i></i><b></b></div>
@@ -607,15 +641,26 @@
                         <div><i class="l"></i><i class="big"></i></div>
                         <div><i class="l"></i><i class="big"></i></div>
                       </div>
-                      <div class="wf__table">
-                        <div><b></b><i></i><i></i><i></i></div>
-                        <div><b></b><i></i><i></i><i></i></div>
-                        <div><b></b><i></i><i></i><i></i></div>
-                        <div><b></b><i></i><i></i><i></i></div>
+                      <div class="wf__panels">
+                        <div class="wf__agenda">
+                          <i></i><i class="mid"></i><i></i><i></i><i></i>
+                          <i></i><i></i><i class="on"></i><i class="mid"></i><i></i>
+                          <i class="mid"></i><i></i><i></i><i class="on"></i><i></i>
+                          <i></i><i class="on"></i><i></i><i></i><i class="mid"></i>
+                        </div>
+                        <div class="wf__clients">
+                          <div><b></b><i></i><em></em></div>
+                          <div><b></b><i></i><em></em></div>
+                          <div><b></b><i></i><em></em></div>
+                          <div><b></b><i></i><em></em></div>
+                        </div>
                       </div>
                     </div>
                   </div>
                 </div>
+                <p class="deck__tag" style="--k: 0; --x: 14%; --y: 37%"><b>1</b>Agendamento</p>
+                <p class="deck__tag" style="--k: 1; --x: 58%; --y: 37%"><b>2</b>Cadastro de clientes</p>
+                <p class="deck__tag" style="--k: 2; --x: 30%; --y: 16%"><b>3</b>Painel administrativo</p>
               </div>
             </div>
           </div>
@@ -690,31 +735,46 @@
         <div class="flowscene__sheet">
         <div class="container">
           <aside class="product" data-reveal="zoom" data-spotlight aria-labelledby="product-title">
-            <div class="product__art" aria-hidden="true" data-stage="flow">
-              <div class="product__world">
-                <div class="flow flow--base">
-                  <div class="flow__side"><i class="on"></i><i></i><i></i><i></i></div>
-                  <div class="flow__main"><div class="flow__top"><i></i><i></i><i></i></div><div class="flow__grid"><i></i><i></i><i></i><i></i></div></div>
-                </div>
-                <div class="flow flow--chart">
-                  <p class="flow__label">Receitas e despesas</p>
-                  <div class="flow__bars">
-                    <i style="--h: 38%"></i><i style="--h: 62%" class="is-hi"></i><i style="--h: 48%"></i><i style="--h: 80%" class="is-hi"></i><i style="--h: 56%"></i><i style="--h: 70%" class="is-hi"></i>
+            <div class="product__visual">
+              <!-- Esquema ilustrativo da interface (decorativo): janela do sistema, gráfico de receitas e despesas,
+                   lançamentos e saldo, só com blocos e barras genéricos (sem números nem telas reais). -->
+              <div class="product__art" aria-hidden="true" data-stage="flow">
+                <div class="product__world">
+                  <div class="flow flow--base">
+                    <div class="flow__side"><i class="on"></i><i></i><i></i><i></i><i></i></div>
+                    <div class="flow__main">
+                      <div class="flow__top"><i></i><i></i><i></i></div>
+                      <div class="flow__grid"><i></i><i></i><i></i><i></i></div>
+                      <div class="flow__table"><i></i><i></i><i></i></div>
+                    </div>
                   </div>
+                  <div class="flow flow--chart">
+                    <p class="flow__label">Receitas e despesas</p>
+                    <div class="flow__bars">
+                      <span><i style="--h: 52%"></i><i style="--h: 34%" class="is-out"></i></span>
+                      <span><i style="--h: 64%"></i><i style="--h: 40%" class="is-out"></i></span>
+                      <span><i style="--h: 48%"></i><i style="--h: 44%" class="is-out"></i></span>
+                      <span><i style="--h: 82%"></i><i style="--h: 46%" class="is-out"></i></span>
+                      <span><i style="--h: 60%"></i><i style="--h: 38%" class="is-out"></i></span>
+                      <span><i style="--h: 74%"></i><i style="--h: 50%" class="is-out"></i></span>
+                    </div>
+                  </div>
+                  <div class="flow flow--list">
+                    <p class="flow__label">Lançamentos</p>
+                    <div class="flow__row is-in"><b><svg class="icon" width="12" height="12"><use href="#icon-arrow-up-right" /></svg></b><span></span><em></em></div>
+                    <div class="flow__row is-out"><b><svg class="icon" width="12" height="12"><use href="#icon-arrow-up-right" /></svg></b><span></span><em></em></div>
+                    <div class="flow__row is-in"><b><svg class="icon" width="12" height="12"><use href="#icon-arrow-up-right" /></svg></b><span></span><em></em></div>
+                  </div>
+                  <div class="flow flow--balance">
+                    <p class="flow__label">Saldo</p>
+                    <span class="flow__big"></span>
+                    <svg class="flow__trend" viewBox="0 0 120 40" preserveAspectRatio="none"><path pathLength="1" d="M2 34 C 18 33 26 19 46 23 S 78 9 96 13 S 112 5 118 3" /></svg>
+                  </div>
+                  <div class="flow flow--chip flow--chip-in"><b></b>Receitas</div>
+                  <div class="flow flow--chip flow--chip-out"><b></b>Despesas</div>
                 </div>
-                <div class="flow flow--list">
-                  <p class="flow__label">Lançamentos</p>
-                  <div class="flow__row"><b></b><span></span><em></em></div>
-                  <div class="flow__row"><b></b><span></span><em></em></div>
-                  <div class="flow__row"><b></b><span></span><em></em></div>
-                </div>
-                <div class="flow flow--balance">
-                  <p class="flow__label">Saldo</p>
-                  <span class="flow__meter"><i></i></span>
-                </div>
-                <div class="flow flow--chip flow--chip-in"><b></b>Receitas</div>
-                <div class="flow flow--chip flow--chip-out"><b></b>Despesas</div>
               </div>
+              <p class="product__caption">Esquema ilustrativo da interface.</p>
             </div>
             <div class="product__copy">
               <p class="product__kicker">Produto próprio</p>
@@ -722,15 +782,18 @@
               <p class="product__text">
                 Sistema de gestão financeira para negócios: controle de receitas, despesas e saldo.
               </p>
+              <p class="product__note">
+                Instalado e personalizado para cada empresa: a MDN cria os recursos de que o seu negócio precisa, cuida e ajusta.
+              </p>
               <a
-                class="product__link"
-                href="https://www.instagram.com/mdnsolutions/"
+                class="button button--primary button--lg product__cta"
+                href="https://wa.me/5581998576040?text=Ol%C3%A1%21%20Conheci%20o%20MDN%20Flow%20pelo%20site%20da%20MDN%20Solutions%20e%20gostaria%20de%20solicitar%20uma%20demonstra%C3%A7%C3%A3o."
                 target="_blank"
                 rel="noopener noreferrer"
               >
-                Ver no Instagram
-                <svg class="icon" width="16" height="16" aria-hidden="true"><use href="#icon-arrow-up-right" /></svg>
-                <span class="visually-hidden">(abre em nova aba)</span>
+                <span>Solicitar demonstração</span>
+                <svg class="icon" width="18" height="18" aria-hidden="true"><use href="#icon-arrow-up-right" /></svg>
+                <span class="visually-hidden">do MDN Flow (abre o WhatsApp em nova aba)</span>
               </a>
             </div>
           </aside>

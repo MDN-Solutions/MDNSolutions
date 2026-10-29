@@ -13,14 +13,14 @@ css/
   components.css           Botões, logo e molduras de dispositivo (navegador e celular)
   header.css               Header fixo e menu mobile
   footer.css               Rodapé
-  sections/                Um arquivo por seção: hero, projects, strip, services, process, about, contact
+  sections/                Um arquivo por seção: hero, projects, services, flow (MDN Flow), process, about, contact
   motion.css               Movimento extra (entradas escalonadas, micro-interações, barra de progresso)
   scenes/                  Cenas de rolagem (scrollytelling): core + hero, projects, services, process,
                            flow, about e closing
 js/main.js                 Header, menu, link ativo, entrada ao rolar, ano no rodapé
 js/scene.js                Inclinação 3D das cenas e brilho que segue o mouse
 js/scenes.js               Motor das cenas de rolagem (lê a rolagem e escreve --e, --q, --x, --st)
-js/extras.js               Faixa de projetos (pausa), numerais que contam e % de leitura
+js/extras.js               Numerais que contam e % de leitura
 assets/                    Fontes, logo, ícones e capturas dos projetos (assets/projects/)
 ```
 
@@ -49,9 +49,16 @@ Cada projeto é um `<li class="case">` em `index.html`, com capturas em `assets/
 - **Só entra o que dá para comprovar.** Os textos e a ficha ("Seções", "Estado") foram conferidos no
   código de cada site. Ao atualizar um projeto, confira de novo; não acrescente números, depoimentos
   ou prazos que o cliente não tenha confirmado.
-- **Link para o site no ar:** ainda não há links porque os endereços de produção dos clientes não
-  foram confirmados. Quando houver, acrescente dentro de `.case__body`, depois da ficha:
-  `<a class="product__link" href="https://…" target="_blank" rel="noopener noreferrer">Ver o site <svg class="icon" width="16" height="16" aria-hidden="true"><use href="#icon-arrow-up-right" /></svg><span class="visually-hidden">(abre em nova aba)</span></a>`
+- **Link para o site no ar:** cada projeto tem o botão "Visitar site" (`.case__link`, abre em nova aba).
+  Trio Vilela (`https://trio-vilela.vercel.app/`) e Tio Pet (`https://tio-pet.vercel.app/`) vêm dos
+  nomes dos projetos no Vercel da MDN e foram conferidos pelo conteúdo de cada página; Studio Monique
+  Marques (`https://monique-megahair.vercel.app/`) foi informado pela MDN e o site está "Em
+  desenvolvimento". Só publique um endereço confirmado; se um site mudar de endereço ou sair do ar,
+  atualize ou remova o link do projeto. Modelo (dentro de `.case__body`, depois da ficha):
+  `<div class="case__actions"><a class="button button--secondary button--sm case__link" href="https://…" target="_blank" rel="noopener noreferrer"><span>Visitar site</span><svg class="icon" width="16" height="16" aria-hidden="true"><use href="#icon-arrow-up-right" /></svg><span class="visually-hidden">do NOME (abre em nova aba)</span></a></div>`
+- **Capturas no hero:** a animação "do papel ao site" do hero usa `tiopet-desktop-sm.webp` e
+  `tiopet-mobile.webp`. Se trocar essas imagens, confira o hero (as molduras do desenho têm
+  proporção fixa).
 - **Novo projeto:** copie um `<li class="case">`, troque textos e imagens e use `case--flip` para
   alternar o lado da imagem. A numeração (01, 02…) é automática.
 - **Autorização:** nomes, marcas e capturas de clientes precisam do OK deles. Isso vale em especial
@@ -75,16 +82,22 @@ Linguagem: preto, grafite e branco, com violeta só como luz (brilhos e pontos d
 "planta de projeto": linhas de cota (legendas e sublinhado do hero), quadriculado fino, marcas de
 canto e fichas técnicas, para reforçar a ideia de solução feita sob medida.
 
+Ritmo de cor ao longo da página (para não repetir a mesma seção escura com brilho e cartões): hero,
+Projetos e Como funciona em preto; **Serviços em tom papel** (respiro claro); **MDN Flow em índigo**
+(o produto próprio ganha um palco de outra cor); Sobre em preto com anéis em 3D; Contato num cartão
+de vidro escuro.
+
 | Item | Valor | Uso |
 | --- | --- | --- |
 | `--c-ink` | `#000` | Fundo da página |
 | `--c-graphite`, `--c-graphite-2` | `#101010`, `#161616` | Cards e painéis |
 | `--c-line`, `--c-line-strong` | `#242424`, `#3b3b3b` | Divisores e bordas |
-| `--c-pencil` | `#8f8f8f` | Texto secundário (6,5:1 sobre o fundo) |
+| `--c-pencil` | `#9b9b9b` | Texto secundário (7,5:1 sobre o fundo; ainda passa de 4,5:1 com ~25% de apagado na cortina entre seções) |
 | `--c-chalk` | `#c4c4c4` | Texto corrido (12:1 sobre o fundo) |
 | `--c-paper`, `--c-white` | `#f3f3f3`, `#fff` | Títulos e botão principal |
 | `--c-violet` | `139 108 255` | Acento da marca: brilhos e destaques, nunca como cor de texto |
 | `--grid-line` | branco a 5,5% | Quadriculado dos fundos |
+| `[data-tone="paper"]` | `--c-ink #efece4`, `--c-graphite #e6e2d8`, `--c-paper #1a1921` (texto), `--c-white #0c0b11` (texto mais forte), `--c-violet 92 58 240` | Seção clara (Serviços): os mesmos tokens são reatribuídos no escopo, então os componentes não mudam. Contrastes: texto 10,6:1, secundário 6:1, violeta 5,4:1 |
 
 - **Tipografia:** Bricolage Grotesque (variável, pesos 200–800), escala fluida com `clamp()`
   (`--fs-*`, incluindo `--fs-hero`). Legendas em caixa alta com espaçamento largo. O mascote da logo
@@ -105,6 +118,7 @@ se move responde ao ponteiro ou à rolagem (ou acontece uma vez, na entrada).
 | Cenas dos projetos (captura + celular em perspectiva) | Dar noção de tela e de profundidade | Inclina ao rolar | Composição parada |
 | Brilho no vidro e no fundo (`--gx`, `--mx`) | Mostrar o que está em foco | Só com mouse | Sem brilho |
 | Entrada do hero (uma vez, ~1,2 s) | Guiar o olhar do título para a cena | Igual | Aparece pronto |
+| Hero "do papel ao site": a captura real do Tio Pet se constrói sobre o desenho, de cima para baixo, conforme se rola | Mostrar a ideia virando site num só gesto | Igual, enquanto o painel sobe pela tela | Só o desenho (a captura fica oculta) |
 | Entrada ao rolar (`data-reveal`) | Guiar a leitura | Igual | Conteúdo visível sem JS ou com movimento reduzido |
 | Linha de "Como funciona" | Mostrar a ordem das etapas | Linha vertical | Linha já desenhada |
 | Giroscópio 3D da seção "Sobre" (3 anéis em planos diferentes cruzando a logo) | Dar vida ao símbolo da marca | Os anéis giram ao rolar e inclinam com o dedo | Composição 3D parada |
@@ -113,19 +127,18 @@ se move responde ao ponteiro ou à rolagem (ou acontece uma vez, na entrada).
 | Entradas laterais e com zoom (`left`/`right`/`zoom` em `data-reveal`) | Narrativa de leitura por seção | Igual | Aparece pronto |
 | Fio violeta que se desenha no topo de cada seção | Transição entre blocos | Igual | Linha estática |
 | Cards de projeto/serviço: elevação, borda e brilho no hover/foco | Feedback e hierarquia | Só foco por teclado | Sem movimento |
-| MDN Flow: esquema ilustrativo em 3D (barras que crescem, medidor) | Destacar o produto sem inventar telas | Inclinação por ponteiro/rolagem | Estático |
+| MDN Flow: esquema ilustrativo em camadas 3D (janela do sistema, gráfico de receitas e despesas, lançamentos e saldo; só blocos e barras, sem números nem telas reais) | Destacar o produto sem inventar telas | Mesmo esquema, mais contido | Estático |
+| Serviços: janelas ilustrativas em 3D com etiquetas numeradas que acendem junto com o serviço em foco | Explicar o que cada serviço entrega | Não aparecem (cada serviço acende ao passar pelo centro) | Lista em papel |
 | Barra de progresso de leitura no header | Mostrar onde se está na página | Igual (navegadores com `animation-timeline`) | Sem barra |
 | Anel que se expande no botão do contato (2 ciclos, ~4,8 s) | Chamar atenção sem distrair | Igual | Parado |
 | Brilho que atravessa o botão principal | Feedback de interação | Só com mouse | Sem brilho |
-| Faixa de projetos que rola sozinha (`css/sections/strip.css`, `js/extras.js`) | Mostrar os trabalhos logo no começo de "Projetos" | Igual | Lista rolável com o dedo/mouse, sem animação |
-| Faixa: pausa no hover, no foco do teclado e pelo botão "Pausar faixa" | Cumprir WCAG 2.2.2 (movimento de mais de 5 s precisa poder parar) | Botão de pausa | Botão some (não há movimento) |
 | Numerais "01, 02, 03" de "Como funciona" contam a partir de 0 (uma vez) | Dar ritmo à entrada da seção | Igual | Numerais prontos |
 | Porcentagem de leitura no header (só telas largas) | Mostrar onde se está na página | Não aparece | Não aparece |
-| Faixa de luz que segue o mouse nos serviços e nos cartões da faixa | Feedback de foco | Só com mouse | Sem brilho |
+| Faixa de luz que segue o mouse nos serviços | Feedback de foco | Só com mouse | Sem brilho |
 | Hover de links e botões | Feedback de interação | Não existe em toque | Mudança de cor e borda |
 
 O 3D é feito só com CSS (`perspective`, `preserve-3d`, `translate3d`) e um arquivo JS pequeno,
-sem biblioteca; o JS só escreve variáveis CSS (`--rx`, `--ry`, `--px`, `--py`, `--sp`, `--spread`).
+sem biblioteca; o JS só escreve variáveis CSS (`--rx`, `--ry`, `--px`, `--gx`, `--gy`, `--sp`).
 
 **Cuidado ao mexer nas cenas:** elementos com `overflow`, `filter`, `opacity < 1` ou `contain`
 "achatam" o 3D dos filhos. Entre `.hero-visual__world`, `.about__world` ou `.case__scene` e as camadas não coloque nenhum
@@ -162,12 +175,12 @@ scale, rotate, 3D) está em `css/scenes/`, usando só `transform`/`translate`/`s
 
 | # | Cena | O que a rolagem faz (telas largas) | Celular (`lite`) |
 | --- | --- | --- | --- |
-| 1 | Hero | Palco fixo; o texto recua sem sumir, o objeto 3D avança em profundidade e gira, as camadas se separam, o quadriculado e o brilho evoluem; indicador de rolagem discreto | Mesmos movimentos com metade da intensidade, sem fixar |
+| 1 | Hero | Palco fixo; o texto sobe um pouco e não some, o objeto 3D avança em profundidade e gira, a captura real do Tio Pet se constrói sobre o desenho, as camadas se separam, o quadriculado e o brilho evoluem; indicador de rolagem discreto | Mesmos movimentos com metade da intensidade, sem fixar |
 | 2 | Projetos | Trilho horizontal (Trio Vilela, Tio Pet, Studio Monique Marques) conduzido pela rolagem vertical, com pausa em cada projeto, perspectiva e profundidade; a navegação inferior vira links para cada painel | Lista vertical (sem trilho) com imagem e texto em velocidades diferentes |
 | 3 | Transições | A folha seguinte sobe cobrindo o palco: hero → projetos (cantos que se endireitam e luz violeta), projetos → serviços (a folha se deita em perspectiva), processo → MDN Flow (mudança de tom para índigo), Sobre → Contato (cúpula que se achata) | Rolagem normal |
-| 4 | Serviços | Composição em camadas: o serviço em foco acende e as janelas ilustrativas (wireframes genéricos, não são projetos) avançam em 3D | Cada serviço acende ao passar pelo centro |
+| 4 | Serviços | Seção em papel: o serviço em foco acende (barra violeta) e a janela ilustrativa dele (wireframe genérico, não é projeto) vem à frente em 3D, com etiquetas numeradas | Cada serviço acende ao passar pelo centro |
 | 5 | Como funciona | Linha horizontal em zigue-zague que se desenha com a rolagem; marcador com a logo na ponta; cada etapa liga quando a linha passa | Linha vertical que se desenha |
-| 6 | MDN Flow | Esquema ilustrativo em camadas que vem de longe, avança ao primeiro plano e abre em profundidades diferentes; barras crescem em sequência | Mesmo avanço, mais contido |
+| 6 | MDN Flow | Esquema ilustrativo em camadas que vem de longe, avança ao primeiro plano e abre em profundidades diferentes; barras crescem e a linha de tendência se desenha; texto e botão "Solicitar demonstração" ficam inteiros desde a chegada | Mesmo avanço, mais contido |
 | 7 | Sobre | Anéis em planos diferentes giram com a rolagem, a "câmera" dá a volta e se aproxima, o brilho muda de lado e o texto acende na ordem de leitura | Anéis e câmera ligados à passagem pela tela |
 | 8 | Encerramento | O Contato sobe e fica fixo; símbolo, celular e a conversa do hero e anéis convergem para o botão do WhatsApp, que acende no fim; título palavra por palavra | Os elementos saem de uma faixa abaixo do botão e entram nele |
 
@@ -179,6 +192,12 @@ inventadas; o MDN Flow e os wireframes de serviços são esquemas genéricos.
 - *Duração de uma cena fixa:* `height: calc(100svh * N)` do trilho, no arquivo da cena em
   `css/scenes/` (1 tela é o palco; o resto é rolagem de história; com `data-tail`, a última tela é a
   cortina da próxima seção).
+- *Durações atuais (em alturas de tela, `100svh`):* hero 2,75 (1 palco + 0,75 de história + 1 de
+  cortina), projetos 4,4 (1 + 2,4 + 1), serviços 3 (1 + 2), como funciona 3,1 (1 + 1,1 + 1), MDN
+  Flow 2 (1 + 1), sobre 3,1 (1 + 1,1 + 1), contato 2 (1 + 1). Em 1440×900 a página tem ~16,8 telas.
+  Se uma cena parecer "parada" ao rolar, encurte o trilho; se passar rápido demais, aumente.
+- *Seção clara:* `data-tone="paper"` na `<section>` reatribui os tokens de cor (veja "Sistema
+  visual"); evite `#fff`/`#000` fixos nos componentes dessa seção.
 - *Pausa de cada projeto/serviço:* `data-hold` (0 a 0,45) no trilho; *quantidade de itens:* `data-stations`.
 - *Quando o movimento começa/termina:* as fórmulas usam `--q`, `--e` e `--x`
   (ex.: `clamp(0, calc((var(--q) - 0.2) / 0.5), 1)` = "de 20% a 70% da história").
@@ -196,3 +215,18 @@ inventadas; o MDN Flow e os wireframes de serviços são esquemas genéricos.
 **Cuidado:** o palco fixo usa `overflow: clip`. O que sair do palco (ex.: blocos que crescem com a
 rolagem) é cortado; em `lite`, quem pode estourar a largura precisa de `overflow: clip` no pai
 (foi o caso do quadriculado do hero).
+
+## Como conferir uma mudança
+
+O repositório não tem lint, verificação de tipos nem build; a conferência é manual:
+
+1. `python3 -m http.server 8000` nesta pasta e abra `http://localhost:8000/`.
+2. Percorra a página de cima a baixo, depois de baixo para cima, parando no meio das animações e
+   rolando devagar e rápido: nada pode ficar sumido, cortado ou sobreposto.
+3. Teste de 960×576 a 1920×1080 (modo `pin`) e em celular (~390×844, modo `lite`): sem rolagem
+   horizontal e com o texto de cada palco cabendo entre o header e o pé da tela.
+4. Ligue "Reduzir movimento" no sistema (a página vira estática) e desligue o JavaScript (todo o
+   conteúdo e os links continuam lá).
+5. Navegue só pelo teclado (Tab/Shift+Tab: foco sempre visível, inclusive nos links "Visitar site" e
+   no botão do MDN Flow), use os links do menu, o botão Voltar do navegador e links com `#`
+   (ex.: `/#tio-pet`).

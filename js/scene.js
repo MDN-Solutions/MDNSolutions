@@ -3,7 +3,7 @@
  *
  * - [data-stage] e [data-tilt-scene]: inclinam conforme o ponteiro (mouse, caneta ou dedo
  *   arrastando na horizontal) e conforme a posição na rolagem. O JS só escreve variáveis CSS
- *   (--rx, --ry, --px, --py, --gx, --gy, --sp, --spread); toda a geometria 3D está no CSS.
+ *   (--rx, --ry, --px, --gx, --gy, --sp); toda a geometria 3D está no CSS.
  * - [data-spotlight]: recebe --mx/--my com a posição do mouse, para o brilho do fundo.
  *
  * Nada aqui é necessário para ler ou usar a página: sem JS, ou com prefers-reduced-motion,
@@ -50,7 +50,7 @@
     scene.x = scene.y = scene.tx = scene.ty = 0;
     scene.pointer = false;
     scene.written = {};
-    ["--rx", "--ry", "--px", "--py", "--gx", "--gy", "--sp", "--spread"].forEach((name) =>
+    ["--rx", "--ry", "--px", "--gx", "--gy", "--sp"].forEach((name) =>
       scene.el.style.removeProperty(name),
     );
     scene.el.removeAttribute("data-active");
@@ -66,16 +66,13 @@
     write(scene, "--ry", String(round(scene.x * max)));
     write(scene, "--rx", String(round(-scene.y * max)));
     write(scene, "--px", String(round(scene.x)));
-    write(scene, "--py", String(round(scene.y)));
     write(scene, "--gx", round((scene.x + 1) * 50) + "%");
     write(scene, "--gy", round((scene.y + 1) * 50) + "%");
 
-    // posição na rolagem
-    const rect = scene.el.getBoundingClientRect();
-    const vh = window.innerHeight;
-    if (scene.kind === "stage") {
-      write(scene, "--spread", String(round(clamp((vh * 0.12 - rect.top) / rect.height, 0, 1))));
-    } else {
+    // posição na rolagem: só os cartões de projeto usam (inclinam conforme cruzam a tela)
+    if (scene.kind === "case") {
+      const rect = scene.el.getBoundingClientRect();
+      const vh = window.innerHeight;
       const center = rect.top + rect.height / 2 - vh / 2;
       write(scene, "--sp", String(round(clamp(center / (vh / 2 + rect.height / 2), -1, 1))));
     }

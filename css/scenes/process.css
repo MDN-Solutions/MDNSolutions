@@ -89,7 +89,7 @@ html[data-scenes="lite"] .process-track {
 /* ---------- Palco fixo: zigue-zague horizontal ---------- */
 
 html[data-scenes="pin"] .process-section {
-  height: calc(100svh * 3.6); /* 1 palco + 1,6 de história + 1 de cortina (o MDN Flow sobe por cima) */
+  height: calc(100svh * 3.1); /* 1 palco + 1,1 de história + 1 de cortina (o MDN Flow sobe por cima) */
   padding-top: 0;
 }
 

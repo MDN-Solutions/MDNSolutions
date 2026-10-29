@@ -33,12 +33,11 @@
     header.dataset.solid = String(scrolled || menuOpen);
   }
 
-  function onScroll() {
+  function updateScrolled() {
     scrolled = window.scrollY > 8;
     updateHeader();
   }
-  window.addEventListener("scroll", onScroll, { passive: true });
-  onScroll();
+  updateScrolled();
 
   /* ---------- 2. Link ativo no menu ---------- */
   const navLinks = document.querySelectorAll(".header__nav-link, .header__panel-link");
@@ -82,7 +81,16 @@
     window.requestAnimationFrame(updateActiveSection);
   }
 
-  window.addEventListener("scroll", requestActiveSection, { passive: true });
+  // um único ouvinte de rolagem: o cabeçalho é barato e atualiza na hora; a seção ativa (lê a
+  // geometria das seções) espera o próximo quadro
+  window.addEventListener(
+    "scroll",
+    () => {
+      updateScrolled();
+      requestActiveSection();
+    },
+    { passive: true },
+  );
   window.addEventListener("resize", requestActiveSection);
   updateActiveSection();
 

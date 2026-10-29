@@ -1,17 +1,28 @@
 /* ==========================================================================
-   Cena 1: hero cinematográfica
-   --q (data-q="leave"): 0 na abertura, 1 quando o palco termina de se movimentar.
+   Cena 1: hero cinematográfica, "do papel ao site"
+   Com o palco fixo (pin): --q vai de 0 a 1 enquanto o hero fica parado (rolagem da cena);
+   --p é o mesmo progresso numa escala própria (0 a 1 nos primeiros ~75% da cena):
+     1. o desenho (planta) se aproxima e se endireita;
+     2. a captura real do site (Tio Pet) "se constrói" por cima do desenho, de cima para baixo;
+     3. as camadas (símbolo, celular e balão) se afastam em profundidade.
    --x: "cortina", a próxima seção (Projetos) sobe e cobre o palco; ele recua e escurece.
-   No modo pin o palco fica fixo por ~1,9 tela de rolagem; no lite (celular) o hero rola
-   normalmente e os mesmos movimentos acontecem com metade da intensidade (--hk).
+   O texto e os botões ficam inteiros até a cortina (só perdem um pouco de presença enquanto são cobertos).
+   No lite (celular) o hero rola normalmente e os mesmos movimentos acontecem com metade da intensidade (--hk).
    ========================================================================== */
 
 html[data-scenes] .hero {
   --hk: 1; /* intensidade dos movimentos */
+  --p0: 0; /* em que ponto da cena (--q) o progresso --p começa... */
+  --pd: 0.75; /* ...e quanto da cena ele leva para ir de 0 a 1 */
+  --p: clamp(0, calc((var(--q, 0) - var(--p0)) / var(--pd)), 1);
 }
 
+/* No celular o hero rola normalmente e o painel fica abaixo do texto: --q anda pelo hero inteiro
+   (data-q="leave"), então o desenho vira site enquanto o painel sobe pela tela (~60 a 410 px de rolagem) */
 html[data-scenes="lite"] .hero {
   --hk: 0.5;
+  --p0: 0.06;
+  --pd: 0.34;
 }
 
 /* o quadriculado cresce com a rolagem; no celular o palco não é fixo, então ele corta o excesso
@@ -23,7 +34,7 @@ html[data-scenes] .hero__stage {
 /* ---------- Palco fixo (telas largas) ---------- */
 
 html[data-scenes="pin"] .hero {
-  height: calc(100svh * 2.9); /* 1 palco + 0,9 de história + 1 de cortina */
+  height: calc(100svh * 2.75); /* 1 palco + 0,75 de história + 1 de cortina */
 }
 
 html[data-scenes="pin"] .hero__stage {
@@ -59,69 +70,112 @@ html[data-scenes="pin"] .hero__actions {
   margin-top: clamp(1.25rem, 3.6svh, 2.25rem);
 }
 
-/* O painel nunca passa da altura da tela */
+/* O painel nunca passa da altura da tela; em telas largas ele "vaza" um pouco para a margem direita
+   (composição fora do eixo), sem sair da janela */
 html[data-scenes="pin"] .hero-visual {
-  width: min(100%, 40rem, calc((100svh - var(--header-h) - 7rem) * 1.1429));
+  width: min(100%, 44rem, calc((100svh - var(--header-h) - 7rem) * 1.1429));
 }
 
-/* ---------- Texto: desloca, encolhe e perde presença (sem sumir de vez) ---------- */
+html[data-scenes="pin"] .hero__art {
+  margin-right: calc(-1 * clamp(0px, (100vw - 75rem) / 2 - 1rem, 3rem));
+}
+
+/* ---------- Texto: sobe um pouco e encolhe; só perde presença quando a próxima seção o cobre ---------- */
 
 html[data-scenes] .hero__copy {
-  --lift: 8svh; /* o quanto o texto sobe até o fim do palco */
+  --lift: 6svh; /* o quanto o texto sobe até o fim do palco */
   transform-origin: 0 50%;
-  translate: 0 calc(var(--q, 0) * var(--hk) * var(--lift) * -1);
-  scale: calc(1 - var(--q, 0) * var(--hk) * 0.07);
-  opacity: calc(1 - var(--q, 0) * var(--hk) * 0.72);
+  translate: 0 calc(var(--p) * var(--hk) * var(--lift) * -1);
+  scale: calc(1 - var(--p) * var(--hk) * 0.05);
+  opacity: calc(1 - var(--x, 0) * 0.4);
 }
 
-/* ---------- Objeto 3D: avança em profundidade e gira; as camadas se afastam ---------- */
+/* ---------- Objeto 3D: o desenho se endireita e se aproxima; a cortina o afasta ---------- */
 
 html[data-scenes] .hero-visual__world {
-  animation: none; /* a deriva por animation-timeline (motion.css) é substituída por --q */
+  animation: none; /* a deriva por animation-timeline (motion.css) é substituída por --p */
   transform: translate3d(
-      calc(var(--q, 0) * var(--hk) * 4%),
-      calc(var(--q, 0) * var(--hk) * 5%),
-      calc(var(--q, 0) * var(--hk) * 150px - var(--x, 0) * 480px)
+      0,
+      calc(var(--p) * var(--hk) * -2%),
+      calc(var(--p) * var(--hk) * 90px - var(--x, 0) * 480px)
     )
-    rotateX(calc(var(--rx, 0) * 1deg + 4deg + var(--q, 0) * var(--hk) * 12deg))
-    rotateY(calc(var(--ry, 0) * 1deg - 9deg - var(--q, 0) * var(--hk) * 38deg));
+    rotateX(calc(var(--rx, 0) * 1deg + 4deg - var(--p) * var(--hk) * 2deg + var(--x, 0) * 8deg))
+    rotateY(calc(var(--ry, 0) * 1deg - 9deg + var(--p) * var(--hk) * 5deg - var(--x, 0) * 22deg));
 }
 
 html[data-scenes] .hero-visual__logo {
-  transform: translate3d(calc(var(--q, 0) * var(--hk) * -3%), 0, calc(55px + var(--q, 0) * var(--hk) * 100px));
+  transform: translate3d(calc(var(--p) * var(--hk) * -2%), 0, calc(55px + var(--p) * var(--hk) * 50px));
 }
 
 html[data-scenes] .hero-visual__phone {
   transform: translate3d(
-    calc(var(--q, 0) * var(--hk) * 7%),
-    calc(var(--q, 0) * var(--hk) * -3%),
-    calc(95px + var(--q, 0) * var(--hk) * 230px)
+    calc(var(--p) * var(--hk) * 1.5%),
+    calc(var(--p) * var(--hk) * -2%),
+    calc(95px + var(--p) * var(--hk) * 80px)
   );
 }
 
 html[data-scenes] .hero-visual__bubble {
   transform: translate3d(
-    calc(var(--q, 0) * var(--hk) * -6%),
-    calc(var(--q, 0) * var(--hk) * 10%),
-    calc(140px + var(--q, 0) * var(--hk) * 340px)
+    calc(var(--p) * var(--hk) * -3%),
+    calc(var(--p) * var(--hk) * 6%),
+    calc(140px + var(--p) * var(--hk) * 170px)
   );
 }
 
 /* Brilho e quadriculado acompanham: a "câmera" entra na planta */
 html[data-scenes] .hero-visual__glow {
-  scale: calc(1 + var(--q, 0) * var(--hk) * 0.9);
-  translate: calc(var(--q, 0) * var(--hk) * 18%) calc(var(--q, 0) * var(--hk) * -8%);
+  scale: calc(1 + var(--p) * var(--hk) * 0.6);
+  translate: calc(var(--p) * var(--hk) * 14%) calc(var(--p) * var(--hk) * -6%);
 }
 
 html[data-scenes] .hero__stage::before {
   transform-origin: 70% 38%;
-  scale: calc(1 + var(--q, 0) * var(--hk) * 0.35);
-  translate: 0 calc(var(--q, 0) * var(--hk) * -9%);
+  scale: calc(1 + var(--p) * var(--hk) * 0.25);
+  translate: 0 calc(var(--p) * var(--hk) * -6%);
 }
 
 html[data-scenes] .hero[data-live="true"] .hero-visual__world,
 html[data-scenes] .hero[data-live="true"] .hero__stage::before {
   will-change: transform;
+}
+
+/* ---------- Do papel ao site: a captura real se constrói por cima do desenho ----------
+   A janela do desenho (navegador e celular) é preenchida de cima para baixo, com a borda suave.
+   Posições em % da área útil de cada moldura do SVG (viewBox 640 x 560). Decorativo (aria-hidden). */
+
+html[data-scenes] .hero-visual__shot {
+  --w: clamp(0, calc((var(--p) - 0.04) / 0.8), 1);
+  position: absolute;
+  display: block;
+  overflow: hidden;
+  -webkit-mask-image: linear-gradient(180deg, #000 calc(var(--w) * 130% - 30%), transparent calc(var(--w) * 130%));
+  mask-image: linear-gradient(180deg, #000 calc(var(--w) * 130% - 30%), transparent calc(var(--w) * 130%));
+}
+
+html[data-scenes] .hero-visual__shot img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: top left;
+  background: #fff;
+}
+
+html[data-scenes] .hero-visual__shot--browser {
+  top: 11.4286%;
+  left: 14%;
+  width: 74.5%;
+  height: 49.7%;
+  border-radius: 0 0 2.9cqw 2.9cqw;
+  transform: translateZ(6px);
+}
+
+html[data-scenes] .hero-visual__shot--phone {
+  top: 9.494%;
+  left: 3.75%;
+  width: 92.5%;
+  height: 88.6%;
+  border-radius: 0 0 3.75cqw 3.75cqw;
 }
 
 /* ---------- Indicador de rolagem (some quando a rolagem começa) ---------- */
@@ -130,15 +184,15 @@ html[data-scenes] .hero[data-live="true"] .hero__stage::before {
   display: none;
 }
 
+/* alinhado à margem direita do conteúdo (a esquerda tem o "Atendimento em...") */
 html[data-scenes="pin"] .hero__cue {
   position: absolute;
+  right: max(var(--gutter), (100% - var(--container)) / 2);
   bottom: 1.1rem;
-  left: 50%;
   z-index: 2;
   display: grid;
   justify-items: center;
   gap: 0.5rem;
-  translate: -50% 0;
   color: var(--c-pencil);
   font-size: 0.6875rem;
   font-weight: 620;

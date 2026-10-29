@@ -73,7 +73,7 @@
   min-height: var(--tap);
   gap: 0.5rem;
   border-bottom: 1px solid var(--c-line-strong);
-  color: var(--c-chalk);
+  color: var(--c-paper); /* os anéis e o halo da cena passam atrás dele: precisa de folga de contraste */
   font-size: var(--fs-sm);
   transition:
     border-color var(--dur-fast) ease,

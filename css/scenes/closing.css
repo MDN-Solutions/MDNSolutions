@@ -25,7 +25,7 @@
    que vai se achatando) e o painel se deita; depois fica fixo enquanto a composição converge. */
 
 html[data-scenes="pin"] .contact {
-  height: calc(100svh * 2.2); /* 1 palco + 1,2 de história */
+  height: calc(100svh * 2); /* 1 palco + 1 de história */
   padding-top: 0;
 }
 

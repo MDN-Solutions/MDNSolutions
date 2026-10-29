@@ -1,56 +1,17 @@
 /*
  * Extras de movimento da página MDN Solutions (JavaScript puro, sem dependências).
  *
- * 1. Faixa de projetos: liga a rolagem automática e o botão de pausa
- * 2. Numerais de "Como funciona" contam de 0 até o número ao entrar na tela (uma vez)
- * 3. Porcentagem de leitura no header (só números; não é movimento)
+ * 1. Numerais de "Como funciona" contam de 0 até o número ao entrar na tela (uma vez)
+ * 2. Porcentagem de leitura no header (só números; não é movimento)
  *
- * Sem este arquivo a página funciona igual: a faixa vira lista rolável e os numerais ficam prontos.
+ * Sem este arquivo a página funciona igual: os numerais ficam prontos e o header sem a porcentagem.
  */
 (function () {
   "use strict";
 
   const reduceQuery = window.matchMedia("(prefers-reduced-motion: reduce)");
 
-  /* ---------- 1. Faixa de projetos ---------- */
-  const strip = document.querySelector("[data-strip]");
-  if (strip) {
-    const button = strip.querySelector(".strip__pause");
-    const label = strip.querySelector(".strip__pause-label");
-
-    const sync = () => {
-      const run = !reduceQuery.matches;
-      strip.toggleAttribute("data-ready", run);
-      button.hidden = !run;
-      if (!run) {
-        delete strip.dataset.paused;
-        button.setAttribute("aria-pressed", "false");
-        label.textContent = "Pausar faixa";
-      }
-    };
-
-    button.addEventListener("click", () => {
-      const paused = strip.toggleAttribute("data-paused");
-      button.setAttribute("aria-pressed", String(paused));
-      label.textContent = paused ? "Retomar faixa" : "Pausar faixa";
-    });
-
-    reduceQuery.addEventListener("change", sync);
-    sync();
-
-    // Só roda enquanto a faixa está na tela (economiza bateria)
-    if ("IntersectionObserver" in window) {
-      new IntersectionObserver(
-        ([entry]) => {
-          strip.querySelector(".strip__track").style.animationPlayState =
-            entry.isIntersecting && !strip.hasAttribute("data-paused") ? "" : "paused";
-        },
-        { threshold: 0.05 },
-      ).observe(strip);
-    }
-  }
-
-  /* ---------- 2. Numerais de "Como funciona" ---------- */
+  /* ---------- 1. Numerais de "Como funciona" ---------- */
   const numerals = Array.from(document.querySelectorAll(".process__number"));
   // no palco fixo (data-scenes="pin") os numerais acendem com a linha do tempo, então não contam
   if (
@@ -87,7 +48,7 @@
     });
   }
 
-  /* ---------- 3. Porcentagem de leitura ---------- */
+  /* ---------- 2. Porcentagem de leitura ---------- */
   const pct = document.querySelector("[data-read-pct]");
   if (pct) {
     pct.parentElement.hidden = false;

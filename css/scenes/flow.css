@@ -1,139 +1,42 @@
 /* ==========================================================================
    Cena 6: MDN Flow como produto
-   O esquema (receitas, despesas e saldo) é ilustrativo: blocos e barras genéricos, sem
-   números nem telas reais. A rolagem faz ele:
-     1. vir de longe, deitado, e avançar para o primeiro plano (--ae, de 0 a 1 até q = 0,45)
-     2. abrir as camadas no espaço, cada uma numa profundidade (--se)
+   O esquema da interface (css/sections/flow.css) é ilustrativo. A rolagem faz ele:
+     1. chegar de longe, deitado, e se endireitar já enquanto a folha sobe (--pre, de --e): quando o
+        palco fica fixo ele já está a meio caminho e o texto já está inteiro (sem tela vazia)
+     2. avançar para o primeiro plano e abrir as camadas no espaço (--ae e --se, até q ≈ 0,4)
      3. girar discretamente até o fim da seção (--b)
    Camadas planas (.flow) podem ter opacity; o "mundo" (preserve-3d) não pode.
    ========================================================================== */
 
-/* ---------- Camadas extras (valem também no layout estático) ---------- */
-
-.flow--base {
-  inset: 9% 1% 3% 9%;
-  display: grid;
-  grid-template-columns: 17% minmax(0, 1fr);
-  padding: 0;
-  overflow: hidden;
-  background: #0c0c0c;
-  transform: translateZ(-40px);
-}
-
-.flow__side {
-  display: grid;
-  align-content: start;
-  gap: 0.7rem;
-  padding: 1.1rem 0.9rem;
-  border-right: 1px solid var(--c-line);
-}
-
-.flow__side i {
-  height: 0.45rem;
-  border-radius: 99px;
-  background: #343434;
-}
-
-.flow__side i.on {
-  background: rgb(var(--c-violet));
-  box-shadow: 0 0 10px rgb(var(--c-violet) / 0.7);
-}
-
-.flow__main {
-  display: grid;
-  gap: 0.9rem;
-  align-content: start;
-  padding: 1.1rem;
-}
-
-.flow__top {
-  display: flex;
-  gap: 0.5rem;
-}
-
-.flow__top i {
-  width: 16%;
-  height: 0.55rem;
-  border-radius: 99px;
-  background: #2e2e2e;
-}
-
-.flow__grid {
-  display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 0.6rem;
-}
-
-.flow__grid i {
-  height: 3.4rem;
-  border: 1px solid #262626;
-  border-radius: 0.5rem;
-  background: #101010;
-}
-
-.flow--chip {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  padding: 0.45rem 0.85rem 0.45rem 0.7rem;
-  border-radius: 99px;
-  color: var(--c-paper);
-  font-size: 0.75rem;
-  font-weight: 620;
-  letter-spacing: 0.04em;
-  white-space: nowrap;
-}
-
-.flow--chip b {
-  width: 0.55rem;
-  height: 0.55rem;
-  border-radius: 50%;
-  background: var(--c-pencil);
-}
-
-.flow--chip-in {
-  top: 44%;
-  right: 40%;
-  transform: translateZ(170px);
-}
-
-.flow--chip-in b {
-  background: rgb(var(--c-violet));
-  box-shadow: 0 0 10px rgb(var(--c-violet));
-}
-
-.flow--chip-out {
-  bottom: 22%;
-  left: 12%;
-  transform: translateZ(210px);
-}
-
-/* ---------- Progresso derivado de --q (todas as telas com cenas) ---------- */
+/* ---------- Progresso (todas as telas com cenas) ---------- */
 
 html[data-scenes] .flowscene {
-  --a: clamp(0, calc(var(--q, 0) / 0.45), 1);
-  --ae: calc(var(--a) * var(--a) * (3 - 2 * var(--a)));
-  --s: clamp(0, calc((var(--q, 0) - 0.1) / 0.5), 1);
-  --se: calc(var(--s) * var(--s) * (3 - 2 * var(--s)));
-  --b: clamp(0, calc((var(--q, 0) - 0.45) / 0.55), 1);
+  --pre: clamp(0, calc((var(--e, 0) - 0.25) / 0.75), 1); /* a folha sobe: 0 a 1 */
+  --c: calc(var(--pre) * var(--pre) * (3 - 2 * var(--pre))); /* chegada do texto */
+  --a: clamp(0, calc(var(--pre) * 0.45 + var(--q, 0) * 1.4), 1);
+  --ae: calc(var(--a) * var(--a) * (3 - 2 * var(--a))); /* aproximação do esquema */
+  --s: clamp(0, calc(var(--pre) * 0.15 + (var(--q, 0) - 0.04) / 0.45), 1);
+  --se: calc(var(--s) * var(--s) * (3 - 2 * var(--s))); /* camadas se afastando em profundidade */
+  --b: clamp(0, calc((var(--q, 0) - 0.35) / 0.65), 1); /* giro final */
+  --g: calc(var(--pre) * 0.1 + var(--q, 0)); /* crescimento das barras e da linha */
 }
 
 /* a animação de entrada única e a flutuação do motion.css dão lugar ao progresso da rolagem */
 html[data-scenes] .product .flow,
 html[data-scenes] .product .flow__bars i,
-html[data-scenes] .product .flow__meter i {
+html[data-scenes] .product .flow__trend path {
   animation: none !important;
 }
 
 html[data-scenes] .product__world {
   transform: translate3d(
-      calc((1 - var(--ae)) * 8%),
-      calc((1 - var(--ae)) * 16%),
-      calc((1 - var(--ae)) * -650px)
+      calc((1 - var(--ae)) * 6%),
+      calc((1 - var(--ae)) * 12%),
+      calc((1 - var(--ae)) * -520px)
     )
-    rotateX(calc(16deg + (1 - var(--ae)) * 46deg - var(--b) * 8deg + var(--rx, 0) * 1deg))
-    rotateY(calc(-16deg + var(--b) * 10deg + var(--ry, 0) * 1deg))
-    rotateZ(calc((1 - var(--ae)) * -20deg));
+    rotateX(calc(7deg + (1 - var(--ae)) * 36deg - var(--b) * 4deg + var(--rx, 0) * 1deg))
+    rotateY(calc(-10deg + var(--b) * 8deg + var(--ry, 0) * 1deg))
+    rotateZ(calc((1 - var(--ae)) * -14deg));
 }
 
 html[data-scenes] .flowscene[data-live="true"] .product__world {
@@ -141,60 +44,66 @@ html[data-scenes] .flowscene[data-live="true"] .product__world {
 }
 
 html[data-scenes] .product .flow {
-  opacity: calc(0.12 + var(--ae) * 0.88);
+  opacity: calc(0.25 + var(--ae) * 0.75);
 }
 
 html[data-scenes] .flow--base {
-  transform: translateZ(calc(var(--se) * -40px));
+  transform: translateZ(calc(var(--se) * -50px));
 }
 
 html[data-scenes] .flow--chart {
-  transform: translate3d(calc((1 - var(--se)) * 18%), calc((1 - var(--se)) * 14%), calc(var(--se) * 70px));
+  transform: translate3d(calc((1 - var(--se)) * 14%), calc((1 - var(--se)) * 12%), calc(var(--se) * 40px));
 }
 
 html[data-scenes] .flow--list {
-  transform: translate3d(calc((1 - var(--se)) * -26%), calc((1 - var(--se)) * -20%), calc(var(--se) * 140px));
+  transform: translate3d(calc((1 - var(--se)) * -20%), calc((1 - var(--se)) * -16%), calc(var(--se) * 90px));
 }
 
 html[data-scenes] .flow--balance {
-  transform: translate3d(calc((1 - var(--se)) * -30%), calc((1 - var(--se)) * 60%), calc(var(--se) * 215px));
+  transform: translate3d(calc((1 - var(--se)) * -24%), calc((1 - var(--se)) * 50%), calc(var(--se) * 150px));
 }
 
 html[data-scenes] .flow--chip-in {
-  transform: translate3d(calc((1 - var(--se)) * -50%), calc((1 - var(--se)) * 40%), calc(var(--se) * 170px));
+  transform: translate3d(calc((1 - var(--se)) * -40%), calc((1 - var(--se)) * 30%), calc(var(--se) * 120px));
 }
 
 html[data-scenes] .flow--chip-out {
-  transform: translate3d(calc((1 - var(--se)) * 60%), calc((1 - var(--se)) * -40%), calc(var(--se) * 210px));
+  transform: translate3d(calc((1 - var(--se)) * 50%), calc((1 - var(--se)) * -30%), calc(var(--se) * 150px));
 }
 
-/* barras crescem em sequência; medidor enche */
-html[data-scenes] .flow__bars i {
+/* barras crescem em sequência; a linha de tendência se desenha */
+html[data-scenes] .flow__bars span {
   --k: 0;
-  scale: 1 clamp(0, calc((var(--q, 0) - 0.2 - var(--k) * 0.045) * 3.4), 1);
 }
 
-html[data-scenes] .flow__bars i:nth-child(2) { --k: 1; }
-html[data-scenes] .flow__bars i:nth-child(3) { --k: 2; }
-html[data-scenes] .flow__bars i:nth-child(4) { --k: 3; }
-html[data-scenes] .flow__bars i:nth-child(5) { --k: 4; }
-html[data-scenes] .flow__bars i:nth-child(6) { --k: 5; }
+html[data-scenes] .flow__bars span:nth-child(2) { --k: 1; }
+html[data-scenes] .flow__bars span:nth-child(3) { --k: 2; }
+html[data-scenes] .flow__bars span:nth-child(4) { --k: 3; }
+html[data-scenes] .flow__bars span:nth-child(5) { --k: 4; }
+html[data-scenes] .flow__bars span:nth-child(6) { --k: 5; }
 
-html[data-scenes] .flow__meter i {
-  transform-origin: left;
-  scale: clamp(0, calc((var(--q, 0) - 0.38) * 2.6), 1) 1;
+html[data-scenes] .flow__bars i {
+  scale: 1 clamp(0, calc((var(--g) - 0.02 - var(--k) * 0.05) * 4), 1);
 }
 
-/* texto chega depois que o esquema já está em movimento */
+html[data-scenes] .flow__trend path {
+  stroke-dashoffset: calc(1 - clamp(0, calc((var(--g) - 0.14) * 3), 1));
+}
+
+/* o texto chega junto com a folha, antes de o palco parar */
 html[data-scenes] .product__copy {
-  opacity: clamp(0, calc((var(--q, 0) - 0.06) * 4), 1);
-  translate: calc((1 - clamp(0, calc((var(--q, 0) - 0.06) * 4), 1)) * -2rem) 0;
+  opacity: var(--c);
+  translate: calc((1 - var(--c)) * -2rem) 0;
+}
+
+html[data-scenes] .product__caption {
+  opacity: var(--c);
 }
 
 /* ---------- Palco fixo (telas largas) ---------- */
 
 html[data-scenes="pin"] .flowscene {
-  height: calc(100svh * 3.2); /* 1 palco + 2,2 de história */
+  height: calc(100svh * 2); /* 1 palco + 1 de história */
   padding-top: 0;
 }
 
@@ -217,7 +126,8 @@ html[data-scenes="pin"] .flowscene__sheet::before {
   position: absolute;
   inset: 0;
   background:
-    radial-gradient(ellipse 60% 70% at 68% 50%, rgb(var(--c-violet) / 0.3), transparent 72%),
+    radial-gradient(ellipse 58% 70% at 68% 48%, rgb(var(--c-violet) / 0.32), transparent 72%),
+    radial-gradient(ellipse 40% 50% at 8% 100%, rgb(var(--c-violet) / 0.14), transparent 70%),
     linear-gradient(180deg, #0b0818, #02010a 70%);
   opacity: var(--e, 0);
   pointer-events: none;
@@ -229,7 +139,7 @@ html[data-scenes="pin"] .flowscene__sheet > .container {
 
 html[data-scenes="pin"] .product {
   display: grid;
-  grid-template-columns: minmax(0, 4fr) minmax(0, 7fr);
+  grid-template-columns: minmax(0, 4fr) minmax(0, 8fr);
   align-items: center;
   column-gap: clamp(2rem, 1rem + 4vw, 5rem);
   margin: 0;
@@ -239,14 +149,24 @@ html[data-scenes="pin"] .product {
   background: none;
 }
 
-html[data-scenes="pin"] .product__art {
+html[data-scenes="pin"] .product__visual {
   order: 2;
-  width: 100%;
-  min-height: 0;
-  max-height: calc(100svh - var(--header-h) - 5rem);
-  margin: 0;
-  aspect-ratio: 1.3 / 1;
+  min-width: 0;
+}
+
+/* o esquema ocupa a altura disponível sem passar da tela (as camadas da frente "crescem" um pouco
+   pela perspectiva, por isso a folga de 9rem) */
+html[data-scenes="pin"] .product__art {
+  width: min(100%, calc((100svh - var(--header-h) - 9rem) * 1.25));
+  margin-left: auto;
+  aspect-ratio: 1.25 / 1;
   perspective: 1400px;
+}
+
+html[data-scenes="pin"] .product__caption {
+  width: min(100%, calc((100svh - var(--header-h) - 9rem) * 1.25));
+  margin: 1.25rem 0 0 auto;
+  text-align: right;
 }
 
 html[data-scenes="pin"] .product__title {
@@ -258,8 +178,16 @@ html[data-scenes="pin"] .product__text {
   font-size: var(--fs-lead);
 }
 
+/* telas baixas: menos folga em volta do esquema */
+@media (max-height: 40em) {
+  html[data-scenes="pin"] .product__art,
+  html[data-scenes="pin"] .product__caption {
+    width: min(100%, calc((100svh - var(--header-h) - 8rem) * 1.25));
+  }
+}
+
 /* ---------- Celular: o mesmo avanço, mais contido ---------- */
 
 html[data-scenes="lite"] .product__art {
-  min-height: 17rem;
+  aspect-ratio: 1 / 1;
 }

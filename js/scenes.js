@@ -218,15 +218,29 @@
     if (!raf) raf = window.requestAnimationFrame(frame);
   }
 
-  /* ---------- Links para os projetos do trilho horizontal ---------- */
+  /* ---------- Links e foco dentro dos palcos fixos ---------- */
+  // distância rolada com o palco preso e inteiro (depois dela começa a cortina da próxima seção)
+  function storyLength(s) {
+    return Math.max(1, s.height - s.boxHeight - s.tail * s.boxHeight);
+  }
+
+  // salto sem deslizar (o scroll-behavior: smooth do CSS não vale aqui: o foco já aconteceu)
+  function jumpTo(top) {
+    const previous = root.style.scrollBehavior;
+    root.style.scrollBehavior = "auto";
+    window.scrollTo(0, top);
+    root.style.scrollBehavior = previous;
+  }
+
+  // leva a rolagem ao ponto do trilho em que o projeto indicado está em destaque
   function goToPanel(panel, behavior) {
-    const track = panel.closest("[data-scene]");
+    const track = panel.closest("[data-pin]");
     const s = scenes.find((item) => item.el === track);
     if (!s || !s.pinned || s.stations < 2) return false;
     const index = Number.parseInt(panel.dataset.railPanel || "0", 10);
-    const main = Math.max(1, s.height - s.boxHeight - s.tail * s.boxHeight);
-    const top = s.top + (index / (s.stations - 1)) * main;
-    window.scrollTo({ top, behavior });
+    const top = s.top + (index / (s.stations - 1)) * storyLength(s);
+    if (behavior === "jump") jumpTo(top);
+    else window.scrollTo({ top, behavior });
     return true;
   }
 
@@ -237,27 +251,63 @@
     const panel = id ? document.getElementById(id) : null;
     if (panel && panel.hasAttribute("data-rail-panel") && goToPanel(panel, "smooth")) {
       event.preventDefault();
+      // o endereço acompanha o projeto (link que dá para copiar) e o botão Voltar volta ao projeto anterior
+      if (window.location.hash !== "#" + id) window.history.pushState(null, "", "#" + id);
     }
   });
 
-  // Foco por teclado dentro de um painel que não está em destaque: leva o trilho até ele
+  // Foco por teclado dentro de um palco fixo. O navegador rola até o elemento pela posição dele na
+  // página, e com o palco preso isso pode cair na cortina (a próxima seção já cobre o palco) ou antes
+  // da chegada dele: o foco ficaria escondido. Aqui a rolagem vai para o trecho em que o palco está
+  // fixo e inteiro: no painel do projeto focado (trilho) ou no fim da história da cena.
   document.addEventListener("focusin", (event) => {
-    if (mode !== "pin") return;
-    const panel = event.target.closest && event.target.closest("[data-rail-panel]");
-    if (panel) goToPanel(panel, "auto");
+    if (mode !== "pin" || !event.target.closest) return;
+    const panel = event.target.closest("[data-rail-panel]");
+    if (panel) {
+      goToPanel(panel, "jump");
+      return;
+    }
+    const s = scenes.find((item) => item.pinned && item.enabled && item.el.contains(event.target));
+    if (!s) return;
+    const first = s.top;
+    const last = s.top + storyLength(s);
+    const y = window.scrollY;
+    if (y >= first && y <= last) return;
+    // vindo de cima, o trilho de projetos começa no primeiro projeto; nos demais, o foco leva ao fim da história
+    jumpTo(s.stations > 1 && y < first ? first : last);
   });
+
+  /* ---------- Endereço com #projeto ---------- */
+  // O navegador rola até o painel pela posição dele no trilho (fora do palco). Na abertura, no
+  // Voltar/Avançar e quando o endereço muda, a cena leva o trilho até o projeto pedido.
+  let userMoved = false; // depois do primeiro gesto do visitante, a abertura não corrige mais a rolagem
+  ["wheel", "touchstart", "keydown", "pointerdown"].forEach((name) =>
+    window.addEventListener(name, () => (userMoved = true), { passive: true, once: true }),
+  );
+
+  function syncHash() {
+    const id = decodeURIComponent(window.location.hash.slice(1));
+    const panel = id ? document.getElementById(id) : null;
+    if (panel && panel.hasAttribute("data-rail-panel") && mode === "pin") goToPanel(panel, "jump");
+  }
+
+  // o navegador também rola até o #hash quando a página termina de carregar: confere depois dele
+  function onLoad() {
+    measure();
+    if (userMoved) return;
+    syncHash();
+    window.setTimeout(() => {
+      if (!userMoved) syncHash();
+    }, 250);
+  }
+
+  window.addEventListener("hashchange", syncHash);
 
   /* ---------- Início ---------- */
   function setup() {
     applyMode();
     measure();
-
-    // Abriu a página com #projeto na URL: o navegador não sabe onde fica o painel no trilho
-    const hash = decodeURIComponent(window.location.hash.slice(1));
-    const target = hash ? document.getElementById(hash) : null;
-    if (target && target.hasAttribute("data-rail-panel")) {
-      window.requestAnimationFrame(() => goToPanel(target, "auto"));
-    }
+    window.requestAnimationFrame(syncHash);
   }
 
   window.addEventListener("scroll", request, { passive: true });
@@ -265,7 +315,7 @@
     applyMode();
     measure();
   });
-  window.addEventListener("load", measure);
+  window.addEventListener("load", onLoad);
   if (document.fonts && document.fonts.ready) document.fonts.ready.then(measure);
   if ("ResizeObserver" in window) {
     let height = document.body.offsetHeight;

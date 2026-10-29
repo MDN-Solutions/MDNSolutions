@@ -65,7 +65,7 @@ html[data-scenes] .about[data-live="true"] .about__world {
 /* ---------- Palco fixo (telas largas) ---------- */
 
 html[data-scenes="pin"] .about {
-  height: calc(100svh * 3.4); /* 1 palco + 1,4 de história + 1 de cortina (o Contato sobe por cima) */
+  height: calc(100svh * 3.1); /* 1 palco + 1,1 de história + 1 de cortina (o Contato sobe por cima) */
   padding-top: 0;
 }
 
@@ -112,6 +112,11 @@ html[data-scenes="pin"] .about [data-reveal]:not(.about__visual) {
   --r: clamp(0, calc((var(--q, 0) - var(--t, 0)) / 0.14), 1);
   opacity: calc(0.75 + var(--r) * 0.25);
   translate: 0 calc((1 - var(--r)) * 1.6rem);
+}
+
+/* a legenda (cinza-lápis) apaga menos que o texto corrido, para manter 4,5:1 mesmo no começo da cena */
+html[data-scenes="pin"] .about [data-reveal].section-kicker {
+  opacity: calc(0.92 + var(--r) * 0.08);
 }
 
 html[data-scenes="pin"] .about__icon {

@@ -1,7 +1,12 @@
 /* ==========================================================================
-   Serviços: lista indexada + faixa do produto próprio (MDN Flow)
+   Serviços: lista indexada (o produto próprio, MDN Flow, fica em css/sections/flow.css)
    Ganchos de JS: [data-spotlight] recebe --mx/--my (posição do ponteiro) para o brilho.
    ========================================================================== */
+
+/* seção em tom papel (data-tone="paper", css/base.css): o fundo claro vai até o fim da lista */
+.services {
+  padding-bottom: var(--space-section);
+}
 
 .services__layout {
   display: grid;
@@ -72,208 +77,6 @@
   }
 }
 
-/* ---------- Faixa do produto próprio ---------- */
-
-.product {
-  position: relative;
-  margin-top: clamp(2rem, 1.5rem + 2vw, 3rem);
-  padding: clamp(1.5rem, 1rem + 2.5vw, 2.5rem);
-  overflow: hidden;
-  border: 1px solid var(--c-line-strong);
-  border-radius: var(--r-md);
-  background:
-    radial-gradient(
-      circle 18rem at var(--mx, 85%) var(--my, 0%),
-      rgb(var(--c-violet) / 0.22),
-      transparent 70%
-    ),
-    var(--c-graphite);
-}
-
-.product__kicker {
-  color: var(--c-pencil);
-  font-size: var(--fs-xs);
-  font-weight: 620;
-  letter-spacing: 0.14em;
-  text-transform: uppercase;
-}
-
-.product__title {
-  margin-top: 0.75rem;
-  font-size: clamp(1.75rem, 1.4rem + 1.5vw, 2.5rem);
-  letter-spacing: -0.035em;
-}
-
-.product__text {
-  max-width: 30rem;
-  margin-top: 0.75rem;
-  color: var(--c-chalk);
-}
-
-.product__link {
-  display: inline-flex;
-  align-items: center;
-  min-height: var(--tap);
-  gap: 0.5rem;
-  margin-top: 1rem;
-  border-bottom: 1px solid var(--c-line-strong);
-  color: var(--c-white);
-  font-size: var(--fs-sm);
-  font-weight: 560;
-  transition: border-color var(--dur-fast) ease;
-}
-
-.product__link:hover {
-  border-color: var(--c-white);
-}
-
-@media (prefers-reduced-motion: no-preference) {
-  .product__link .icon {
-    transition: translate var(--dur) var(--ease-out);
-  }
-
-  .product__link:hover .icon {
-    translate: 2px -2px;
-  }
-}
-
-/* ---------- MDN Flow: esquema ilustrativo da interface (sem dados reais) ----------
-   Camadas em 3D: gráfico, lançamentos e saldo. São só blocos e barras genéricas, não telas do produto.
-   js/scene.js escreve --rx/--ry. Sem overflow/filter/opacity<1 em .product__world (achata o 3D). */
-
-.product__art {
-  position: relative;
-  min-height: 15rem;
-  margin-bottom: 1.5rem;
-  perspective: 1000px;
-  perspective-origin: 50% 40%;
-  touch-action: pan-y;
-}
-
-.product__world {
-  position: absolute;
-  inset: 0;
-  transform-style: preserve-3d;
-  transform: rotateX(calc(var(--rx, 0) * 1deg + 8deg)) rotateY(calc(var(--ry, 0) * 1deg - 14deg));
-}
-
-.product__art[data-live="true"] .product__world {
-  will-change: transform;
-}
-
-.flow {
-  position: absolute;
-  padding: 0.875rem 1rem;
-  border: 1px solid var(--c-line-strong);
-  border-radius: var(--r-sm);
-  background: var(--c-graphite-2);
-  box-shadow: 0 24px 40px -22px rgb(0 0 0 / 0.9);
-}
-
-.flow__label {
-  margin-bottom: 0.625rem;
-  color: var(--c-pencil);
-  font-size: 0.6875rem;
-  font-weight: 620;
-  letter-spacing: 0.12em;
-  text-transform: uppercase;
-}
-
-.flow--chart {
-  top: 6%;
-  left: 0;
-  width: 55%;
-  height: 62%;
-  transform: translateZ(0);
-}
-
-.flow__bars {
-  display: flex;
-  align-items: flex-end;
-  gap: 0.5rem;
-  height: calc(100% - 1.75rem);
-}
-
-.flow__bars i {
-  flex: 1;
-  height: var(--h);
-  border-radius: 4px 4px 0 0;
-  background: #333;
-  transform-origin: bottom;
-}
-
-.flow__bars i.is-hi {
-  background: rgb(var(--c-violet));
-  box-shadow: 0 0 18px -2px rgb(var(--c-violet) / 0.7);
-}
-
-.flow--list {
-  right: 0;
-  bottom: 2%;
-  width: 47%;
-  transform: translateZ(60px);
-}
-
-.flow__row {
-  display: grid;
-  grid-template-columns: 1.25rem minmax(0, 1fr) 2.5rem;
-  align-items: center;
-  gap: 0.625rem;
-  padding-block: 0.4rem;
-  border-top: 1px solid var(--c-line);
-}
-
-.flow__row b {
-  width: 1.25rem;
-  height: 1.25rem;
-  border: 1px solid var(--c-line-strong);
-  border-radius: 50%;
-}
-
-.flow__row span,
-.flow__row em {
-  height: 0.4rem;
-  border-radius: 2px;
-  background: #2f2f2f;
-}
-
-.flow--balance {
-  top: 0;
-  right: 4%;
-  width: 34%;
-  transform: translateZ(110px);
-}
-
-.flow__meter {
-  display: block;
-  height: 0.5rem;
-  border-radius: 999px;
-  background: #2f2f2f;
-}
-
-.flow__meter i {
-  display: block;
-  width: 64%;
-  height: 100%;
-  border-radius: inherit;
-  background: linear-gradient(90deg, rgb(var(--c-violet)), var(--c-white));
-}
-
-@media (width >= 48em) {
-  .product {
-    display: grid;
-    grid-template-columns: minmax(0, 1fr) minmax(0, 1.05fr);
-    align-items: center;
-    column-gap: clamp(2rem, 1rem + 4vw, 4rem);
-  }
-
-  .product__art {
-    order: 2;
-    min-height: 17rem;
-    margin-bottom: 0;
-  }
-}
-
 /* ---------- Responsivo ---------- */
 
 @media (width >= 60em) {
@@ -288,12 +91,7 @@
     align-self: start;
   }
 
-  .services__list,
-  .product {
+  .services__list {
     grid-column: 2;
-  }
-
-  .product {
-    margin-top: 0;
   }
 }
