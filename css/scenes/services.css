@@ -1,0 +1,457 @@
+/* ==========================================================================
+   Cena 4: serviços em camadas
+   --st (0 a 2): serviço em foco. A lista acende o item atual e as janelas ilustrativas
+   (wireframes genéricos de landing page, site e sistema; não são projetos) avançam em 3D.
+   --e: a folha dos serviços sobe inclinada e se deita (transição projetos → serviços).
+   Celular (lite): cada serviço acende quando passa pelo centro da tela. Estático: lista simples.
+   ========================================================================== */
+
+.deck {
+  display: none; /* só existe com as cenas fixas */
+}
+
+/* ---------- Palco fixo + folha que se deita (telas largas) ---------- */
+
+html[data-scenes="pin"] .services {
+  height: calc(100svh * 3); /* 1 palco + 2 de história */
+  padding-top: 0;
+}
+
+html[data-scenes="pin"] .services__stage {
+  perspective: 1800px;
+  perspective-origin: 50% 0;
+}
+
+html[data-scenes="pin"] .services__sheet {
+  height: 100%;
+  padding-top: var(--header-h);
+  border-top: 1px solid rgb(255 255 255 / 0.1);
+  border-radius: calc((1 - var(--e, 0)) * 2.25rem) calc((1 - var(--e, 0)) * 2.25rem) 0 0;
+  background:
+    radial-gradient(ellipse 50% 60% at 78% 55%, rgb(var(--c-violet) / 0.16), transparent 70%),
+    var(--c-ink);
+  transform-origin: 50% 100%;
+  transform: rotateX(calc((1 - var(--e, 0)) * 14deg));
+  /* ao sair, o conteúdo perde destaque */
+  opacity: calc(1 - var(--x, 0) * 0.5);
+  scale: calc(1 - var(--x, 0) * 0.05);
+}
+
+html[data-scenes="pin"] .services__layout {
+  grid-template-columns: minmax(0, 5fr) minmax(0, 6fr);
+  grid-template-rows: auto auto;
+  align-content: center;
+  align-items: start;
+  column-gap: clamp(2rem, 1rem + 4vw, 5rem);
+  row-gap: clamp(0.5rem, 1.6svh, 1.25rem);
+  height: 100%;
+}
+
+html[data-scenes="pin"] .services__head {
+  position: static;
+  grid-column: 1;
+  grid-row: 1;
+}
+
+/* A coluna da esquerda (cabeçalho + 3 serviços) tem de caber entre o header e o pé da tela em
+   qualquer notebook: tamanhos e espaços acompanham a altura (svh) em vez de ficarem fixos. */
+html[data-scenes="pin"] .services__head .section-title {
+  margin-top: clamp(0.5rem, 1.6svh, 1.25rem);
+  font-size: clamp(1.75rem, 5.3svh, 3.5rem);
+}
+
+html[data-scenes="pin"] .services__head .lead {
+  margin-top: clamp(0.5rem, 1.6svh, 1.5rem);
+  font-size: clamp(0.9375rem, 0.4rem + 1.6svh, 1.3125rem);
+}
+
+html[data-scenes="pin"] .services__list {
+  grid-column: 1;
+  grid-row: 2;
+  border-bottom: 0;
+}
+
+/* ---------- Serviços: o do foco acende, os outros recuam ---------- */
+
+html[data-scenes="pin"] .service {
+  --o: calc(var(--i) - var(--st, 0));
+  --oa: clamp(0, max(var(--o), var(--o) * -1), 1);
+  --a: calc(1 - var(--oa)); /* 1 no serviço em foco */
+  --pad: clamp(0.75rem, 2.2svh, 2rem);
+  padding-block: var(--pad);
+  padding-left: 1rem;
+  opacity: calc(0.34 + var(--a) * 0.66);
+  translate: calc(var(--a) * 1rem) 0;
+  background: linear-gradient(90deg, rgb(var(--c-violet) / calc(var(--a) * 0.14)), transparent 72%);
+}
+
+html[data-scenes="pin"] .service::before {
+  top: var(--pad);
+  right: 0.5rem;
+}
+
+html[data-scenes="pin"] .service__title {
+  font-size: clamp(1.25rem, 3.3svh, 2rem);
+}
+
+html[data-scenes="pin"] .service__text {
+  margin-top: clamp(0.25rem, 0.7svh, 0.625rem);
+  font-size: clamp(0.875rem, 0.3rem + 1.4svh, 1.0625rem);
+  line-height: 1.5;
+}
+
+html[data-scenes="pin"] .service__icon {
+  width: clamp(2.5rem, 5.6svh, 3.25rem);
+  height: clamp(2.5rem, 5.6svh, 3.25rem);
+  border-color: rgb(var(--c-violet) / calc(0.2 + var(--a) * 0.8));
+  box-shadow: 0 0 0 calc(var(--a) * 6px) rgb(var(--c-violet) / calc(var(--a) * 0.16));
+}
+
+/* ---------- Janelas em camadas ---------- */
+
+html[data-scenes="pin"] .deck {
+  position: relative;
+  grid-column: 2;
+  grid-row: 1 / span 2;
+  align-self: center;
+  display: block;
+  width: 100%;
+  max-height: calc(100svh - var(--header-h) - 5rem);
+  aspect-ratio: 1.12 / 1;
+  perspective: 1400px;
+  perspective-origin: 50% 40%;
+  touch-action: pan-y;
+}
+
+html[data-scenes="pin"] .deck__world {
+  position: absolute;
+  inset: 0;
+  transform-style: preserve-3d;
+  transform: rotateX(calc(var(--rx, 0) * 1deg + 10deg)) rotateY(calc(var(--ry, 0) * 1deg - 16deg));
+}
+
+html[data-scenes="pin"] .services[data-live="true"] .deck__world {
+  will-change: transform;
+}
+
+html[data-scenes="pin"] .deck__layer {
+  --o: calc(var(--i) - var(--st, 0));
+  --oa: clamp(0, max(var(--o), var(--o) * -1), 1);
+  position: absolute;
+  inset: 12% 4% 12% 4%;
+  container-type: inline-size;
+  opacity: calc(1 - var(--oa) * 0.6);
+  transform: translate3d(calc(var(--o) * 12%), calc(var(--o) * -11%), calc(var(--oa) * -200px + (1 - var(--oa)) * 60px))
+    rotateY(calc(var(--o) * 7deg));
+}
+
+.wf {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  border: 1px solid #5a5a5a;
+  border-radius: 3.2cqw;
+  background: #0b0b0b;
+  box-shadow:
+    0 3cqw 8cqw -3cqw rgb(0 0 0 / 0.9),
+    0 0 8cqw -3cqw rgb(var(--c-violet) / 0.4);
+}
+
+.wf__bar {
+  display: flex;
+  align-items: center;
+  gap: 1.2cqw;
+  padding: 1.8cqw 2.4cqw;
+  border-bottom: 1px solid var(--c-line);
+  background: var(--c-graphite-2);
+}
+
+.wf__bar i {
+  width: 1.5cqw;
+  height: 1.5cqw;
+  border-radius: 50%;
+  background: var(--c-line-strong);
+}
+
+.wf__bar b {
+  width: 36%;
+  height: 2.4cqw;
+  margin-left: 3cqw;
+  border-radius: 99px;
+  background: #1c1c1c;
+}
+
+.wf__body {
+  flex: 1;
+  min-height: 0;
+  padding: 4cqw;
+}
+
+/* blocos genéricos */
+.wf i {
+  display: block;
+}
+
+.wf .t {
+  width: 78%;
+  height: 4cqw;
+  margin-bottom: 1.6cqw;
+  border-radius: 99px;
+  background: #5e5e5e;
+}
+
+.wf .t--s {
+  width: 52%;
+}
+
+.wf .l {
+  width: 92%;
+  height: 1.6cqw;
+  margin-top: 1.4cqw;
+  border-radius: 99px;
+  background: #3d3d3d;
+}
+
+.wf .l--s {
+  width: 62%;
+}
+
+.wf .cta {
+  width: 24cqw;
+  height: 5cqw;
+  margin-top: 3.2cqw;
+  border: 1px solid rgb(var(--c-violet));
+  border-radius: 99px;
+  box-shadow: 0 0 3cqw rgb(var(--c-violet) / 0.5);
+}
+
+.wf .img {
+  height: 14cqw;
+  margin-bottom: 2cqw;
+  border: 1px solid #4d4d4d;
+  border-radius: 1.6cqw;
+  background:
+    linear-gradient(to top right, transparent calc(50% - 0.5px), #474747, transparent calc(50% + 0.5px)),
+    linear-gradient(to bottom right, transparent calc(50% - 0.5px), #474747, transparent calc(50% + 0.5px));
+}
+
+/* landing page: título, chamada, imagem e três cartões */
+.wf__body--landing {
+  display: grid;
+  grid-template-columns: 1.1fr 0.9fr;
+  grid-template-rows: auto auto;
+  gap: 4cqw;
+}
+
+.wf__body--landing .wf__img {
+  height: 100%;
+  min-height: 24cqw;
+  border: 1px solid #4d4d4d;
+  border-radius: 2cqw;
+  background:
+    linear-gradient(to top right, transparent calc(50% - 0.5px), #474747, transparent calc(50% + 0.5px)),
+    linear-gradient(to bottom right, transparent calc(50% - 0.5px), #474747, transparent calc(50% + 0.5px));
+}
+
+.wf__cards {
+  display: grid;
+  grid-column: 1 / -1;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 3cqw;
+}
+
+.wf__cards i {
+  height: 15cqw;
+  border: 1px solid #474747;
+  border-radius: 1.8cqw;
+  background: #101010;
+}
+
+/* site profissional: menu, faixa e três colunas */
+.wf__body--site {
+  display: grid;
+  align-content: start;
+  gap: 3.4cqw;
+}
+
+.wf__nav {
+  display: flex;
+  align-items: center;
+  gap: 3cqw;
+}
+
+.wf__nav .logo {
+  width: 6cqw;
+  height: 6cqw;
+  border: 1px solid #5a5a5a;
+  border-radius: 1.6cqw;
+}
+
+.wf__nav .link {
+  width: 9cqw;
+  height: 1.6cqw;
+  border-radius: 99px;
+  background: #474747;
+}
+
+.wf__nav .btn {
+  width: 14cqw;
+  height: 4.4cqw;
+  margin-left: auto;
+  border-radius: 99px;
+  background: #e8e8e8;
+}
+
+.wf__banner {
+  padding: 5cqw 4cqw;
+  border: 1px solid #474747;
+  border-radius: 2cqw;
+  background: linear-gradient(120deg, rgb(var(--c-violet) / 0.18), #101010 70%);
+}
+
+.wf__cols {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 3cqw;
+}
+
+/* sistema: menu lateral, indicadores e tabela */
+.wf__body--system {
+  display: grid;
+  grid-template-columns: 17% 1fr;
+  gap: 3.5cqw;
+  padding: 3cqw;
+}
+
+.wf__side {
+  display: grid;
+  align-content: start;
+  gap: 2.4cqw;
+  padding: 2.4cqw;
+  border-right: 1px solid var(--c-line);
+}
+
+.wf__side i {
+  height: 2.4cqw;
+  border-radius: 99px;
+  background: #3d3d3d;
+}
+
+.wf__side i.on {
+  background: rgb(var(--c-violet));
+  box-shadow: 0 0 3cqw rgb(var(--c-violet) / 0.6);
+}
+
+.wf__main {
+  display: grid;
+  align-content: start;
+  gap: 3.2cqw;
+}
+
+.wf__top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.wf__top .search {
+  width: 40%;
+  height: 4cqw;
+  border: 1px solid #474747;
+  border-radius: 99px;
+}
+
+.wf__top .avatar {
+  width: 4.4cqw;
+  height: 4.4cqw;
+  border: 1px solid #5a5a5a;
+  border-radius: 50%;
+}
+
+.wf__stats {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 2.4cqw;
+}
+
+.wf__stats > div {
+  padding: 2.4cqw;
+  border: 1px solid #474747;
+  border-radius: 1.8cqw;
+  background: #101010;
+}
+
+.wf__stats .l {
+  width: 55%;
+  margin-top: 0;
+}
+
+.wf__stats .big {
+  width: 80%;
+  height: 4.4cqw;
+  margin-top: 2cqw;
+  border-radius: 1cqw;
+  background: #585858;
+}
+
+.wf__stats > div:nth-child(2) .big {
+  background: rgb(var(--c-violet) / 0.8);
+}
+
+.wf__table {
+  display: grid;
+  gap: 1.2cqw;
+}
+
+.wf__table > div {
+  display: grid;
+  grid-template-columns: 3cqw 1fr 1fr 14cqw;
+  align-items: center;
+  gap: 2.4cqw;
+  padding: 1.8cqw 0;
+  border-top: 1px solid var(--c-line);
+}
+
+.wf__table b {
+  width: 3cqw;
+  height: 3cqw;
+  border: 1px solid #5a5a5a;
+  border-radius: 50%;
+}
+
+.wf__table i {
+  height: 1.6cqw;
+  border-radius: 99px;
+  background: #3d3d3d;
+}
+
+/* ---------- Celular (lite): o serviço que passa pelo centro acende ---------- */
+
+html[data-scenes="lite"] .service {
+  --a: clamp(0, 1 - max(var(--q, 0.5) - 0.5, 0.5 - var(--q, 0.5)) * 2.6, 1);
+  opacity: calc(0.45 + var(--a) * 0.55);
+  translate: calc(var(--a) * 0.75rem) 0;
+}
+
+html[data-scenes="lite"] .service__icon {
+  border-color: rgb(var(--c-violet) / calc(0.25 + var(--a) * 0.75));
+  box-shadow: 0 0 0 calc(var(--a) * 5px) rgb(var(--c-violet) / calc(var(--a) * 0.16));
+}
+
+/* ---------- Telas estreitas (< 75em): a lista ganha largura e a pilha de janelas encolhe um pouco ---------- */
+
+@media (width < 75em) {
+  html[data-scenes="pin"] .services__layout {
+    grid-template-columns: minmax(0, 6fr) minmax(0, 5fr);
+  }
+}
+
+/* ---------- Telas muito baixas (notebook com barras do navegador): sem a chamada do cabeçalho ---------- */
+
+@media (max-height: 40em) {
+  html[data-scenes="pin"] .services__head .lead {
+    display: none;
+  }
+}

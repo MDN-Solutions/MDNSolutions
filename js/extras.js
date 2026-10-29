@@ -52,7 +52,13 @@
 
   /* ---------- 2. Numerais de "Como funciona" ---------- */
   const numerals = Array.from(document.querySelectorAll(".process__number"));
-  if (numerals.length && "IntersectionObserver" in window && !reduceQuery.matches) {
+  // no palco fixo (data-scenes="pin") os numerais acendem com a linha do tempo, então não contam
+  if (
+    numerals.length &&
+    "IntersectionObserver" in window &&
+    !reduceQuery.matches &&
+    document.documentElement.dataset.scenes !== "pin"
+  ) {
     const countObserver = new IntersectionObserver(
       (entries) => {
         entries.forEach((entry) => {

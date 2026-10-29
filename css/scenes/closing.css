@@ -1,0 +1,316 @@
+/* ==========================================================================
+   Cena 8: encerramento
+   Os elementos do hero (símbolo, celular e a conversa) e os anéis do Sobre voltam e convergem
+   para o botão do WhatsApp conforme a rolagem; no fim o botão "acende".
+   Telas largas: o Contato sobe por cima do Sobre (cúpula) e fica fixo; --q é a história com o
+   palco preso. Celular: sem pinagem; --q (data-q="end") vai do botão entrando na tela até ele
+   ficar um pouco acima do meio (ver js/scenes.js), e os elementos chegam por baixo.
+   Tudo o que há aqui é decorativo (aria-hidden); os links de contato são os de sempre.
+   Estático (movimento reduzido ou sem JS): painel à esquerda, sem a composição.
+   ========================================================================== */
+
+/* ---------- Estático ---------- */
+
+.contact__converge {
+  display: contents; /* o botão continua sendo o item do flex, como antes */
+}
+
+.contact__rings,
+.contact__sat {
+  display: none;
+}
+
+/* ---------- Palco fixo + folha em cúpula (telas largas) ----------
+   A transição Sobre → Contato: o Contato sobe por cima do Sobre com o topo em arco (uma "cúpula"
+   que vai se achatando) e o painel se deita; depois fica fixo enquanto a composição converge. */
+
+html[data-scenes="pin"] .contact {
+  height: calc(100svh * 2.2); /* 1 palco + 1,2 de história */
+  padding-top: 0;
+}
+
+html[data-scenes="pin"] .contact[data-sheet]::before,
+html[data-scenes="pin"] .contact[data-sheet]::after {
+  display: none; /* a barra e a luz em faixa, retas, não combinam com o topo em arco */
+}
+
+/* o respiro entre o palco e o rodapé já vem do palco */
+html[data-scenes="pin"] .footer {
+  margin-top: 0;
+}
+
+html[data-scenes="pin"] .contact__stage {
+  display: grid;
+  align-content: center;
+  padding-top: var(--header-h);
+  border-top: 1px solid rgb(255 255 255 / 0.1);
+  border-radius: 50% 50% 0 0 / calc((1 - var(--e, 0)) * 9rem) calc((1 - var(--e, 0)) * 9rem) 0 0;
+  background:
+    radial-gradient(ellipse 60% 55% at 50% 62%, rgb(var(--c-violet) / 0.16), transparent 70%),
+    var(--c-ink);
+  /* luz que escorre pelo arco enquanto ele sobe */
+  box-shadow: 0 calc((1 - var(--e, 0)) * -1.5rem) 5rem -1.5rem rgb(var(--c-violet) / calc((1 - var(--e, 0)) * 0.5));
+}
+
+html[data-scenes="pin"] .contact__panel {
+  transform-origin: 50% 100%;
+  transform: perspective(1600px) rotateX(calc((1 - var(--e, 0)) * 9deg));
+}
+
+/* ---------- Com cenas: painel centralizado e composição ao redor do botão ---------- */
+
+html[data-scenes] .contact__panel {
+  container-type: inline-size; /* as distâncias da composição usam a largura do painel (cqw) */
+  text-align: center;
+}
+
+html[data-scenes] .contact__panel .section-kicker {
+  justify-content: center;
+}
+
+/* o texto fica por cima dos anéis e dos satélites que atravessam o painel */
+html[data-scenes] .contact__panel .section-kicker,
+html[data-scenes] .contact__title,
+html[data-scenes] .contact__text,
+html[data-scenes] .contact__social {
+  position: relative;
+  z-index: 3;
+}
+
+html[data-scenes] .contact__title,
+html[data-scenes] .contact__text {
+  margin-inline: auto;
+}
+
+html[data-scenes] .contact__title {
+  max-width: 16ch;
+}
+
+html[data-scenes] .contact__actions {
+  justify-content: center;
+}
+
+/* título palavra por palavra */
+html[data-scenes] .contact__title .w {
+  --r: clamp(0, calc((var(--q, 0) - 0.02 - var(--w, 0) * 0.03) / 0.16), 1);
+  display: inline-block;
+  opacity: calc(0.6 + var(--r) * 0.4);
+  translate: 0 calc((1 - var(--r)) * 0.42em);
+}
+
+html[data-scenes] .contact__text {
+  --r: clamp(0, calc((var(--q, 0) - 0.1) / 0.16), 1);
+  opacity: calc(0.75 + var(--r) * 0.25);
+  translate: 0 calc((1 - var(--r)) * 1rem);
+}
+
+html[data-scenes] .contact__converge {
+  --lit: clamp(0, calc((var(--q, 0) - 0.68) / 0.16), 1); /* 1 quando tudo já chegou ao botão */
+  position: relative;
+  display: block;
+  perspective: 900px;
+}
+
+html[data-scenes] .contact__converge .button {
+  position: relative;
+  z-index: 2;
+  scale: calc(1 + var(--lit) * 0.035);
+}
+
+/* luz do botão, que acende quando os elementos chegam */
+html[data-scenes] .contact__converge::before {
+  content: "";
+  position: absolute;
+  inset: -60% -22%;
+  z-index: 0;
+  background: radial-gradient(closest-side, rgb(var(--c-violet) / 0.5), transparent);
+  opacity: var(--lit);
+  scale: calc(0.6 + var(--lit) * 0.45);
+  pointer-events: none;
+}
+
+/* ---------- Anéis que se fecham sobre o botão ---------- */
+
+html[data-scenes] .contact__rings {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  display: block;
+  pointer-events: none;
+}
+
+html[data-scenes] .contact__rings i {
+  --k: 0;
+  --c: clamp(0, calc((var(--q, 0) - 0.05 - var(--k) * 0.05) / 0.7), 1);
+  --ce: calc(var(--c) * var(--c) * (3 - 2 * var(--c)));
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  display: block;
+  width: calc(max(46cqw, 15rem) + var(--k) * max(16cqw, 4rem));
+  aspect-ratio: 1;
+  border: 1px solid rgb(var(--c-violet) / 0.65);
+  border-radius: 50%;
+  translate: -50% -50%;
+  scale: calc(1 - var(--ce) * 0.93);
+  opacity: calc(min(var(--c) * 6, (1 - var(--ce)) * 3, 1) * 0.6);
+}
+
+html[data-scenes] .contact__rings i:nth-child(2) { --k: 1; }
+html[data-scenes] .contact__rings i:nth-child(3) { --k: 2; }
+
+/* ---------- Satélites: símbolo, celular e conversa do hero ---------- */
+
+html[data-scenes] .contact__sat {
+  --d: 0; /* quando (em --q) este elemento começa a andar */
+  --c: clamp(0, calc((var(--q, 0) - var(--d)) / (0.76 - var(--d))), 1);
+  --ce: calc(var(--c) * var(--c) * (3 - 2 * var(--c)));
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  z-index: 1;
+  display: block;
+  translate: calc(-50% + (1 - var(--ce)) * var(--sx)) calc(-50% + (1 - var(--ce)) * var(--sy));
+  scale: calc(0.2 + (var(--ss) - 0.2) * (1 - var(--ce)));
+  transform: rotateY(calc((1 - var(--ce)) * var(--sry))) rotateZ(calc((1 - var(--ce)) * var(--srz)));
+  /* aparece logo no começo e some ao ser "absorvido" pelo botão */
+  opacity: min(clamp(0, calc(0.25 + var(--c) * 6), 1), clamp(0, calc((1 - var(--ce)) * 4), 1));
+  pointer-events: none;
+}
+
+html[data-scenes] .contact__sat--logo {
+  --d: 0.02;
+  --sx: -36cqw;
+  --sy: -2.2rem;
+  --ss: 1.15;
+  --sry: 40deg;
+  --srz: -14deg;
+  display: grid;
+  place-items: center;
+  width: 4.25rem;
+  aspect-ratio: 1;
+  overflow: hidden;
+  border: 1px solid var(--c-line-strong);
+  border-radius: 50%;
+  background: var(--c-ink);
+  box-shadow:
+    0 0 0 6px rgb(var(--c-violet) / 0.12),
+    0 0 36px rgb(var(--c-violet) / 0.45);
+}
+
+html[data-scenes] .contact__sat--logo img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+html[data-scenes] .contact__sat--phone {
+  --d: 0.1;
+  --sx: 38cqw;
+  --sy: -3.6rem;
+  --ss: 1.1;
+  --sry: -38deg;
+  --srz: 12deg;
+  display: grid;
+  align-content: start;
+  gap: 0.4rem;
+  width: 3.4rem;
+  aspect-ratio: 160 / 316;
+  padding: 0.7rem 0.55rem;
+  border: 1px solid var(--c-pencil);
+  border-radius: 0.95rem;
+  background: var(--c-ink);
+  box-shadow: 0 0 30px rgb(var(--c-violet) / 0.35);
+}
+
+html[data-scenes] .contact__sat--phone i {
+  display: block;
+  height: 0.28rem;
+  border-radius: 99px;
+  background: var(--c-line-strong);
+}
+
+html[data-scenes] .contact__sat--phone i:nth-child(1) {
+  width: 78%;
+  background: var(--c-paper);
+}
+
+html[data-scenes] .contact__sat--phone i:nth-child(2) {
+  width: 56%;
+}
+
+html[data-scenes] .contact__sat--phone i:nth-child(3) {
+  width: 100%;
+  height: 2.4rem;
+  margin-top: 0.3rem;
+  border: 1px solid var(--c-line-strong);
+  border-radius: 0.4rem;
+  background: none;
+}
+
+html[data-scenes] .contact__sat--bubble {
+  --d: 0.16;
+  --sx: -22cqw;
+  --sy: 4.8rem;
+  --ss: 1.05;
+  --sry: 28deg;
+  --srz: 6deg;
+  width: max-content;
+  max-width: 15rem;
+  padding: 0.7em 1em;
+  border: 1px solid var(--c-line-strong);
+  border-radius: 1.1em 1.1em 1.1em 0.3em;
+  background: var(--c-graphite-2);
+  color: var(--c-paper);
+  font-size: 0.875rem;
+  line-height: 1.35;
+  text-align: left;
+  box-shadow: 0 18px 40px -18px rgb(0 0 0 / 0.9);
+}
+
+html[data-scenes] .contact__sat--bubble::before {
+  content: "Olá! Quero tirar meu projeto do papel.";
+}
+
+html[data-scenes] .contact[data-live="true"] :is(.contact__sat, .contact__rings i) {
+  will-change: transform, opacity;
+}
+
+/* ---------- Celular: o painel é estreito, então os elementos chegam por baixo ---------- */
+
+@media (width < 48em) {
+  html[data-scenes] .contact__converge {
+    width: 100%;
+  }
+
+  html[data-scenes] .contact__panel {
+    padding-bottom: 6.5rem; /* faixa de onde a composição parte, abaixo do botão */
+  }
+
+  html[data-scenes] .contact__sat--logo {
+    --sx: -26cqw;
+    --sy: 8.5rem;
+    --ss: 1.1;
+    width: 3rem;
+  }
+
+  html[data-scenes] .contact__sat--phone {
+    --sx: 2cqw;
+    --sy: 8.6rem;
+    --ss: 1.05;
+    width: 2.5rem;
+    padding: 0.55rem 0.45rem;
+  }
+
+  html[data-scenes] .contact__sat--phone i:nth-child(3) {
+    height: 1.6rem;
+  }
+
+  html[data-scenes] .contact__sat--bubble {
+    --sx: 27cqw;
+    --sy: 8.2rem;
+    --ss: 1;
+    max-width: 9.5rem;
+    font-size: 0.6875rem;
+  }
+}

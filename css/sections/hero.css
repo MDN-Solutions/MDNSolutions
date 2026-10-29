@@ -9,13 +9,19 @@
 
 .hero {
   position: relative;
+}
+
+/* Palco do hero. Com as cenas de rolagem (css/scenes/hero.css) ele fica fixo na tela
+   enquanto a rolagem conduz a animação; sem elas é só um bloco comum. */
+.hero__stage {
+  position: relative;
   isolation: isolate; /* mantém o quadriculado (z-index -1) dentro do hero */
   padding-top: calc(var(--header-h) + clamp(2rem, 1rem + 5vw, 5rem));
   padding-bottom: clamp(2.5rem, 2rem + 3vw, 4.5rem);
 }
 
 /* "Planta": quadriculado fino que some nas bordas + brilho violeta atrás da cena */
-.hero::before {
+.hero__stage::before {
   content: "";
   position: absolute;
   inset: 0 0 auto;

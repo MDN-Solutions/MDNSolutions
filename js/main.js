@@ -12,7 +12,8 @@
 (function () {
   "use strict";
 
-  const SECTION_IDS = ["inicio", "projetos", "servicos", "como-funciona", "sobre", "contato"];
+  // na ordem em que aparecem na página (o MDN Flow não tem link no menu, mas encerra o "Como funciona")
+  const SECTION_IDS = ["inicio", "projetos", "servicos", "como-funciona", "mdn-flow", "sobre", "contato"];
   const DESKTOP_QUERY = "(min-width: 60em)"; // acima disso o menu mobile some
   const MAX_REVEAL_STAGGER = 4; // máximo de itens escalonados por vez
 
@@ -52,31 +53,38 @@
     });
   }
 
-  if (hasObserver) {
-    const sectionObserver = new IntersectionObserver(
-      (entries) => {
-        entries.forEach((entry) => {
-          if (entry.isIntersecting) setActiveSection(entry.target.id);
-        });
-      },
-      { rootMargin: "-45% 0px -50% 0px" },
-    );
-    SECTION_IDS.forEach((id) => {
-      const section = document.getElementById(id);
-      if (section) sectionObserver.observe(section);
+  // Com as cenas de rolagem as seções ficam altas e se sobrepõem (a próxima sobe por cima da
+  // anterior), então a seção ativa é a última cuja borda de cima já passou do meio da tela.
+  const sections = SECTION_IDS.map((id) => document.getElementById(id)).filter(Boolean);
+  let activeId = "";
+  let activeTicking = false;
+
+  function updateActiveSection() {
+    activeTicking = false;
+    const middle = window.innerHeight * 0.5;
+    let current = sections[0];
+    sections.forEach((section) => {
+      if (section.getBoundingClientRect().top <= middle) current = section;
     });
+    // No fim da página, marca a última seção (ela pode ser curta demais)
+    if (window.innerHeight + window.scrollY >= root.scrollHeight - 4) {
+      current = sections[sections.length - 1];
+    }
+    if (current && current.id !== activeId) {
+      activeId = current.id;
+      setActiveSection(activeId);
+    }
   }
 
-  // No fim da página, marca a última seção (ela pode ser curta demais)
-  window.addEventListener(
-    "scroll",
-    () => {
-      if (window.innerHeight + window.scrollY >= root.scrollHeight - 4) {
-        setActiveSection(SECTION_IDS[SECTION_IDS.length - 1]);
-      }
-    },
-    { passive: true },
-  );
+  function requestActiveSection() {
+    if (activeTicking) return;
+    activeTicking = true;
+    window.requestAnimationFrame(updateActiveSection);
+  }
+
+  window.addEventListener("scroll", requestActiveSection, { passive: true });
+  window.addEventListener("resize", requestActiveSection);
+  updateActiveSection();
 
   /* ---------- 3. Menu mobile ---------- */
   const firstMenuLink = menuPanel.querySelector("a");
@@ -127,8 +135,13 @@
   /* ---------- 4. Animação de entrada ([data-reveal]) ---------- */
   // Só anima o que ainda está abaixo da dobra; o que já está visível aparece direto.
   if (hasObserver && window.matchMedia("(prefers-reduced-motion: no-preference)").matches) {
+    // Com as cenas de rolagem fixas (data-scenes="pin") o que está dentro do palco é conduzido
+    // pela rolagem (js/scenes.js); a entrada única por observador ficaria brigando com ele.
+    const pinnedScenes = root.dataset.scenes === "pin";
     const pending = Array.from(document.querySelectorAll("[data-reveal]")).filter(
-      (el) => el.getBoundingClientRect().top >= window.innerHeight,
+      (el) =>
+        el.getBoundingClientRect().top >= window.innerHeight &&
+        !(pinnedScenes && el.closest("[data-pin]")),
     );
     const stagger = getComputedStyle(root).getPropertyValue("--stagger").trim() || "90ms";
 

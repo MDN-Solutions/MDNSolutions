@@ -15,8 +15,11 @@ css/
   footer.css               Rodapé
   sections/                Um arquivo por seção: hero, projects, strip, services, process, about, contact
   motion.css               Movimento extra (entradas escalonadas, micro-interações, barra de progresso)
+  scenes/                  Cenas de rolagem (scrollytelling): core + hero, projects, services, process,
+                           flow, about e closing
 js/main.js                 Header, menu, link ativo, entrada ao rolar, ano no rodapé
 js/scene.js                Inclinação 3D das cenas e brilho que segue o mouse
+js/scenes.js               Motor das cenas de rolagem (lê a rolagem e escreve --e, --q, --x, --st)
 js/extras.js               Faixa de projetos (pausa), numerais que contam e % de leitura
 assets/                    Fontes, logo, ícones e capturas dos projetos (assets/projects/)
 ```
@@ -26,7 +29,8 @@ assets/                    Fontes, logo, ícones e capturas dos projetos (assets
 - **Textos e links:** em `index.html`. Os links do WhatsApp seguem o formato
   `https://wa.me/5581998576040?text=<mensagem codificada>`.
 - **Cores e espaçamentos globais:** variáveis no topo de `css/base.css` (ex.: `--c-violet`).
-- **Estilo de uma seção:** arquivo com o nome dela em `css/sections/`.
+- **Estilo de uma seção:** arquivo com o nome dela em `css/sections/`. A coreografia de rolagem de
+  cada uma fica em `css/scenes/` (veja "Cenas de rolagem" abaixo).
   As classes seguem o padrão `bloco__elemento--modificador` (ex.: `.case__title`).
 - **Classes compartilhadas** (em `base.css`): `.section` (espaço do topo), `.section-head` e
   `.section-kicker` (legenda + título de seção), `.section-title`, `.lead`, `.location` e `.icon`.
@@ -105,7 +109,7 @@ se move responde ao ponteiro ou à rolagem (ou acontece uma vez, na entrada).
 | Linha de "Como funciona" | Mostrar a ordem das etapas | Linha vertical | Linha já desenhada |
 | Giroscópio 3D da seção "Sobre" (3 anéis em planos diferentes cruzando a logo) | Dar vida ao símbolo da marca | Os anéis giram ao rolar e inclinam com o dedo | Composição 3D parada |
 | Entradas escalonadas dos projetos, títulos que se revelam, ícones que "saltam" (`css/motion.css`) | Guiar a leitura | Igual | Aparece pronto |
-| Hero: flutuação (2 ciclos) e deriva em parallax ao rolar (`css/motion.css`) | Profundidade sem distrair | Só a deriva por rolagem | Estático |
+| Hero: flutuação (2 ciclos) e deriva em parallax ao rolar (`css/motion.css`) | Profundidade sem distrair | Só a deriva por rolagem | Estático. Com as cenas de rolagem ligadas, quem conduz o hero é a cena 1 |
 | Entradas laterais e com zoom (`left`/`right`/`zoom` em `data-reveal`) | Narrativa de leitura por seção | Igual | Aparece pronto |
 | Fio violeta que se desenha no topo de cada seção | Transição entre blocos | Igual | Linha estática |
 | Cards de projeto/serviço: elevação, borda e brilho no hover/foco | Feedback e hierarquia | Só foco por teclado | Sem movimento |
@@ -126,3 +130,69 @@ sem biblioteca; o JS só escreve variáveis CSS (`--rx`, `--ry`, `--px`, `--py`,
 **Cuidado ao mexer nas cenas:** elementos com `overflow`, `filter`, `opacity < 1` ou `contain`
 "achatam" o 3D dos filhos. Entre `.hero-visual__world`, `.about__world` ou `.case__scene` e as camadas não coloque nenhum
 desses. Para desligar o 3D, remova `js/scene.js` do `index.html` (as cenas ficam paradas).
+
+## Cenas de rolagem (scrollytelling)
+
+A página conta a história pela rolagem: o movimento acompanha a posição real do scroll, avança e
+recua junto com ele e pára quando a rolagem pára. A rolagem em si nunca é capturada, travada ou
+simulada (nada de `preventDefault` em `wheel`/`touch`, nada de "scroll jacking").
+
+**Como funciona.** `js/scenes.js` (JavaScript puro, sem biblioteca) lê `window.scrollY`, calcula o
+progresso de cada trilho `[data-scene]` e escreve variáveis CSS nele; toda a geometria (translate,
+scale, rotate, 3D) está em `css/scenes/`, usando só `transform`/`translate`/`scale`/`rotate` e
+`opacity`. Os valores avançam com uma inércia curta, e o laço pára sozinho quando convergem.
+
+| Variável | Significado |
+| --- | --- |
+| `--e` | entrada: 0 a 1 enquanto o topo do trilho sobe do rodapé ao topo da tela |
+| `--q` | história: 0 a 1, o avanço da cena (com o palco fixo, é a distância rolada com ele preso) |
+| `--x` | saída: 0 a 1 (com `data-tail`, é a "cortina": a próxima seção sobe e cobre o palco) |
+| `--st` | só com `data-stations="N"`: posição de 0 a N-1, com pausas (`data-hold`) em cada item |
+| `--page` | na raiz: progresso do documento (barra do header) |
+
+**Três modos**, definidos em `html[data-scenes]` (por um script no `<head>`, antes da primeira pintura):
+
+- `pin`: telas largas (≥ 60em de largura e ≥ 36em de altura). Os trilhos `[data-pin]` ficam altos
+  e o palco (`[data-pinbox]`) usa `position: sticky` durante a história.
+- `lite`: celulares e telas baixas. Nada fica fixo; as mesmas cenas viram efeitos mais leves na
+  rolagem normal (linha do processo vertical, serviços que acendem no centro, projetos em lista).
+- sem o atributo: `prefers-reduced-motion: reduce`, sem JS ou se o motor falhar (o script do
+  `<head>` remove `data-scenes` após 5 s sem resposta). A página fica estática, em fluxo normal, com
+  todo o conteúdo e os links, e sem pinagem, sem parallax e sem animações.
+
+| # | Cena | O que a rolagem faz (telas largas) | Celular (`lite`) |
+| --- | --- | --- | --- |
+| 1 | Hero | Palco fixo; o texto recua sem sumir, o objeto 3D avança em profundidade e gira, as camadas se separam, o quadriculado e o brilho evoluem; indicador de rolagem discreto | Mesmos movimentos com metade da intensidade, sem fixar |
+| 2 | Projetos | Trilho horizontal (Trio Vilela, Tio Pet, Studio Monique Marques) conduzido pela rolagem vertical, com pausa em cada projeto, perspectiva e profundidade; a navegação inferior vira links para cada painel | Lista vertical (sem trilho) com imagem e texto em velocidades diferentes |
+| 3 | Transições | A folha seguinte sobe cobrindo o palco: hero → projetos (cantos que se endireitam e luz violeta), projetos → serviços (a folha se deita em perspectiva), processo → MDN Flow (mudança de tom para índigo), Sobre → Contato (cúpula que se achata) | Rolagem normal |
+| 4 | Serviços | Composição em camadas: o serviço em foco acende e as janelas ilustrativas (wireframes genéricos, não são projetos) avançam em 3D | Cada serviço acende ao passar pelo centro |
+| 5 | Como funciona | Linha horizontal em zigue-zague que se desenha com a rolagem; marcador com a logo na ponta; cada etapa liga quando a linha passa | Linha vertical que se desenha |
+| 6 | MDN Flow | Esquema ilustrativo em camadas que vem de longe, avança ao primeiro plano e abre em profundidades diferentes; barras crescem em sequência | Mesmo avanço, mais contido |
+| 7 | Sobre | Anéis em planos diferentes giram com a rolagem, a "câmera" dá a volta e se aproxima, o brilho muda de lado e o texto acende na ordem de leitura | Anéis e câmera ligados à passagem pela tela |
+| 8 | Encerramento | O Contato sobe e fica fixo; símbolo, celular e a conversa do hero e anéis convergem para o botão do WhatsApp, que acende no fim; título palavra por palavra | Os elementos saem de uma faixa abaixo do botão e entram nele |
+
+Todas as ilustrações são decorativas (`aria-hidden`) e não mostram métricas, telas ou funções
+inventadas; o MDN Flow e os wireframes de serviços são esquemas genéricos.
+
+**Ajustes comuns.**
+
+- *Duração de uma cena fixa:* `height: calc(100svh * N)` do trilho, no arquivo da cena em
+  `css/scenes/` (1 tela é o palco; o resto é rolagem de história; com `data-tail`, a última tela é a
+  cortina da próxima seção).
+- *Pausa de cada projeto/serviço:* `data-hold` (0 a 0,45) no trilho; *quantidade de itens:* `data-stations`.
+- *Quando o movimento começa/termina:* as fórmulas usam `--q`, `--e` e `--x`
+  (ex.: `clamp(0, calc((var(--q) - 0.2) / 0.5), 1)` = "de 20% a 70% da história").
+- *Última seção da página:* `data-q="end"` (+ `data-q-anchor="<seletor>"`) faz o progresso ir da
+  chegada do elemento até um pouco acima do meio da tela (ou o fim do documento).
+- *Telas baixas (notebook com barras do navegador, ~600 a 740 px de altura):* o conteúdo de cada
+  palco precisa caber entre o header e o pé da tela. Por isso tamanhos e espaços dos palcos usam
+  `svh` (`clamp(mín, n svh, máx)`, com o máximo igual ao layout original) e há faixas
+  `@media (max-height: 46em)` / `(max-height: 40em)` (ex.: o "Como funciona" vira uma linha reta, o
+  "Serviços" esconde a chamada). Ao criar ou mexer numa cena, confira de 576 a 1080 px de altura e de
+  960 a 1920 de largura; abaixo de 36em de altura a página usa o modo `lite`.
+- *Desligar tudo:* tire o script do `<head>` que define `data-scenes`, `js/scenes.js` e os links de
+  `css/scenes/`; a página volta ao layout estático.
+
+**Cuidado:** o palco fixo usa `overflow: clip`. O que sair do palco (ex.: blocos que crescem com a
+rolagem) é cortado; em `lite`, quem pode estourar a largura precisa de `overflow: clip` no pai
+(foi o caso do quadriculado do hero).

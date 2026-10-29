@@ -285,7 +285,6 @@
   .services__head {
     position: sticky;
     top: calc(var(--header-h) + 2rem);
-    grid-row: 1 / span 2;
     align-self: start;
   }
 

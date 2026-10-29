@@ -66,10 +66,34 @@
     <link rel="stylesheet" href="css/sections/contact.css" />
     <link rel="stylesheet" href="css/sections/strip.css" />
     <link rel="stylesheet" href="css/motion.css" />
+    <link rel="stylesheet" href="css/scenes/core.css" />
+    <link rel="stylesheet" href="css/scenes/hero.css" />
+    <link rel="stylesheet" href="css/scenes/projects.css" />
+    <link rel="stylesheet" href="css/scenes/services.css" />
+    <link rel="stylesheet" href="css/scenes/process.css" />
+    <link rel="stylesheet" href="css/scenes/flow.css" />
+    <link rel="stylesheet" href="css/scenes/about.css" />
+    <link rel="stylesheet" href="css/scenes/closing.css" />
+
+    <!-- Cenas de rolagem: o modo é decidido antes da 1ª pintura para o layout não "pular".
+         Sem JS, ou com "reduzir movimento" ligado, nada disso entra e a página fica estática. -->
+    <script>
+      (function () {
+        var d = document.documentElement;
+        var m = window.matchMedia;
+        if (!m || m("(prefers-reduced-motion: reduce)").matches) return;
+        d.setAttribute("data-scenes", m("(min-width: 60em) and (min-height: 36em)").matches ? "pin" : "lite");
+        // se o motor (js/scenes.js) não iniciar, volta ao layout estático
+        window.setTimeout(function () {
+          if (!d.hasAttribute("data-engine")) d.removeAttribute("data-scenes");
+        }, 5000);
+      })();
+    </script>
 
     <script src="js/main.js" defer></script>
     <script src="js/scene.js" defer></script>
     <script src="js/extras.js" defer></script>
+    <script src="js/scenes.js" defer></script>
   </head>
 
   <body>
@@ -214,7 +238,8 @@
 
     <main id="conteudo" tabindex="-1">
       <!-- ==================== HERO ==================== -->
-      <section class="hero" id="inicio" aria-labelledby="hero-title">
+      <section class="hero" id="inicio" aria-labelledby="hero-title" data-scene="hero" data-pin data-tail="1" data-q="leave">
+       <div class="hero__stage" data-pinbox>
         <div class="container hero__grid">
           <div class="hero__copy">
             <p class="hero__eyebrow">MDN Solutions <span aria-hidden="true">/</span> Olinda e Recife</p>
@@ -327,16 +352,47 @@
           <svg class="icon" width="16" height="16" aria-hidden="true"><use href="#icon-map-pin" /></svg>
           Atendimento em Olinda, Recife e região
         </p>
+
+        <!-- Indicador de rolagem e véu da transição para os projetos (decorativos) -->
+        <div class="hero__cue" aria-hidden="true"><span>Role</span><i></i></div>
+        <div class="hero__veil" aria-hidden="true"></div>
+       </div>
       </section>
 
       <!-- ==================== PROJETOS ==================== -->
-      <section class="section" id="projetos" aria-labelledby="projetos-title">
-        <div class="container">
-          <header class="section-head" data-reveal="up">
-            <p class="section-kicker">Projetos</p>
-            <h2 class="section-title" id="projetos-title">Trabalhos reais, feitos para negócios locais.</h2>
-          </header>
+      <!-- Cena 2: com as cenas de rolagem (telas largas) a seção vira um palco fixo e os projetos
+           deslizam na horizontal conforme a rolagem vertical; nos demais casos é a lista vertical. -->
+      <section
+        class="section projects"
+        id="projetos"
+        aria-labelledby="projetos-title"
+        data-scene="projects"
+        data-pin
+        data-sheet
+        data-tail="1"
+        data-stations="3"
+        data-hold="0.2"
+      >
+       <div class="projects__stage" data-pinbox>
+        <div class="projects__sheet">
+          <div class="container projects__top">
+            <header class="section-head" data-reveal="up">
+              <p class="section-kicker">Projetos</p>
+              <h2 class="section-title" id="projetos-title">Trabalhos reais, feitos para negócios locais.</h2>
+            </header>
 
+            <!-- Navegação do trilho horizontal (só aparece nas telas largas, com as cenas ligadas) -->
+            <nav class="rail-nav" aria-label="Ir para um projeto">
+              <ol class="rail-nav__list">
+                <li><a class="rail-nav__link" href="#trio-vilela" style="--i: 0"><span class="rail-nav__n">01</span><span class="rail-nav__name">Trio Vilela</span></a></li>
+                <li><a class="rail-nav__link" href="#tio-pet" style="--i: 1"><span class="rail-nav__n">02</span><span class="rail-nav__name">Tio Pet</span></a></li>
+                <li><a class="rail-nav__link" href="#studio-monique-marques" style="--i: 2"><span class="rail-nav__n">03</span><span class="rail-nav__name">Studio Monique Marques</span></a></li>
+              </ol>
+              <span class="rail-nav__line" aria-hidden="true"><i></i></span>
+            </nav>
+          </div>
+
+          <div class="container projects__strip">
           <!-- Faixa de projetos: rola sozinha com JS (pausa no hover/foco ou pelo botão); sem JS ou com movimento reduzido vira uma lista rolável -->
           <div class="strip" data-strip role="region" aria-label="Projetos em destaque">
             <div class="strip__viewport">
@@ -358,10 +414,12 @@
               <span class="strip__pause-label">Pausar faixa</span>
             </button>
           </div>
+          </div>
 
-          <ol class="cases">
+          <div class="rail" data-rail>
+          <ol class="container cases">
             <!-- Trio Vilela -->
-            <li class="case" id="trio-vilela" data-reveal="up">
+            <li class="case" id="trio-vilela" data-reveal="up" data-rail-panel="0" data-scene="case" data-lite-only style="--i: 0">
               <div class="case__media" data-tilt-scene>
                 <div class="case__scene">
                   <figure class="device device--browser case__main">
@@ -388,7 +446,7 @@
             </li>
 
             <!-- Tio Pet -->
-            <li class="case case--flip" id="tio-pet" data-reveal="up">
+            <li class="case case--flip" id="tio-pet" data-reveal="up" data-rail-panel="1" data-scene="case" data-lite-only style="--i: 1">
               <div class="case__media" data-tilt-scene>
                 <div class="case__scene">
                   <figure class="device device--browser case__main">
@@ -417,7 +475,7 @@
             </li>
 
             <!-- Studio Monique Marques -->
-            <li class="case" id="studio-monique-marques" data-reveal="up">
+            <li class="case" id="studio-monique-marques" data-reveal="up" data-rail-panel="2" data-scene="case" data-lite-only style="--i: 2">
               <div class="case__media" data-tilt-scene>
                 <div class="case__scene">
                   <figure class="device device--browser case__main">
@@ -444,11 +502,27 @@
               </div>
             </li>
           </ol>
+          </div>
         </div>
+       </div>
       </section>
 
       <!-- ==================== SERVIÇOS ==================== -->
-      <section class="section" id="servicos" aria-labelledby="servicos-title">
+      <!-- Cena 4: palco fixo; a rolagem passa o foco entre os três serviços e as janelas ilustrativas
+           (wireframes genéricos, não são projetos) avançam em 3D. Sem as cenas: lista simples. -->
+      <section
+        class="section services"
+        id="servicos"
+        aria-labelledby="servicos-title"
+        data-scene="services"
+        data-pin
+        data-sheet="tilt"
+        data-tail="0"
+        data-stations="3"
+        data-hold="0.14"
+      >
+       <div class="services__stage" data-pinbox>
+        <div class="services__sheet">
         <div class="container services__layout">
           <header class="section-head services__head" data-reveal="up">
             <p class="section-kicker">Serviços</p>
@@ -459,7 +533,7 @@
           </header>
 
           <ul class="services__list">
-            <li class="service" data-reveal="right" data-spotlight>
+            <li class="service" data-scene="svc" data-lite-only data-spotlight style="--i: 0">
               <span class="service__icon" aria-hidden="true">
                 <svg class="icon" width="26" height="26"><use href="#icon-chat" /></svg>
               </span>
@@ -469,7 +543,7 @@
                 direcionar visitantes para o contato pelo WhatsApp.
               </p>
             </li>
-            <li class="service" data-reveal="right" data-spotlight>
+            <li class="service" data-scene="svc" data-lite-only data-spotlight style="--i: 1">
               <span class="service__icon" aria-hidden="true">
                 <svg class="icon" width="26" height="26"><use href="#icon-devices" /></svg>
               </span>
@@ -479,7 +553,7 @@
                 seus serviços e informações de contato com clareza.
               </p>
             </li>
-            <li class="service" data-reveal="right" data-spotlight>
+            <li class="service" data-scene="svc" data-lite-only data-spotlight style="--i: 2">
               <span class="service__icon" aria-hidden="true">
                 <svg class="icon" width="26" height="26"><use href="#icon-layout-list" /></svg>
               </span>
@@ -491,9 +565,134 @@
             </li>
           </ul>
 
+          <!-- Janelas ilustrativas em camadas (decorativas; só aparecem com as cenas de rolagem) -->
+          <div class="deck" aria-hidden="true" data-stage="deck">
+            <div class="deck__world">
+              <div class="deck__layer" style="--i: 0">
+                <div class="wf">
+                  <div class="wf__bar"><i></i><i></i><i></i><b></b></div>
+                  <div class="wf__body wf__body--landing">
+                    <div class="wf__copy"><i class="t"></i><i class="t t--s"></i><i class="l"></i><i class="l l--s"></i><i class="cta"></i></div>
+                    <div class="wf__img"></div>
+                    <div class="wf__cards"><i></i><i></i><i></i></div>
+                  </div>
+                </div>
+              </div>
+              <div class="deck__layer" style="--i: 1">
+                <div class="wf">
+                  <div class="wf__bar"><i></i><i></i><i></i><b></b></div>
+                  <div class="wf__body wf__body--site">
+                    <div class="wf__nav"><i class="logo"></i><i class="link"></i><i class="link"></i><i class="link"></i><i class="btn"></i></div>
+                    <div class="wf__banner"><i class="t"></i><i class="l"></i></div>
+                    <div class="wf__cols">
+                      <div><i class="img"></i><i class="l"></i><i class="l l--s"></i></div>
+                      <div><i class="img"></i><i class="l"></i><i class="l l--s"></i></div>
+                      <div><i class="img"></i><i class="l"></i><i class="l l--s"></i></div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="deck__layer" style="--i: 2">
+                <div class="wf">
+                  <div class="wf__bar"><i></i><i></i><i></i><b></b></div>
+                  <div class="wf__body wf__body--system">
+                    <div class="wf__side"><i class="on"></i><i></i><i></i><i></i><i></i></div>
+                    <div class="wf__main">
+                      <div class="wf__top"><i class="search"></i><i class="avatar"></i></div>
+                      <div class="wf__stats">
+                        <div><i class="l"></i><i class="big"></i></div>
+                        <div><i class="l"></i><i class="big"></i></div>
+                        <div><i class="l"></i><i class="big"></i></div>
+                      </div>
+                      <div class="wf__table">
+                        <div><b></b><i></i><i></i><i></i></div>
+                        <div><b></b><i></i><i></i><i></i></div>
+                        <div><b></b><i></i><i></i><i></i></div>
+                        <div><b></b><i></i><i></i><i></i></div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        </div>
+       </div>
+      </section>
+
+      <!-- ==================== COMO FUNCIONA ==================== -->
+      <!-- Cena 5: a linha do processo se desenha conforme a rolagem e um marcador percorre as etapas.
+           Estático/sem JS: as três etapas em linha, com a linha já desenhada. -->
+      <section
+        class="section process-section"
+        id="como-funciona"
+        aria-labelledby="como-funciona-title"
+        data-scene="process"
+        data-pin
+        data-tail="1"
+      >
+       <div class="process-section__stage" data-pinbox>
+        <div class="process-section__sheet">
+        <div class="container">
+          <header class="section-head" data-reveal="up">
+            <p class="section-kicker">Como funciona</p>
+            <h2 class="section-title" id="como-funciona-title">Da ideia à solução digital.</h2>
+          </header>
+
+          <div class="process-track">
+            <ol class="process">
+              <li class="process__step" data-reveal="up" style="--i: 0">
+                <span class="process__number" aria-hidden="true">01</span>
+                <h3 class="process__title">Conversamos sobre sua ideia</h3>
+                <p class="process__text">
+                  Entendemos seu negócio, seus objetivos e as necessidades do projeto.
+                </p>
+              </li>
+              <li class="process__step" data-reveal="up" style="--i: 1">
+                <span class="process__number" aria-hidden="true">02</span>
+                <h3 class="process__title">Planejamos a solução</h3>
+                <p class="process__text">
+                  Definimos a estrutura, os recursos e a identidade visual mais adequados ao projeto.
+                </p>
+              </li>
+              <li class="process__step" data-reveal="up" style="--i: 2">
+                <span class="process__number" aria-hidden="true">03</span>
+                <h3 class="process__title">Desenvolvemos seu projeto</h3>
+                <p class="process__text">Criamos a solução digital alinhada ao escopo acordado.</p>
+              </li>
+            </ol>
+            <!-- Marcador que percorre a linha (decorativo) -->
+            <div class="process__marker" aria-hidden="true">
+              <img src="assets/img/logo-256.webp" alt="" width="64" height="64" loading="lazy" />
+            </div>
+          </div>
+        </div>
+        </div>
+       </div>
+      </section>
+
+      <!-- ==================== MDN FLOW ==================== -->
+      <!-- Cena 6: o esquema ilustrativo (receitas, despesas e saldo; não são telas reais do produto)
+           vem de longe, avança e se organiza em camadas conforme a rolagem. -->
+      <section
+        class="section flowscene"
+        id="mdn-flow"
+        aria-labelledby="product-title"
+        data-scene="flow"
+        data-pin
+        data-sheet="bloom"
+      >
+       <div class="flowscene__stage" data-pinbox>
+        <div class="flowscene__sheet">
+        <div class="container">
           <aside class="product" data-reveal="zoom" data-spotlight aria-labelledby="product-title">
             <div class="product__art" aria-hidden="true" data-stage="flow">
               <div class="product__world">
+                <div class="flow flow--base">
+                  <div class="flow__side"><i class="on"></i><i></i><i></i><i></i></div>
+                  <div class="flow__main"><div class="flow__top"><i></i><i></i><i></i></div><div class="flow__grid"><i></i><i></i><i></i><i></i></div></div>
+                </div>
                 <div class="flow flow--chart">
                   <p class="flow__label">Receitas e despesas</p>
                   <div class="flow__bars">
@@ -510,6 +709,8 @@
                   <p class="flow__label">Saldo</p>
                   <span class="flow__meter"><i></i></span>
                 </div>
+                <div class="flow flow--chip flow--chip-in"><b></b>Receitas</div>
+                <div class="flow flow--chip flow--chip-out"><b></b>Despesas</div>
               </div>
             </div>
             <div class="product__copy">
@@ -531,42 +732,22 @@
             </div>
           </aside>
         </div>
-      </section>
-
-      <!-- ==================== COMO FUNCIONA ==================== -->
-      <section class="section" id="como-funciona" aria-labelledby="como-funciona-title">
-        <div class="container">
-          <header class="section-head" data-reveal="up">
-            <p class="section-kicker">Como funciona</p>
-            <h2 class="section-title" id="como-funciona-title">Da ideia à solução digital.</h2>
-          </header>
-
-          <ol class="process">
-            <li class="process__step" data-reveal="up">
-              <span class="process__number" aria-hidden="true">01</span>
-              <h3 class="process__title">Conversamos sobre sua ideia</h3>
-              <p class="process__text">
-                Entendemos seu negócio, seus objetivos e as necessidades do projeto.
-              </p>
-            </li>
-            <li class="process__step" data-reveal="up">
-              <span class="process__number" aria-hidden="true">02</span>
-              <h3 class="process__title">Planejamos a solução</h3>
-              <p class="process__text">
-                Definimos a estrutura, os recursos e a identidade visual mais adequados ao projeto.
-              </p>
-            </li>
-            <li class="process__step" data-reveal="up">
-              <span class="process__number" aria-hidden="true">03</span>
-              <h3 class="process__title">Desenvolvemos seu projeto</h3>
-              <p class="process__text">Criamos a solução digital alinhada ao escopo acordado.</p>
-            </li>
-          </ol>
         </div>
+       </div>
       </section>
 
       <!-- ==================== SOBRE ==================== -->
-      <section class="section" id="sobre" aria-labelledby="sobre-title">
+      <!-- Cena 7: o símbolo da MDN no centro de anéis em planos diferentes; a rolagem gira os anéis,
+           move a "câmera" e vai acendendo o texto. Estático: composição parada ao lado do texto. -->
+      <section
+        class="section about"
+        id="sobre"
+        aria-labelledby="sobre-title"
+        data-scene="about"
+        data-pin
+        data-tail="1"
+      >
+       <div class="about__stage" data-pinbox>
         <div class="container about__layout">
           <div class="about__visual" aria-hidden="true" data-reveal="left" data-stage="orbit">
             <div class="about__world">
@@ -580,18 +761,18 @@
           </div>
 
           <div>
-            <p class="section-kicker" data-reveal="up">Sobre</p>
-            <h2 class="section-title about__title" id="sobre-title" data-reveal="up">
+            <p class="section-kicker" data-reveal="up" style="--t: 0.04">Sobre</p>
+            <h2 class="section-title about__title" id="sobre-title" data-reveal="up" style="--t: 0.1">
               Seu negócio, conectado ao digital.
             </h2>
-            <p class="lead about__lead" data-reveal="up">
+            <p class="lead about__lead" data-reveal="up" style="--t: 0.2">
               A MDN Solutions nasceu com a proposta de tornar a tecnologia mais acessível para
               negócios locais. Desenvolvemos experiências web e soluções digitais com foco em
               apresentação profissional, praticidade e nas necessidades de cada cliente.
             </p>
 
             <ul class="about__highlights">
-              <li data-reveal="up">
+              <li data-reveal="up" style="--t: 0.36">
                 <svg class="icon about__icon" width="22" height="22" aria-hidden="true"><use href="#icon-handshake" /></svg>
                 <h3 class="about__highlight-title">Atendimento próximo</h3>
                 <p class="about__highlight-text">
@@ -599,7 +780,7 @@
                   projeto.
                 </p>
               </li>
-              <li data-reveal="up">
+              <li data-reveal="up" style="--t: 0.5">
                 <svg class="icon about__icon" width="22" height="22" aria-hidden="true"><use href="#icon-ruler" /></svg>
                 <h3 class="about__highlight-title">Soluções sob medida</h3>
                 <p class="about__highlight-text">
@@ -610,29 +791,42 @@
             </ul>
           </div>
         </div>
+       </div>
       </section>
 
       <!-- ==================== CONTATO ==================== -->
-      <section class="contact" id="contato" aria-labelledby="contato-title">
+      <!-- Cena 8: os elementos do hero (símbolo, celular e conversa) voltam e convergem para o botão.
+           Os links reais de contato são os mesmos de antes. -->
+      <section class="contact" id="contato" aria-labelledby="contato-title" data-scene="closing" data-q="end" data-q-anchor=".contact__actions" data-pin data-sheet="dome">
+       <div class="contact__stage" data-pinbox>
         <div class="container">
           <div class="contact__panel" data-reveal="zoom" data-spotlight>
             <p class="section-kicker">Contato</p>
-            <h2 class="contact__title" id="contato-title">Vamos construir sua presença digital?</h2>
+            <h2 class="contact__title" id="contato-title"><span class="w" style="--w: 0">Vamos</span> <span class="w" style="--w: 1">construir</span> <span class="w" style="--w: 2">sua</span> <span class="w" style="--w: 3">presença</span> <span class="w" style="--w: 4">digital?</span></h2>
             <p class="lead contact__text">
               Conte um pouco sobre seu negócio e descubra como a MDN Solutions pode ajudar a
               transformar sua ideia em uma solução digital.
             </p>
             <div class="contact__actions">
-              <a
-                class="button button--primary button--lg"
-                href="https://wa.me/5581998576040?text=Ol%C3%A1%21%20Conheci%20a%20MDN%20Solutions%20pelo%20site%20e%20gostaria%20de%20conversar%20sobre%20um%20projeto."
-                target="_blank"
-                rel="noopener noreferrer"
-              >
-                <svg class="icon" width="20" height="20" aria-hidden="true"><use href="#icon-whatsapp" /></svg>
-                <span>Falar com a MDN Solutions</span>
-                <span class="visually-hidden">(abre o WhatsApp em nova aba)</span>
-              </a>
+              <div class="contact__converge">
+                <a
+                  class="button button--primary button--lg"
+                  href="https://wa.me/5581998576040?text=Ol%C3%A1%21%20Conheci%20a%20MDN%20Solutions%20pelo%20site%20e%20gostaria%20de%20conversar%20sobre%20um%20projeto."
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  <svg class="icon" width="20" height="20" aria-hidden="true"><use href="#icon-whatsapp" /></svg>
+                  <span>Falar com a MDN Solutions</span>
+                  <span class="visually-hidden">(abre o WhatsApp em nova aba)</span>
+                </a>
+                <!-- Decorativo: anéis e os elementos do hero, que chegam de longe conforme a rolagem -->
+                <span class="contact__rings" aria-hidden="true"><i></i><i></i><i></i></span>
+                <span class="contact__sat contact__sat--logo" aria-hidden="true">
+                  <img src="assets/img/logo-256.webp" alt="" width="64" height="64" loading="lazy" />
+                </span>
+                <span class="contact__sat contact__sat--phone" aria-hidden="true"><i></i><i></i><i></i></span>
+                <span class="contact__sat contact__sat--bubble" aria-hidden="true"></span>
+              </div>
               <a
                 class="contact__social"
                 href="https://www.instagram.com/mdnsolutions/"
@@ -646,6 +840,7 @@
             </div>
           </div>
         </div>
+       </div>
       </section>
     </main>
 

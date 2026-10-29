@@ -1,0 +1,89 @@
+/* ==========================================================================
+   Cenas de rolagem: regras comuns
+   O progresso vem de js/scenes.js, que escreve --e, --q, --x e --st em cada [data-scene]
+   (veja o cabeçalho do arquivo). Aqui ficam só o palco fixo e o que é compartilhado;
+   cada cena tem o seu arquivo em css/scenes/.
+
+   html[data-scenes="pin"]   telas largas: [data-pin] vira trilho alto + palco position: sticky
+   html[data-scenes="lite"]  telas pequenas: sem palco fixo, efeitos leves na rolagem normal
+   sem data-scenes           movimento reduzido ou sem JS: layout estático original
+
+   Cuidado com o 3D: nenhum elemento entre um "mundo" (transform-style: preserve-3d) e as suas
+   camadas pode ter overflow, filter, opacity < 1 ou contain, senão o 3D "achata".
+   ========================================================================== */
+
+html[data-scenes] {
+  /* mantém o fundo preto mesmo se alguma camada 3D atrasar a pintura */
+  background: var(--c-ink);
+}
+
+/* ---------- Trilho alto + palco fixo ---------- */
+
+html[data-scenes="pin"] [data-scene][data-pin] {
+  position: relative;
+}
+
+html[data-scenes="pin"] [data-pinbox] {
+  position: sticky;
+  top: 0;
+  height: 100svh;
+  overflow: clip;
+}
+
+/* Links do menu pousam no começo do trilho (o palco já fixo), sem folga para o header */
+html[data-scenes="pin"] [data-scene][data-pin] {
+  scroll-margin-top: calc(-1 * (var(--header-h) + 1rem));
+}
+
+/* Palco totalmente coberto pela seção seguinte: não pinta e sai da ordem de foco */
+html[data-scenes] [data-covered="true"] [data-pinbox] {
+  visibility: hidden;
+}
+
+/* ---------- Folha: a seção que sobe e cobre o palco anterior ----------
+   A seção seguinte ao palco com data-tail sobe por cima dele (margem negativa de uma tela).
+   --e (da própria seção) vai de 0 a 1 enquanto a folha sobe. */
+
+html[data-scenes="pin"] [data-sheet] {
+  position: relative;
+  z-index: 2;
+  margin-top: -100svh;
+}
+
+/* barra de luz no topo da folha enquanto ela sobe */
+html[data-scenes="pin"] [data-sheet]::before {
+  content: "";
+  position: absolute;
+  inset: 0 0 auto;
+  z-index: 3;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgb(var(--c-violet) / 0.95), transparent);
+  opacity: calc(1 - var(--e, 0));
+  pointer-events: none;
+}
+
+/* luz que a folha projeta sobre o palco anterior enquanto sobe */
+html[data-scenes="pin"] [data-sheet]::after {
+  content: "";
+  position: absolute;
+  inset: auto 0 100%;
+  z-index: 1;
+  height: 14rem;
+  background: linear-gradient(to top, rgb(var(--c-violet) / 0.22), transparent);
+  opacity: calc(1 - var(--e, 0));
+  pointer-events: none;
+}
+
+/* ---------- Progresso de leitura no header (vale para os dois modos) ---------- */
+
+html[data-scenes] .header::after {
+  content: "";
+  position: absolute;
+  inset: auto 0 -1px;
+  height: 2px;
+  background: linear-gradient(90deg, rgb(var(--c-violet)), var(--c-white));
+  transform-origin: left;
+  scale: var(--page, 0) 1;
+  animation: none;
+  animation-timeline: auto;
+}
