@@ -153,7 +153,9 @@
   window.addEventListener("resize", requestFrame, { passive: true });
 
   // Mudança da preferência com a página aberta (o quadro acima faz a limpeza)
-  reduceQuery.addEventListener("change", requestFrame);
+  // addEventListener em matchMedia não existe no Safari 13 e anteriores
+  if (reduceQuery.addEventListener) reduceQuery.addEventListener("change", requestFrame);
+  else if (reduceQuery.addListener) reduceQuery.addListener(requestFrame);
 
   requestFrame();
 

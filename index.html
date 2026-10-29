@@ -74,22 +74,79 @@
     <link rel="stylesheet" href="css/scenes/flow.css" />
     <link rel="stylesheet" href="css/scenes/about.css" />
     <link rel="stylesheet" href="css/scenes/closing.css" />
+    <link rel="stylesheet" href="css/scenes/lite.css" />
 
     <!-- Cenas de rolagem: o modo é decidido antes da 1ª pintura para o layout não "pular".
-         Sem JS, ou com "reduzir movimento" ligado, nada disso entra e a página fica estática. -->
+         Cada recurso tem o seu requisito (veja window.MDNMotion abaixo); faltar um só não desliga tudo:
+           pin   telas largas + svh, cqw e overflow: clip (palcos fixos)
+           lite  qualquer tela com transformações individuais (translate/scale/rotate); sem svh, cqw ou
+                 overflow: clip o CSS usa alternativas (@supports)
+           (nenhum) "reduzir movimento" ligado, sem transformações individuais ou sem matchMedia: página
+                 estática, só com as entradas por observador (e o conteúdo sempre visível)
+         O motivo fica em <html data-scenes-why> e no console. Sem JS nada disso entra. -->
     <script>
       (function () {
+        var w = window;
         var d = document.documentElement;
-        var m = window.matchMedia;
-        var c = window.CSS;
-        // navegador sem unidades svh/cqw, overflow: clip ou translate individual: layout estático
-        var ok = c && c.supports && c.supports("height: 1svh") && c.supports("width: 1cqw") && c.supports("overflow: clip") && c.supports("translate: 1px");
-        if (!m || !ok || m("(prefers-reduced-motion: reduce)").matches) return;
-        d.setAttribute("data-scenes", m("(min-width: 60em) and (min-height: 36em)").matches ? "pin" : "lite");
-        // se o motor (js/scenes.js) não iniciar, volta ao layout estático
-        window.setTimeout(function () {
-          if (!d.hasAttribute("data-engine")) d.removeAttribute("data-scenes");
-        }, 5000);
+        var m = typeof w.matchMedia === "function" ? w.matchMedia.bind(w) : null;
+        var c = w.CSS;
+        function sup(p) {
+          try {
+            return Boolean(c && c.supports && c.supports(p));
+          } catch (e) {
+            return false;
+          }
+        }
+        var features = {
+          matchMedia: Boolean(m),
+          svh: sup("height: 1svh"),
+          cqw: sup("width: 1cqw"),
+          clip: sup("overflow: clip"),
+          xform: sup("translate: 1px") && sup("scale: 1") && sup("rotate: 1deg"),
+          observer: "IntersectionObserver" in w,
+        };
+        var api = (w.MDNMotion = { features: features, mode: null, why: "" });
+
+        // devolve { mode: "pin" | "lite" | null, why: texto curto com o motivo }
+        api.decide = function () {
+          if (!m) return { mode: null, why: "off:sem-matchMedia" };
+          if (m("(prefers-reduced-motion: reduce)").matches) return { mode: null, why: "off:movimento-reduzido" };
+          if (!features.xform) return { mode: null, why: "off:sem-transformacoes-individuais" };
+          var missing = [];
+          if (!features.svh) missing.push("svh");
+          if (!features.cqw) missing.push("cqw");
+          if (!features.clip) missing.push("overflow-clip");
+          var wide = m("(min-width: 60em) and (min-height: 36em)").matches;
+          if (wide && !missing.length) return { mode: "pin", why: "pin" };
+          return { mode: "lite", why: wide ? "lite:sem-" + missing.join(",") : "lite:tela-pequena" };
+        };
+
+        // aplica o resultado na raiz (idempotente); quem chama decide o que registrar no console
+        api.apply = function () {
+          var r = api.decide();
+          api.mode = r.mode;
+          api.why = r.why;
+          if (r.mode) d.setAttribute("data-scenes", r.mode);
+          else {
+            d.removeAttribute("data-scenes");
+            d.removeAttribute("data-engine");
+          }
+          d.setAttribute("data-scenes-why", r.why);
+          return r;
+        };
+        api.apply();
+
+        // se o motor (js/scenes.js) não iniciar depois da carga, volta ao layout estático e diz por quê
+        w.addEventListener("load", function () {
+          w.setTimeout(function () {
+            if (api.mode && !d.hasAttribute("data-engine")) {
+              d.removeAttribute("data-scenes");
+              d.setAttribute("data-scenes-why", "off:motor-nao-iniciou");
+              api.mode = null;
+              if (w.console) console.warn("[MDN] Cenas de rolagem desligadas: o motor (js/scenes.js) não iniciou.");
+            }
+          }, 1500);
+        });
       })();
     </script>
 
@@ -420,17 +477,17 @@
                 </div>
               </div>
               <div class="case__body">
-                <p class="case__kicker">Site de banda</p>
-                <h3 class="case__title">Trio Vilela</h3>
-                <p class="case__text">
+                <p class="case__kicker" data-reveal="up">Site de banda</p>
+                <h3 class="case__title" data-reveal="up">Trio Vilela</h3>
+                <p class="case__text" data-reveal="up">
                   Site de apresentação de um trio de forró pé-de-serra de Olinda, com galeria de fotos,
                   vídeos, tipos de evento atendidos e contato direto pelo WhatsApp.
                 </p>
-                <dl class="spec">
+                <dl class="spec" data-reveal="up">
                   <div data-minor><dt>Local</dt><dd>Olinda, PE</dd></div>
                   <div><dt>Seções</dt><dd>Sobre, Cultura, Galeria, Vídeos, Eventos, Contato</dd></div>
                 </dl>
-                <div class="case__actions">
+                <div class="case__actions" data-reveal="up">
                   <a class="button button--secondary button--sm case__link" href="https://trio-vilela.vercel.app/" target="_blank" rel="noopener noreferrer">
                     <span>Visitar site</span>
                     <svg class="icon" width="16" height="16" aria-hidden="true"><use href="#icon-arrow-up-right" /></svg>
@@ -454,19 +511,19 @@
                 </div>
               </div>
               <div class="case__body">
-                <p class="case__kicker">Site de pet shop</p>
-                <h3 class="case__title">Tio Pet</h3>
-                <p class="case__text">
+                <p class="case__kicker" data-reveal="up">Site de pet shop</p>
+                <h3 class="case__title" data-reveal="up">Tio Pet</h3>
+                <p class="case__text" data-reveal="up">
                   Site de banho e tosa em Olinda, com o serviço de busca e entrega (MotoDog) explicado
                   em passos e botões que abrem o WhatsApp com a mensagem pronta para banho, tosa ou
                   MotoDog.
                 </p>
-                <dl class="spec">
+                <dl class="spec" data-reveal="up">
                   <div data-minor><dt>Local</dt><dd>Olinda, PE</dd></div>
                   <div><dt>Seções</dt><dd>Início, Sobre, Serviços, MotoDog, Como agendar, Instagram, Localização</dd></div>
                   <div><dt>Destaque</dt><dd>MotoDog e botão “Como chegar”</dd></div>
                 </dl>
-                <div class="case__actions">
+                <div class="case__actions" data-reveal="up">
                   <a class="button button--secondary button--sm case__link" href="https://tio-pet.vercel.app/" target="_blank" rel="noopener noreferrer">
                     <span>Visitar site</span>
                     <svg class="icon" width="16" height="16" aria-hidden="true"><use href="#icon-arrow-up-right" /></svg>
@@ -490,18 +547,18 @@
                 </div>
               </div>
               <div class="case__body">
-                <p class="case__kicker">Landing page de salão</p>
-                <h3 class="case__title">Studio Monique Marques</h3>
-                <p class="case__text">
+                <p class="case__kicker" data-reveal="up">Landing page de salão</p>
+                <h3 class="case__title" data-reveal="up">Studio Monique Marques</h3>
+                <p class="case__text" data-reveal="up">
                   Landing page de uma especialista em mega hair, com abertura em vídeo da inauguração do
                   studio (com botão para pular), retrato em destaque na primeira tela, galeria
                   "Por dentro do Studio" e chamada para contato.
                 </p>
-                <dl class="spec">
+                <dl class="spec" data-reveal="up">
                   <div><dt>Seções</dt><dd>Abertura em vídeo, Início, Sobre, Serviços, Por dentro do Studio, Contato</dd></div>
                   <div><dt>Estado</dt><dd>Em desenvolvimento</dd></div>
                 </dl>
-                <div class="case__actions">
+                <div class="case__actions" data-reveal="up">
                   <a class="button button--secondary button--sm case__link" href="https://monique-megahair.vercel.app/" target="_blank" rel="noopener noreferrer">
                     <span>Visitar site</span>
                     <svg class="icon" width="16" height="16" aria-hidden="true"><use href="#icon-arrow-up-right" /></svg>
@@ -858,7 +915,7 @@
               Conte um pouco sobre seu negócio e descubra como a MDN Solutions pode ajudar a
               transformar sua ideia em uma solução digital.
             </p>
-            <div class="contact__actions">
+            <div class="contact__actions" data-reveal="up">
               <div class="contact__converge">
                 <a
                   class="button button--primary button--lg"

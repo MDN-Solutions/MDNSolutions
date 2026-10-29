@@ -1,0 +1,82 @@
+/* ==========================================================================
+   Modo celular (html[data-scenes="lite"]): movimentos da rolagem normal
+   Sem palco fixo. Cada cena recebe do js/scenes.js os mesmos --e, --q e --x do desktop, e aqui ficam os
+   efeitos que só existem no celular ou que precisam ser mais evidentes numa tela pequena. O que é comum
+   aos dois modos continua em css/scenes/<cena>.css (hero, serviços, processo, MDN Flow e contato).
+   Regras da casa:
+     - só transform/translate/scale/rotate e opacity (nada que recalcule layout);
+     - nada depende de hover: tudo acompanha a rolagem (--q) ou entra quando o elemento aparece (data-reveal);
+     - o texto nunca fica abaixo de ~4,5:1 de contraste, nem no começo do movimento;
+     - sem "reduzir movimento" ou sem JS este arquivo não entra (html[data-scenes] deixa de existir).
+   Para desligar só os extras do celular, remova este arquivo do index.html.
+   ========================================================================== */
+
+/* entradas por observador: deslocamento maior, para ser percebido numa tela pequena */
+html[data-scenes="lite"] {
+  --reveal-shift: 1.5rem;
+}
+
+/* ---------- Projetos: cada caso "chega" enquanto passa pela tela ----------
+   --q (0 a 1) vem de js/scenes.js para cada .case; 0,5 é o caso no centro. --b vale 0 nas pontas e 1 no centro. */
+
+html[data-scenes="lite"] .case {
+  --b: clamp(0, calc(1 - max(var(--q, 0.5) - 0.5, 0.5 - var(--q, 0.5)) * 2), 1);
+}
+
+/* a moldura sobe um pouco mais rápido que a rolagem e cresce até o centro; a borda acende */
+html[data-scenes="lite"] .case__media {
+  transform: translate3d(0, calc((0.5 - var(--q, 0.5)) * 4rem), 0);
+  scale: calc(0.94 + var(--b) * 0.06);
+  border-color: rgb(var(--c-violet) / calc(0.12 + var(--b) * 0.5));
+}
+
+/* o celular da captura sobe para dentro da moldura (em outra velocidade: profundidade) e chega ao lugar no centro */
+html[data-scenes="lite"] .case__phone {
+  translate: 0 calc((0.5 - min(var(--q, 0.5), 0.5)) * 7rem);
+  rotate: calc((0.5 - min(var(--q, 0.5), 0.5)) * 6deg);
+}
+
+/* o texto anda mais devagar que a imagem */
+html[data-scenes="lite"] .case__body {
+  translate: 0 calc((var(--q, 0.5) - 0.5) * 1.5rem);
+}
+
+/* ---------- Serviços: o item em foco desliza, cresce e o ícone gira para o lugar ---------- */
+
+html[data-scenes="lite"] .service {
+  translate: calc(var(--a) * 1.1rem) 0;
+  scale: calc(0.97 + var(--a) * 0.03);
+  transform-origin: 0 50%;
+}
+
+html[data-scenes="lite"] .service__icon {
+  scale: calc(0.86 + var(--a) * 0.24);
+  rotate: calc((1 - var(--a)) * -10deg);
+}
+
+/* ---------- Como funciona: a etapa que a linha alcança entra pela esquerda ---------- */
+
+html[data-scenes="lite"] .process__title,
+html[data-scenes="lite"] .process__text {
+  translate: calc((1 - var(--on)) * 1.1rem) 0;
+}
+
+html[data-scenes="lite"] .process__number {
+  translate: calc((1 - var(--on)) * -0.75rem) 0;
+}
+
+/* ---------- Sobre: a composição cresce, os anéis giram mais e o brilho muda de lado ---------- */
+
+html[data-scenes="lite"] .about__world {
+  scale: calc(0.82 + var(--q, 0) * 0.26);
+}
+
+html[data-scenes="lite"] .orbit__ring {
+  rotate: calc(var(--q, 0) * var(--turn) * 2.2);
+}
+
+/* ---------- Contato: o botão ganha presença quando tudo chega a ele ---------- */
+
+html[data-scenes="lite"] .contact__converge .button {
+  scale: calc(1 + var(--lit) * 0.06);
+}

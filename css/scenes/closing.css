@@ -276,6 +276,19 @@ html[data-scenes] .contact[data-live="true"] :is(.contact__sat, .contact__rings 
   will-change: transform, opacity;
 }
 
+/* ---------- Navegador sem unidades de container (cqw): anéis em rem e sem satélites ----------
+   (os satélites andam em cqw; sem ele eles ficariam parados no centro, em cima do botão) */
+
+@supports not (width: 1cqw) {
+  html[data-scenes] .contact__rings i {
+    width: calc(15rem + var(--k) * 4rem);
+  }
+
+  html[data-scenes] .contact__sat {
+    display: none;
+  }
+}
+
 /* ---------- Celular: o painel é estreito, então os elementos chegam por baixo ---------- */
 
 @media (width < 48em) {

@@ -351,6 +351,38 @@ main:focus {
   }
 }
 
+/* Navegador sem translate/scale individuais (Safari 14.0 e anteriores, Chrome < 104): a entrada usa
+   transform (mesmo efeito) em vez de ficar só no fade */
+@supports not (translate: 1px) {
+  @media (prefers-reduced-motion: no-preference) {
+    [data-reveal-state] {
+      transition:
+        opacity var(--dur-reveal) var(--ease-out) var(--reveal-delay, 0s),
+        transform calc(var(--dur-reveal) + 0.12s) var(--ease-out) var(--reveal-delay, 0s);
+    }
+
+    [data-reveal="left"][data-reveal-state="hidden"] {
+      transform: translateX(calc(var(--reveal-shift) * -2.5));
+    }
+
+    [data-reveal="right"][data-reveal-state="hidden"] {
+      transform: translateX(calc(var(--reveal-shift) * 2));
+    }
+
+    [data-reveal="zoom"][data-reveal-state="hidden"] {
+      transform: translateY(calc(var(--reveal-shift) * 1.25)) scale(0.965);
+    }
+
+    [data-reveal="up"][data-reveal-state="hidden"] {
+      transform: translateY(var(--reveal-shift));
+    }
+
+    [data-reveal-state="hidden"]:focus-within {
+      transform: none;
+    }
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
   *,
   ::before,
