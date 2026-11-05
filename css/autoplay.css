@@ -1,0 +1,53 @@
+/* ==========================================================================
+   Botão da rolagem automática (criado por js/autoplay.js; sem JS ele não existe)
+   Pílula escura fixa no canto: contraste alto sobre qualquer fundo e alvo de toque de 44px ou mais.
+   ========================================================================== */
+.autoplay {
+  position: fixed;
+  z-index: 60;
+  right: max(1rem, env(safe-area-inset-right));
+  bottom: max(1rem, env(safe-area-inset-bottom));
+  display: inline-flex;
+  align-items: center;
+  gap: 0.55rem;
+  min-height: 2.75rem;
+  padding: 0 1.1rem 0 0.9rem;
+  border: 1px solid rgb(139 108 255 / 0.55);
+  border-radius: 999px;
+  background: rgb(14 11 32 / 0.9);
+  color: #fff;
+  font: 600 0.875rem / 1 var(--font-sans, system-ui, sans-serif);
+  cursor: pointer;
+  -webkit-backdrop-filter: blur(8px);
+  backdrop-filter: blur(8px);
+  box-shadow: 0 6px 24px rgb(0 0 0 / 0.35);
+}
+
+.autoplay:hover {
+  border-color: rgb(139 108 255 / 0.95);
+}
+
+.autoplay:focus-visible {
+  outline: 2px solid #fff;
+  outline-offset: 3px;
+}
+
+.autoplay[hidden] {
+  display: none;
+}
+
+.autoplay__icon {
+  flex: none;
+}
+
+.autoplay[data-state="playing"] .autoplay__play,
+.autoplay[data-state="paused"] .autoplay__pause {
+  display: none;
+}
+
+/* não cobre o menu aberto */
+@media (max-width: 30em) {
+  .autoplay__label {
+    font-size: 0.8125rem;
+  }
+}

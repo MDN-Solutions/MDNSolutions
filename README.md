@@ -21,6 +21,8 @@ js/main.js                 Header, menu, link ativo, entrada ao rolar, ano no ro
 js/scene.js                Inclinação 3D das cenas e brilho que segue o mouse
 js/scenes.js               Motor das cenas de rolagem (lê a rolagem e escreve --e, --q, --x, --st)
 js/extras.js               Numerais que contam e % de leitura
+js/autoplay.js             Rolagem automática contínua (para ao tocar/rolar/teclar; botão pausar/continuar)
+css/autoplay.css           Botão da rolagem automática
 assets/                    Fontes, logo, ícones e capturas dos projetos (assets/projects/)
 ```
 
@@ -250,3 +252,10 @@ O repositório não tem lint, verificação de tipos nem build; a conferência �
 5. Navegue só pelo teclado (Tab/Shift+Tab: foco sempre visível, inclusive nos links "Visitar site" e
    no botão do MDN Flow), use os links do menu, o botão Voltar do navegador e links com `#`
    (ex.: `/#tio-pet`).
+
+## Rolagem automática
+
+`js/autoplay.js`: a página desce sozinha ~2,5 s após carregar (se ninguém mexeu) e para em qualquer toque, roda do mouse,
+tecla de navegação, clique em link/botão ou arrasto da barra. O botão fixo "Rolagem automática / Pausar rolagem" retoma ou
+pausa. Para no fim da página e com a aba em segundo plano; não inicia com "reduzir movimento". Velocidade: ~9% da altura da
+tela por segundo (entre 55 e 120 px/s), ajustável em `speed()`. Para desligar: remova o `<script>` e o `<link>` do `index.html`.
