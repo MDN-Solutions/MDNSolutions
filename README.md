@@ -75,8 +75,11 @@ Cada projeto é um `<li class="case">` em `index.html`, com capturas em `assets/
 - `og-image.png` deve ficar em 1200×630 (proporção 1,91:1) e leve; a atual tem 177 KB. Para trocar
   a arte, substitua o arquivo mantendo o nome. Redes sociais guardam a imagem antiga em cache por um
   tempo.
-- Ao incluir novas páginas, acrescente-as ao `sitemap.xml`.
-- Os dados estruturados (`Organization`) só trazem informações que já estão no site. Não acrescente
+- Ao incluir novas páginas, acrescente-as ao `sitemap.xml` e atualize o `<lastmod>`.
+- `vercel.json` define o cache: fontes por 1 ano; imagens de `assets/` por 7 dias. Ao trocar uma
+  imagem mantendo o nome, quem já visitou pode ver a antiga por até 7 dias (troque o nome do arquivo
+  se precisar que mude na hora).
+- Os dados estruturados (`Organization` + `ProfessionalService`, com os 3 serviços) só trazem informações que já estão no site. Não acrescente
   endereço, avaliações ou horários que não sejam reais e visíveis na página.
 
 ## Sistema visual

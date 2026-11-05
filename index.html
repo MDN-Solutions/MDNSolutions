@@ -38,18 +38,70 @@
     <script type="application/ld+json">
       {
         "@context": "https://schema.org",
-        "@type": "Organization",
-        "@id": "https://www.mdnsolutions.com.br/#organizacao",
-        "name": "MDN Solutions",
-        "url": "https://www.mdnsolutions.com.br/",
-        "logo": "https://www.mdnsolutions.com.br/assets/img/logo.png",
-        "description": "Sites e sistemas para negócios locais.",
-        "telephone": "+55-81-99857-6040",
-        "areaServed": [
-          { "@type": "City", "name": "Olinda" },
-          { "@type": "City", "name": "Recife" }
-        ],
-        "sameAs": ["https://www.instagram.com/mdnsolutions/"]
+        "@graph": [
+          {
+            "@type": ["Organization", "ProfessionalService"],
+            "@id": "https://www.mdnsolutions.com.br/#organizacao",
+            "name": "MDN Solutions",
+            "url": "https://www.mdnsolutions.com.br/",
+            "logo": "https://www.mdnsolutions.com.br/assets/img/logo.png",
+            "image": "https://www.mdnsolutions.com.br/og-image.png",
+            "description": "Criação de landing pages, sites profissionais e sistemas personalizados para negócios locais em Olinda, Recife e região.",
+            "telephone": "+55-81-99857-6040",
+            "areaServed": [
+              { "@type": "City", "name": "Olinda" },
+              { "@type": "City", "name": "Recife" },
+              { "@type": "State", "name": "Pernambuco" }
+            ],
+            "knowsAbout": [
+              "Criação de sites",
+              "Landing pages",
+              "Cardápio digital",
+              "Catálogo digital",
+              "Sistema de agendamento",
+              "Sistemas personalizados"
+            ],
+            "hasOfferCatalog": {
+              "@type": "OfferCatalog",
+              "name": "Serviços da MDN Solutions",
+              "itemListElement": [
+                {
+                  "@type": "Offer",
+                  "itemOffered": {
+                    "@type": "Service",
+                    "name": "Landing pages",
+                    "description": "Páginas para apresentar produtos e serviços, destacar diferenciais e levar o visitante ao contato pelo WhatsApp."
+                  }
+                },
+                {
+                  "@type": "Offer",
+                  "itemOffered": {
+                    "@type": "Service",
+                    "name": "Sites profissionais",
+                    "description": "Sites institucionais, catálogos e cardápios digitais."
+                  }
+                },
+                {
+                  "@type": "Offer",
+                  "itemOffered": {
+                    "@type": "Service",
+                    "name": "Sistemas personalizados",
+                    "description": "Sistemas sob medida, como agendamento, cadastro de clientes e painel administrativo."
+                  }
+                }
+              ]
+            },
+            "sameAs": ["https://www.instagram.com/mdnsolutions/"]
+          },
+          {
+            "@type": "WebSite",
+            "@id": "https://www.mdnsolutions.com.br/#site",
+            "url": "https://www.mdnsolutions.com.br/",
+            "name": "MDN Solutions",
+            "inLanguage": "pt-BR",
+            "publisher": { "@id": "https://www.mdnsolutions.com.br/#organizacao" }
+          }
+        ]
       }
     </script>
 
