@@ -257,8 +257,8 @@ O repositório não tem lint, verificação de tipos nem build; a conferência �
 
 `js/autoplay.js`: a página desce sozinha ~2,5 s após carregar (se ninguém mexeu) e para em qualquer toque, roda do mouse,
 tecla de navegação, clique em link/botão ou arrasto da barra. O botão fixo "Rolagem automática / Pausar rolagem" retoma ou
-pausa. Para no fim da página e com a aba em segundo plano; não inicia com "reduzir movimento". Velocidade: ~9% da altura da
-tela por segundo (entre 55 e 120 px/s), ajustável em `speed()`. Para desligar: remova o `<script>` e o `<link>` do `index.html`.
+pausa. Para no fim da página e com a aba em segundo plano; não inicia com "reduzir movimento". Velocidade: ~28% da altura da
+tela por segundo (entre 170 e 380 px/s), ajustável em `speed()`. Para desligar: remova o `<script>` e o `<link>` do `index.html`.
 
 ### Desempenho no celular
 
