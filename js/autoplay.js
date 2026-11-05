@@ -39,7 +39,7 @@
     doc.body.appendChild(button);
 
     const maxScroll = () => Math.max(0, root.scrollHeight - window.innerHeight);
-    const speed = () => Math.min(120, Math.max(55, window.innerHeight * 0.09)); // px por segundo
+    const speed = () => Math.min(380, Math.max(170, window.innerHeight * 0.28)); // px por segundo
 
     function render() {
       button.dataset.state = running ? "playing" : "paused";
