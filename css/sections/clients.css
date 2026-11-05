@@ -1,0 +1,100 @@
+/* ==========================================================================
+   Clientes: faixa de logos que rola em loop (entre o contato e o rodapé)
+   ========================================================================== */
+
+.clients {
+  --clients-gap: clamp(3.5rem, 2rem + 4.5vw, 6.5rem);
+  --clients-logo-h: clamp(3.25rem, 2.6rem + 2vw, 4.75rem);
+  --clients-speed: 40s; /* menor = mais rápido */
+  /* o contato já termina com folga (cena fixada), então o topo é menor que o normal */
+  padding-block: calc(var(--space-section) * 0.4) calc(var(--space-section) * 0.75);
+  text-align: center;
+}
+
+.clients__title {
+  margin: 0 0 clamp(1.75rem, 1.2rem + 1.6vw, 2.75rem);
+  color: var(--c-pencil);
+  font-size: var(--fs-xs);
+  font-weight: 620;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+
+.clients__viewport {
+  overflow: hidden;
+  /* Os logos somem nas bordas em vez de cortar seco */
+  -webkit-mask-image: linear-gradient(90deg, transparent, #000 14%, #000 86%, transparent);
+  mask-image: linear-gradient(90deg, transparent, #000 14%, #000 86%, transparent);
+}
+
+.clients__track {
+  display: flex;
+  align-items: center;
+  width: max-content;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  animation: clients-scroll var(--clients-speed) linear infinite;
+}
+
+.clients__viewport:hover .clients__track {
+  animation-play-state: paused;
+}
+
+.clients__item {
+  flex: none;
+  display: grid;
+  place-items: center;
+  height: calc(var(--clients-logo-h) + 1.5rem);
+  padding-right: var(--clients-gap);
+}
+
+.clients__item img {
+  display: block;
+  width: auto;
+  height: var(--clients-logo-h);
+  opacity: 0.82;
+  filter: saturate(0.85);
+  transition: opacity 0.3s ease, filter 0.3s ease, transform 0.3s ease;
+}
+
+/* Logos largos ficam mais baixos para ter o mesmo "peso" visual dos outros */
+.clients__item--wide img {
+  height: calc(var(--clients-logo-h) * 0.68);
+}
+
+.clients__item:hover img {
+  opacity: 1;
+  filter: saturate(1) drop-shadow(0 0 18px rgb(var(--c-violet) / 0.35));
+  transform: scale(1.06);
+}
+
+@keyframes clients-scroll {
+  to {
+    transform: translateX(-50%);
+  }
+}
+
+/* Com menos movimento pedido no sistema: logos parados, centralizados e sem repetição */
+@media (prefers-reduced-motion: reduce) {
+  .clients__viewport {
+    -webkit-mask-image: none;
+    mask-image: none;
+  }
+
+  .clients__track {
+    flex-wrap: wrap;
+    justify-content: center;
+    width: auto;
+    gap: 2rem var(--clients-gap);
+    animation: none;
+  }
+
+  .clients__item {
+    padding-right: 0;
+  }
+
+  .clients__item:nth-child(n + 6) {
+    display: none;
+  }
+}

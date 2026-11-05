@@ -13,7 +13,8 @@ css/
   components.css           Botões, logo e molduras de dispositivo (navegador e celular)
   header.css               Header fixo e menu mobile
   footer.css               Rodapé
-  sections/                Um arquivo por seção: hero, projects, services, flow (MDN Flow), process, about, contact
+  sections/                Um arquivo por seção: hero, projects, services, flow (MDN Flow), process, about, contact,
+                           clients (faixa de logos de clientes)
   motion.css               Movimento extra (entradas escalonadas, micro-interações, barra de progresso)
   scenes/                  Cenas de rolagem (scrollytelling): core + hero, projects, services, process,
                            flow, about, closing e lite (movimentos extras do celular)
@@ -23,7 +24,7 @@ js/scenes.js               Motor das cenas de rolagem (lê a rolagem e escreve -
 js/extras.js               Numerais que contam e % de leitura
 js/autoplay.js             Rolagem automática contínua (para ao tocar/rolar/teclar; botão pausar/continuar)
 css/autoplay.css           Botão da rolagem automática
-assets/                    Fontes, logo, ícones e capturas dos projetos (assets/projects/)
+assets/                    Fontes, logo, ícones, capturas dos projetos (assets/projects/) e logos de clientes (assets/clients/)
 ```
 
 ## Como editar
