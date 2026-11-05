@@ -259,3 +259,9 @@ O repositório não tem lint, verificação de tipos nem build; a conferência �
 tecla de navegação, clique em link/botão ou arrasto da barra. O botão fixo "Rolagem automática / Pausar rolagem" retoma ou
 pausa. Para no fim da página e com a aba em segundo plano; não inicia com "reduzir movimento". Velocidade: ~9% da altura da
 tela por segundo (entre 55 e 120 px/s), ajustável em `speed()`. Para desligar: remova o `<script>` e o `<link>` do `index.html`.
+
+### Desempenho no celular
+
+`js/scenes.js` escreve `--page` só no cabeçalho (na raiz forçava recalcular o estilo da página toda a cada quadro) e, no modo
+`lite`, só grava `--e/--q/--x` quando mudam mais de `LITE_STEP` (0,008, cerca de 1 px de efeito); ao parar grava o valor exato.
+Medido no Chromium com CPU 4x mais lenta e a rolagem automática ligada: mediana de quadro de ~100 ms para ~17 ms.

@@ -15,7 +15,7 @@
  *                  seção cobre o palco; sem data-tail, é o palco saindo da tela)
  *   --st posição   0 a N-1, só com data-stations="N": a estação atual, com pausas
  *                  (data-hold, 0 a 0.45) para cada item "descansar" antes do próximo
- * e a raiz recebe --page (0 a 1, progresso do documento).
+ * e o cabeçalho recebe --page (0 a 1, progresso do documento).
  * Os valores avançam suavizados (inércia curta); ao parar de rolar, o loop termina sozinho.
  * Voltar a rolar para cima desfaz tudo na mesma proporção.
  *
@@ -52,6 +52,7 @@
 
   const SMOOTH = 0.16; // fração do caminho percorrida por quadro (a 60 fps)
   const EPSILON = 0.0006;
+  const LITE_STEP = 0.008; // menor variação de --e/--q/--x que vale escrever no modo celular
 
   const clamp = (value, min = 0, max = 1) => Math.min(max, Math.max(min, value));
   const smooth = (t) => t * t * (3 - 2 * t);
@@ -76,6 +77,7 @@
     cur: { e: 0, q: 0, x: 0 },
     tgt: { e: 0, q: 0, x: 0 },
     written: {},
+    num: {},
     live: null,
   }));
 
@@ -139,6 +141,7 @@
 
   function clearScene(s) {
     s.written = {};
+    s.num = {};
     s.live = null;
     ["--e", "--q", "--x", "--st"].forEach((name) => s.el.style.removeProperty(name));
     s.el.removeAttribute("data-live");
@@ -216,18 +219,22 @@
     return moving;
   }
 
-  function setVar(s, name, value) {
+  // No celular cada escrita faz o navegador recalcular o estilo da cena inteira. Em passos de 0,008 (cerca de 1 px
+  // de efeito, invisível) as escritas caem a ~1/10, e quando a cena para (rest) o valor exato é gravado.
+  function setVar(s, name, value, rest) {
     const text = fixed(value);
     if (s.written[name] === text) return;
+    if (!rest && mode === "lite" && s.num[name] !== undefined && Math.abs(value - s.num[name]) < LITE_STEP) return;
     s.written[name] = text;
+    s.num[name] = value;
     s.el.style.setProperty(name, text);
   }
 
-  function write(s, y) {
-    setVar(s, "--e", s.cur.e);
-    setVar(s, "--q", s.cur.q);
-    setVar(s, "--x", s.cur.x);
-    if (s.stations > 1) setVar(s, "--st", station(s.cur.q, s.stations, s.hold));
+  function write(s, y, rest) {
+    setVar(s, "--e", s.cur.e, rest);
+    setVar(s, "--q", s.cur.q, rest);
+    setVar(s, "--x", s.cur.x, rest);
+    if (s.stations > 1) setVar(s, "--st", station(s.cur.q, s.stations, s.hold), true);
 
     // só pede will-change ao CSS enquanto a cena está perto da tela
     const near = y + vh * 2 > s.top && y - vh < s.top + s.height;
@@ -249,6 +256,9 @@
     }
   }
 
+  const pageBar = document.querySelector(".header");
+  let pageWritten = -1;
+
   function step(now) {
     const dt = last ? Math.min(64, now - last) : 16.667;
     last = now;
@@ -258,13 +268,19 @@
     scenes.forEach((s) => {
       if (!s.enabled) return;
       target(s, y);
-      if (ease(s, dt)) moving = true;
-      write(s, y);
+      const sceneMoving = ease(s, dt);
+      if (sceneMoving) moving = true;
+      write(s, y, !sceneMoving || snap);
     });
     snap = false;
 
     const max = root.scrollHeight - vh;
-    root.style.setProperty("--page", fixed(max > 0 ? clamp(y / max) : 0));
+    // --page só é usada no cabeçalho: escrevê-la na raiz recalcularia o estilo da página inteira a cada quadro
+    const page = max > 0 ? clamp(y / max) : 0;
+    if (Math.abs(page - pageWritten) >= 0.002 || page === 0 || page === 1) {
+      pageWritten = page;
+      (pageBar || root).style.setProperty("--page", fixed(page));
+    }
 
     if (moving) request();
     else last = 0;
